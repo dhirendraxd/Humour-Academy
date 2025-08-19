@@ -5,10 +5,12 @@ import { FacultyDashboard } from "@/components/FacultyDashboard";
 import { BODDashboard } from "@/components/BODDashboard";
 import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
 import { LoginForm } from "@/components/LoginForm";
+import { HomePage } from "@/components/HomePage";
 import heroImage from "@/assets/ramay-institute-hero.jpg";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [currentRole, setCurrentRole] = useState<'student' | 'faculty' | 'bod' | 'superadmin'>('student');
   
   // Mock user data - in real app this would come from Supabase auth
@@ -22,14 +24,25 @@ const Index = () => {
   const handleLogin = (role: 'student' | 'faculty' | 'bod' | 'superadmin') => {
     setCurrentRole(role);
     setIsLoggedIn(true);
+    setShowLogin(false);
   };
 
   const handleRoleChange = (role: 'student' | 'faculty' | 'bod' | 'superadmin') => {
     setCurrentRole(role);
   };
 
-  if (!isLoggedIn) {
+  const handleShowLogin = () => {
+    setShowLogin(true);
+  };
+
+  // Show login form if user clicked login
+  if (!isLoggedIn && showLogin) {
     return <LoginForm onLogin={handleLogin} />;
+  }
+
+  // Show homepage if not logged in and not showing login
+  if (!isLoggedIn) {
+    return <HomePage onLoginClick={handleShowLogin} />;
   }
 
   const renderDashboard = () => {
