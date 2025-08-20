@@ -11,11 +11,11 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
     <div className="min-h-screen bg-gradient-background">
       {/* Navigation */}
-      <nav className="border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow">
                 <GraduationCap className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
@@ -25,7 +25,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             
             <Button 
               onClick={onLoginClick}
-              className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200"
+              className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm"
             >
               Login / Join Us
               <ChevronRight className="ml-2 h-4 w-4" />
@@ -35,151 +35,121 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+      <section className="relative py-24 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-10">
+              <div className="space-y-6">
+                <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
                   Welcome to the{" "}
                   <span className="bg-gradient-primary bg-clip-text text-transparent">
                     Ramay Institute
                   </span>
                 </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  The premier academy for humor education and comedic excellence. 
-                  Transform your wit, master the art of comedy, and join a community 
-                  of distinguished humorists.
+                <p className="text-xl lg:text-2xl text-muted-foreground leading-relaxed font-light">
+                  The premier academy for humor education and comedic excellence.
                 </p>
               </div>
               
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
                   onClick={onLoginClick}
-                  className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200"
+                  className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.02] transition-all duration-300 text-lg px-8 py-6"
                 >
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  Start Your Humor Journey
-                </Button>
-                <Button size="lg" variant="outline" className="border-primary/30 text-foreground hover:bg-primary/5">
-                  Learn More
+                  <Sparkles className="mr-3 h-6 w-6" />
+                  Start Your Journey
                 </Button>
               </div>
             </div>
             
-            <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-card">
+            <div className="relative lg:ml-8">
+              <div className="aspect-square rounded-3xl overflow-hidden shadow-glass bg-gradient-glass backdrop-blur-sm border border-border/20">
                 <img 
                   src={heroImage} 
-                  alt="Ramay Institute - Where Humor Meets Academia" 
+                  alt="Ramay Institute" 
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -inset-4 bg-gradient-primary/10 rounded-3xl -z-10 blur-xl"></div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+      <section className="py-24 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
               Master the Art of{" "}
               <span className="bg-gradient-primary bg-clip-text text-transparent">
                 Academic Humor
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join our distinguished community of humorists, from aspiring students 
-              to acclaimed Board of Directors.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
+              Join our distinguished community of humorists.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
-                  <BookOpen className="h-6 w-6 text-primary-foreground" />
+            <Card className="shadow-glass border border-border/20 bg-gradient-glass backdrop-blur-md hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02]">
+              <CardHeader className="pb-4">
+                <div className="w-14 h-14 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 shadow-button">
+                  <BookOpen className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <CardTitle>Students</CardTitle>
-                <CardDescription>
-                  Begin your humor journey with structured learning and mentorship
+                <CardTitle className="text-xl font-semibold">Students</CardTitle>
+                <CardDescription className="text-base leading-relaxed">
+                  Begin your humor journey with structured learning
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Track your humor level and growth</li>
-                  <li>• Earn certifications from faculty</li>
-                  <li>• Access exclusive comedy workshops</li>
-                </ul>
-              </CardContent>
             </Card>
 
-            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-primary-foreground" />
+            <Card className="shadow-glass border border-border/20 bg-gradient-glass backdrop-blur-md hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02]">
+              <CardHeader className="pb-4">
+                <div className="w-14 h-14 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 shadow-button">
+                  <Users className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <CardTitle>Faculty</CardTitle>
-                <CardDescription>
-                  Experienced humorists who guide and evaluate student progress
+                <CardTitle className="text-xl font-semibold">Faculty</CardTitle>
+                <CardDescription className="text-base leading-relaxed">
+                  Experienced humorists who guide student progress
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Mentor aspiring comedians</li>
-                  <li>• Issue humor certifications</li>
-                  <li>• Promote deserving students</li>
-                </ul>
-              </CardContent>
             </Card>
 
-            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
-                  <Trophy className="h-6 w-6 text-primary-foreground" />
+            <Card className="shadow-glass border border-border/20 bg-gradient-glass backdrop-blur-md hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02]">
+              <CardHeader className="pb-4">
+                <div className="w-14 h-14 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 shadow-button">
+                  <Trophy className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <CardTitle>Board of Directors</CardTitle>
-                <CardDescription>
-                  Elite humorists who shape the future of comedy education
+                <CardTitle className="text-xl font-semibold">Board of Directors</CardTitle>
+                <CardDescription className="text-base leading-relaxed">
+                  Elite humorists who shape comedy education
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Oversee institute operations</li>
-                  <li>• Promote faculty members</li>
-                  <li>• Set humor standards</li>
-                </ul>
-              </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-24 px-6 sm:px-8 lg:px-12">
         <div className="max-w-4xl mx-auto text-center">
-          <Card className="shadow-card bg-gradient-subtle border-border">
-            <CardContent className="p-12">
-              <div className="space-y-6">
-                <h3 className="text-3xl font-bold text-foreground">
-                  Ready to Join Our Comedy Academy?
+          <Card className="shadow-glass bg-gradient-glass backdrop-blur-md border border-border/20">
+            <CardContent className="p-16">
+              <div className="space-y-8">
+                <h3 className="text-4xl font-bold text-foreground tracking-tight">
+                  Ready to Join Our Academy?
                 </h3>
-                <p className="text-xl text-muted-foreground">
-                  Apply for access today and begin your journey toward humor mastery. 
-                  Our Super Admin carefully reviews each application to maintain 
-                  our prestigious standards.
+                <p className="text-xl text-muted-foreground leading-relaxed font-light max-w-2xl mx-auto">
+                  Apply for access today and begin your journey toward humor mastery.
                 </p>
                 <Button 
                   size="lg" 
                   onClick={onLoginClick}
-                  className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200 text-lg px-8"
+                  className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.02] transition-all duration-300 text-lg px-12 py-6"
                 >
-                  <GraduationCap className="mr-2 h-5 w-5" />
-                  Request Institute Access
+                  <GraduationCap className="mr-3 h-6 w-6" />
+                  Request Access
                 </Button>
               </div>
             </CardContent>
@@ -188,9 +158,9 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/10 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-muted-foreground">
+      <footer className="border-t border-border/30 py-12 px-6 sm:px-8 lg:px-12 bg-gradient-glass backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-muted-foreground text-lg font-light">
             © 2024 Ramay Institute. Where humor meets excellence.
           </p>
         </div>
