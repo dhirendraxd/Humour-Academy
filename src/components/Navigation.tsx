@@ -45,7 +45,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
     };
     
     return (
-      <Badge className={`${variants[currentRole]} border-0 shadow-academic`}>
+      <Badge className={`${variants[currentRole]} border-0 shadow-elegant`}>
         {getRoleIcon(currentRole)}
         <span className="ml-1 capitalize">{currentRole}</span>
       </Badge>
@@ -53,7 +53,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
   };
 
   return (
-    <nav className="bg-gradient-academic border-b border-border shadow-academic">
+    <nav className="bg-background/95 backdrop-blur-sm border-b border-border shadow-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -115,7 +115,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               <select 
                 value={currentRole}
                 onChange={(e) => onRoleChange(e.target.value as any)}
-                className="bg-background border border-border rounded px-2 py-1 text-sm"
+                className="bg-background border border-border rounded px-2 py-1 text-sm text-foreground"
               >
                 <option value="student">Student</option>
                 <option value="faculty">Faculty</option>

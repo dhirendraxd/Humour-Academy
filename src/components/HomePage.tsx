@@ -9,9 +9,9 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-gradient-academic">
+    <div className="min-h-screen bg-gradient-background">
       {/* Navigation */}
-      <nav className="border-b border-border/10 bg-background/50 backdrop-blur-sm">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
@@ -25,7 +25,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             
             <Button 
               onClick={onLoginClick}
-              className="bg-gradient-primary border-0 hover:shadow-glow"
+              className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200"
             >
               Login / Join Us
               <ChevronRight className="ml-2 h-4 w-4" />
@@ -57,26 +57,26 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
                 <Button 
                   size="lg" 
                   onClick={onLoginClick}
-                  className="bg-gradient-primary border-0 hover:shadow-glow"
+                  className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200"
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
                   Start Your Humor Journey
                 </Button>
-                <Button size="lg" variant="outline" className="border-primary/20">
+                <Button size="lg" variant="outline" className="border-primary/30 text-foreground hover:bg-primary/5">
                   Learn More
                 </Button>
               </div>
             </div>
             
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-academic">
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-card">
                 <img 
                   src={heroImage} 
                   alt="Ramay Institute - Where Humor Meets Academia" 
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -inset-4 bg-gradient-primary/20 rounded-3xl -z-10 blur-xl"></div>
+              <div className="absolute -inset-4 bg-gradient-primary/10 rounded-3xl -z-10 blur-xl"></div>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="shadow-academic border-primary/10">
+            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
               <CardHeader>
                 <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
                   <BookOpen className="h-6 w-6 text-primary-foreground" />
@@ -118,7 +118,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-academic border-primary/10">
+            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
               <CardHeader>
                 <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-primary-foreground" />
@@ -137,7 +137,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-academic border-primary/10">
+            <Card className="shadow-card border-border bg-card hover:shadow-elegant transition-all duration-200">
               <CardHeader>
                 <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mb-4">
                   <Trophy className="h-6 w-6 text-primary-foreground" />
@@ -162,10 +162,10 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <Card className="shadow-academic bg-gradient-subtle border-primary/20">
+          <Card className="shadow-card bg-gradient-subtle border-border">
             <CardContent className="p-12">
               <div className="space-y-6">
-                <h3 className="text-3xl font-bold">
+                <h3 className="text-3xl font-bold text-foreground">
                   Ready to Join Our Comedy Academy?
                 </h3>
                 <p className="text-xl text-muted-foreground">
@@ -176,7 +176,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
                 <Button 
                   size="lg" 
                   onClick={onLoginClick}
-                  className="bg-gradient-primary border-0 hover:shadow-glow text-lg px-8"
+                  className="bg-gradient-primary text-primary-foreground border-0 hover:shadow-glow hover:scale-105 transition-all duration-200 text-lg px-8"
                 >
                   <GraduationCap className="mr-2 h-5 w-5" />
                   Request Institute Access
