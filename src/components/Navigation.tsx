@@ -107,7 +107,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           {/* User Info */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              {currentUser && (
+              {currentUser && currentUser.name && (
                 <div className="text-right hidden sm:block">
                   <div className="text-sm font-medium text-foreground">{currentUser.name}</div>
                   <div className="text-xs text-muted-foreground">Level {currentUser.level}</div>
@@ -116,7 +116,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               
               <Avatar className="h-8 w-8 shadow-glass">
                 <AvatarFallback className="bg-gradient-primary text-primary-foreground">
-                  {currentUser ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
+                  {currentUser && currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
                 </AvatarFallback>
               </Avatar>
               
