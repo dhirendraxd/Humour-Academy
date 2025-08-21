@@ -1,83 +1,65 @@
-import { useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { Navigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { StudentDashboard } from "@/components/StudentDashboard";
 import { FacultyDashboard } from "@/components/FacultyDashboard";
 import { BODDashboard } from "@/components/BODDashboard";
 import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
-import { LoginForm } from "@/components/LoginForm";
-import { HomePage } from "@/components/HomePage";
-import heroImage from "@/assets/ramay-institute-hero.jpg";
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [currentRole, setCurrentRole] = useState<'student' | 'faculty' | 'bod' | 'superadmin'>('student');
-  
-  // Mock user data - in real app this would come from Supabase auth
-  const mockUsers = {
-    student: { name: "Alex Johnson", rank: "Pun Apprentice", level: 3 },
-    faculty: { name: "Dr. Sarah Wilson", rank: "Comedy Professor", level: 8 },
-    bod: { name: "Prof. Michael Chen", rank: "Humor Director", level: 10 },
-    superadmin: { name: "System Administrator", rank: "Super Admin", level: 99 }
-  };
+  const { user, profile, loading } = useAuth();
 
-  const handleLogin = (role: 'student' | 'faculty' | 'bod' | 'superadmin') => {
-    setCurrentRole(role);
-    setIsLoggedIn(true);
-    setShowLogin(false);
-  };
-
-  const handleRoleChange = (role: 'student' | 'faculty' | 'bod' | 'superadmin') => {
-    setCurrentRole(role);
-  };
-
-  const handleShowLogin = () => {
-    setShowLogin(true);
-  };
-
-  // Show login form if user clicked login
-  if (!isLoggedIn && showLogin) {
-    return <LoginForm onLogin={handleLogin} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-academic">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
   }
 
-  // Show homepage if not logged in and not showing login
-  if (!isLoggedIn) {
-    return <HomePage onLoginClick={handleShowLogin} />;
+  // Redirect to auth if not logged in or no profile
+  if (!user || !profile || !profile.approved_status) {
+    return <Navigate to="/auth" replace />;
   }
 
   const renderDashboard = () => {
-    const user = mockUsers[currentRole];
+    const userData = {
+      name: profile.full_name,
+      rank: profile.rank || 'Member',
+      level: profile.level
+    };
     
-    switch (currentRole) {
+    switch (profile.role) {
       case 'student':
-        return <StudentDashboard user={user} />;
+        return <StudentDashboard user={userData} />;
       case 'faculty':
-        return <FacultyDashboard user={user} />;
+        return <FacultyDashboard user={userData} />;
       case 'bod':
-        return <BODDashboard user={user} />;
+        return <BODDashboard user={userData} />;
       case 'superadmin':
-        return <SuperAdminDashboard user={user} />;
+        return <SuperAdminDashboard user={userData} />;
       default:
-        return <StudentDashboard user={user} />;
+        return <StudentDashboard user={userData} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-screen bg-gradient-academic">
       <Navigation 
-        currentRole={currentRole}
-        currentUser={mockUsers[currentRole]}
-        onRoleChange={handleRoleChange}
+        currentRole={profile.role}
+        currentUser={{
+          name: profile.full_name,
+          rank: profile.rank || 'Member',
+          level: profile.level
+        }}
+        onRoleChange={() => {}}
       />
       
-      <main className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderDashboard()}
       </main>
-
-      {/* Hero Image Credit - Hidden but imported for demo */}
-      <div className="hidden">
-        <img src={heroImage} alt="Ramay Institute" />
-      </div>
     </div>
   );
 };

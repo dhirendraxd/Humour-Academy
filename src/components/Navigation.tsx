@@ -13,6 +13,7 @@ import {
   Crown,
   Star
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NavigationProps {
   currentRole: 'student' | 'faculty' | 'bod' | 'superadmin';
@@ -136,6 +137,22 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               </Avatar>
               
               {getRoleBadge()}
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    await supabase.auth.signOut();
+                    window.location.href = '/auth';
+                  } catch (error) {
+                    console.error('Error signing out:', error);
+                  }
+                }}
+                className="ml-2"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
