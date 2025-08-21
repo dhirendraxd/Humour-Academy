@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -24,7 +25,9 @@ interface NavigationProps {
 }
 
 export const Navigation = ({ currentRole, currentUser, onRoleChange }: NavigationProps) => {
-  const [activeTab, setActiveTab] = useState('home');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.pathname);
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -66,8 +69,11 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-2">
             <Button
-              variant={activeTab === 'home' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('home')}
+              variant={activeTab === '/' ? 'default' : 'ghost'}
+              onClick={() => {
+                setActiveTab('/');
+                navigate('/');
+              }}
               className="flex items-center space-x-2 backdrop-blur-sm"
             >
               <Home className="h-4 w-4" />
@@ -75,8 +81,11 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
             </Button>
 
             <Button
-              variant={activeTab === 'faculty' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('faculty')}
+              variant={activeTab === '/faculty' ? 'default' : 'ghost'}
+              onClick={() => {
+                setActiveTab('/faculty');
+                navigate('/faculty');
+              }}
               className="flex items-center space-x-2 backdrop-blur-sm"
             >
               <Star className="h-4 w-4" />
@@ -84,8 +93,11 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
             </Button>
 
             <Button
-              variant={activeTab === 'students' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('students')}
+              variant={activeTab === '/students' ? 'default' : 'ghost'}
+              onClick={() => {
+                setActiveTab('/students');
+                navigate('/students');
+              }}
               className="flex items-center space-x-2 backdrop-blur-sm"
             >
               <GraduationCap className="h-4 w-4" />
@@ -94,8 +106,11 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
 
             {currentRole === 'superadmin' && (
               <Button
-                variant={activeTab === 'requests' ? 'default' : 'ghost'}
-                onClick={() => setActiveTab('requests')}
+                variant={activeTab === '/admin/requests' ? 'default' : 'ghost'}
+                onClick={() => {
+                  setActiveTab('/admin/requests');
+                  navigate('/admin/requests');
+                }}
                 className="flex items-center space-x-2 backdrop-blur-sm"
               >
                 <Shield className="h-4 w-4" />
