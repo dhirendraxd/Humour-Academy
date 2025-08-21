@@ -19,7 +19,7 @@ interface NavigationProps {
     name: string;
     rank: string;
     level: number;
-  };
+  } | null;
   onRoleChange: (role: 'student' | 'faculty' | 'bod' | 'superadmin') => void;
 }
 
@@ -107,14 +107,16 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           {/* User Info */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="text-right hidden sm:block">
-                <div className="text-sm font-medium text-foreground">{currentUser.name}</div>
-                <div className="text-xs text-muted-foreground">Level {currentUser.level}</div>
-              </div>
+              {currentUser && (
+                <div className="text-right hidden sm:block">
+                  <div className="text-sm font-medium text-foreground">{currentUser.name}</div>
+                  <div className="text-xs text-muted-foreground">Level {currentUser.level}</div>
+                </div>
+              )}
               
               <Avatar className="h-8 w-8 shadow-glass">
                 <AvatarFallback className="bg-gradient-primary text-primary-foreground">
-                  {currentUser.name.split(' ').map(n => n[0]).join('')}
+                  {currentUser ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
                 </AvatarFallback>
               </Avatar>
               

@@ -35,7 +35,7 @@ export default function Students() {
   useEffect(() => {
     const filtered = students.filter(student =>
       student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.rank.toLowerCase().includes(searchTerm.toLowerCase())
+      (student.rank && student.rank.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredStudents(filtered);
   }, [students, searchTerm]);
