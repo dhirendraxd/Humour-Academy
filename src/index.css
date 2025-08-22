@@ -24,6 +24,11 @@ All colors MUST be HSL.
 
     --secondary: 262 83% 58%;         /* Purple accent */
     --secondary-foreground: 0 0% 100%;
+    
+    --tertiary: 172 66% 50%;          /* Subtle teal-green */
+    --tertiary-foreground: 0 0% 100%;
+    --quaternary: 200 85% 55%;        /* Ocean blue */
+    --quaternary-foreground: 0 0% 100%;
 
     --muted: 240 20% 96% / 0.6;       /* Glass muted */
     --muted-foreground: 221 13% 46%;  /* Medium gray */
@@ -43,6 +48,8 @@ All colors MUST be HSL.
     --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.25), hsl(240 20% 96% / 0.1));
     --gradient-hero: linear-gradient(135deg, hsl(239 84% 67% / 0.1) 0%, hsl(262 83% 58% / 0.05) 100%);
     --gradient-background: radial-gradient(ellipse at top, hsl(239 50% 98%) 0%, hsl(240 100% 99%) 100%);
+    --gradient-ocean: linear-gradient(135deg, hsl(172 66% 50% / 0.2) 0%, hsl(200 85% 55% / 0.15) 100%);
+    --gradient-academic: linear-gradient(135deg, hsl(200 85% 55% / 0.1), hsl(172 66% 50% / 0.05));
     
     /* Glass shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.1), 0 2px 16px 0 hsl(0 0% 0% / 0.05);
@@ -80,6 +87,11 @@ All colors MUST be HSL.
 
     --secondary: 262 83% 58%;         
     --secondary-foreground: 0 0% 100%;
+    
+    --tertiary: 172 66% 50%;          /* Subtle teal-green */
+    --tertiary-foreground: 0 0% 100%;
+    --quaternary: 200 85% 55%;        /* Ocean blue */
+    --quaternary-foreground: 0 0% 100%;
 
     --muted: 221 39% 11% / 0.6;       /* Glass muted dark */
     --muted-foreground: 221 13% 65%;  
@@ -99,6 +111,8 @@ All colors MUST be HSL.
     --gradient-glass: linear-gradient(135deg, hsl(221 39% 15% / 0.4), hsl(221 39% 7% / 0.2));
     --gradient-hero: linear-gradient(135deg, hsl(239 84% 67% / 0.1) 0%, hsl(262 83% 58% / 0.05) 100%);
     --gradient-background: radial-gradient(ellipse at top, hsl(221 39% 6%) 0%, hsl(221 39% 4%) 100%);
+    --gradient-ocean: linear-gradient(135deg, hsl(172 66% 50% / 0.3) 0%, hsl(200 85% 55% / 0.2) 100%);
+    --gradient-academic: linear-gradient(135deg, hsl(200 85% 55% / 0.15), hsl(172 66% 50% / 0.1));
     
     /* Dark glass shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4), 0 2px 16px 0 hsl(0 0% 0% / 0.2);
