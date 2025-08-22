@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, Users, Trophy, BookOpen, Sparkles, ChevronRight } from "lucide-react";
-import heroImage from "@/assets/ramay-institute-hero.jpg";
+import { ParticleField } from "./ParticleField";
 
 interface HomePageProps {
   onLoginClick: () => void;
@@ -9,7 +9,8 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-screen bg-gradient-background relative">
+      <ParticleField />
       {/* Navigation */}
       <nav className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -64,12 +65,18 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             </div>
             
             <div className="relative lg:ml-8">
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-glass bg-gradient-glass backdrop-blur-sm border border-border/20">
-                <img 
-                  src={heroImage} 
-                  alt="Ramay Institute" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-square rounded-3xl bg-gradient-ocean backdrop-blur-sm border border-border/20 flex items-center justify-center overflow-hidden">
+                <div className="text-center space-y-4 p-8">
+                  <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-glow animate-pulse">
+                    <Sparkles className="h-12 w-12 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                    Innovation Hub
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Where creativity meets excellence in humor education
+                  </p>
+                </div>
               </div>
             </div>
           </div>
