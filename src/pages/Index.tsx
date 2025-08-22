@@ -1,5 +1,6 @@
 import { useAuth } from "@/components/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { HomePage } from "@/components/HomePage";
 import { Navigation } from "@/components/Navigation";
 import { StudentDashboard } from "@/components/StudentDashboard";
 import { FacultyDashboard } from "@/components/FacultyDashboard";
@@ -8,6 +9,7 @@ import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -19,9 +21,9 @@ const Index = () => {
     );
   }
 
-  // Redirect to auth if not logged in or no profile
+  // Show public homepage for non-authenticated users
   if (!user || !profile || !profile.approved_status) {
-    return <Navigate to="/auth" replace />;
+    return <HomePage onLoginClick={() => navigate('/auth')} />;
   }
 
   const renderDashboard = () => {

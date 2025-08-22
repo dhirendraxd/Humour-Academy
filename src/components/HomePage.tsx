@@ -65,16 +65,23 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             </div>
             
             <div className="relative lg:ml-8">
-              <div className="aspect-square rounded-3xl bg-gradient-ocean backdrop-blur-sm border border-border/20 flex items-center justify-center overflow-hidden">
-                <div className="text-center space-y-4 p-8">
-                  <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center mx-auto shadow-glow animate-pulse">
-                    <Sparkles className="h-12 w-12 text-primary-foreground" />
+              <div className="aspect-square rounded-3xl bg-gradient-ocean backdrop-blur-sm border border-border/20 flex items-center justify-center overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-primary opacity-10 animate-pulse"></div>
+                <div className="text-center space-y-6 p-12 relative z-10">
+                  <div className="grid grid-cols-3 gap-4 mb-8">
+                    {[...Array(9)].map((_, i) => (
+                      <div 
+                        key={i}
+                        className="w-8 h-8 bg-gradient-primary rounded-lg opacity-60 animate-pulse"
+                        style={{ animationDelay: `${i * 0.2}s` }}
+                      />
+                    ))}
                   </div>
-                  <h3 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                    Innovation Hub
+                  <h3 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                    Academic Excellence
                   </h3>
-                  <p className="text-muted-foreground">
-                    Where creativity meets excellence in humor education
+                  <p className="text-muted-foreground text-lg">
+                    Discover the future of humor education
                   </p>
                 </div>
               </div>
