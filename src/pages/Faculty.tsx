@@ -13,10 +13,9 @@ interface Profile {
   user_id: string;
   full_name: string;
   email: string;
-  role: 'student' | 'faculty' | 'bod' | 'superadmin';
+  role: 'student' | 'faculty' | 'bod';
   level: number;
   rank: string;
-  approved_status: boolean;
 }
 
 export default function Faculty() {
@@ -35,7 +34,6 @@ export default function Faculty() {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('approved_status', true)
         .order('level', { ascending: false });
 
       if (error) throw error;

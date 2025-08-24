@@ -70,36 +70,25 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // First create the auth user
+      // Create the auth user with metadata
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: signupData.fullName,
+            role: signupData.role
+          }
         }
       });
 
       if (error) throw error;
 
       if (data.user) {
-        // Create access request
-        const { error: requestError } = await supabase
-          .from('access_requests')
-          .insert({
-            full_name: signupData.fullName,
-            email: signupData.email,
-            requested_role: signupData.role,
-            reason: signupData.reason,
-            status: 'pending'
-          });
-
-        if (requestError) {
-          console.error('Error creating access request:', requestError);
-        }
-
         toast({
-          title: "Registration Submitted!",
-          description: "Your account request has been submitted for approval. You'll receive an email confirmation shortly.",
+          title: "Registration Successful!",
+          description: "Account created successfully. You can now log in.",
         });
 
         // Reset form
@@ -168,7 +157,7 @@ export default function Auth() {
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="login">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Request Access</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
               {/* Login Tab */}
@@ -289,20 +278,8 @@ export default function Auth() {
                     </Select>
                   </div>
 
-                  <div>
-                    <Label htmlFor="reason">Reason for Access</Label>
-                    <Textarea
-                      id="reason"
-                      value={signupData.reason}
-                      onChange={(e) => setSignupData({ ...signupData, reason: e.target.value })}
-                      placeholder="Briefly explain why you want to join Ramay Institute..."
-                      required
-                      className="min-h-[80px]"
-                    />
-                  </div>
-
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Submitting Request..." : "Request Access"}
+                    {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
               </TabsContent>

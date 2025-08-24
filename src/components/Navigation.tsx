@@ -16,13 +16,13 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 
 interface NavigationProps {
-  currentRole: 'student' | 'faculty' | 'bod' | 'superadmin';
+  currentRole: 'student' | 'faculty' | 'bod';
   currentUser: {
     name: string;
     rank: string;
     level: number;
   } | null;
-  onRoleChange: (role: 'student' | 'faculty' | 'bod' | 'superadmin') => void;
+  onRoleChange: (role: 'student' | 'faculty' | 'bod') => void;
 }
 
 export const Navigation = ({ currentRole, currentUser, onRoleChange }: NavigationProps) => {
@@ -35,7 +35,6 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
       case 'student': return <GraduationCap className="h-4 w-4" />;
       case 'faculty': return <Star className="h-4 w-4" />;
       case 'bod': return <Crown className="h-4 w-4" />;
-      case 'superadmin': return <Shield className="h-4 w-4" />;
       default: return <User className="h-4 w-4" />;
     }
   };
@@ -44,8 +43,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
     const variants = {
       student: 'bg-gradient-secondary text-secondary-foreground shadow-button',
       faculty: 'bg-gradient-primary text-primary-foreground shadow-button', 
-      bod: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-button',
-      superadmin: 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-button'
+      bod: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-button'
     };
     
     return (
@@ -105,19 +103,6 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               <span>Students</span>
             </Button>
 
-            {currentRole === 'superadmin' && (
-              <Button
-                variant={activeTab === '/admin/requests' ? 'default' : 'ghost'}
-                onClick={() => {
-                  setActiveTab('/admin/requests');
-                  navigate('/admin/requests');
-                }}
-                className="flex items-center space-x-2 backdrop-blur-sm"
-              >
-                <Shield className="h-4 w-4" />
-                <span>Requests</span>
-              </Button>
-            )}
           </div>
 
           {/* User Info */}

@@ -13,10 +13,9 @@ interface Profile {
   user_id: string;
   full_name: string;
   email: string;
-  role: 'student' | 'faculty' | 'bod' | 'superadmin';
+  role: 'student' | 'faculty' | 'bod';
   level: number;
   rank: string;
-  approved_status: boolean;
 }
 
 export default function Students() {
@@ -46,7 +45,6 @@ export default function Students() {
         .from('profiles')
         .select('*')
         .eq('role', 'student')
-        .eq('approved_status', true)
         .order('level', { ascending: false });
 
       if (error) throw error;

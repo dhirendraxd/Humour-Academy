@@ -5,7 +5,7 @@ import { Navigation } from "@/components/Navigation";
 import { StudentDashboard } from "@/components/StudentDashboard";
 import { FacultyDashboard } from "@/components/FacultyDashboard";
 import { BODDashboard } from "@/components/BODDashboard";
-import { SuperAdminDashboard } from "@/components/SuperAdminDashboard";
+
 
 const Index = () => {
   const { user, profile, loading } = useAuth();
@@ -22,7 +22,7 @@ const Index = () => {
   }
 
   // Show public homepage for non-authenticated users
-  if (!user || !profile || !profile.approved_status) {
+  if (!user || !profile) {
     return <HomePage onLoginClick={() => navigate('/auth')} />;
   }
 
@@ -40,8 +40,6 @@ const Index = () => {
         return <FacultyDashboard user={userData} />;
       case 'bod':
         return <BODDashboard user={userData} />;
-      case 'superadmin':
-        return <SuperAdminDashboard user={userData} />;
       default:
         return <StudentDashboard user={userData} />;
     }

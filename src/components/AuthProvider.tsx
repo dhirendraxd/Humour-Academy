@@ -7,10 +7,9 @@ interface Profile {
   user_id: string;
   full_name: string;
   email: string;
-  role: 'student' | 'faculty' | 'bod' | 'superadmin';
+  role: 'student' | 'faculty' | 'bod';
   level: number;
   rank: string;
-  approved_status: boolean;
 }
 
 interface AuthContextType {
