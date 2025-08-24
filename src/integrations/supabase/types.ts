@@ -14,53 +14,8 @@ export type Database = {
   }
   public: {
     Tables: {
-      access_requests: {
-        Row: {
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          reason: string
-          requested_role: Database["public"]["Enums"]["app_role"]
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          full_name: string
-          id?: string
-          reason: string
-          requested_role: Database["public"]["Enums"]["app_role"]
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          reason?: string
-          requested_role?: Database["public"]["Enums"]["app_role"]
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "access_requests_reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
-          approved_status: boolean | null
           created_at: string
           email: string
           full_name: string
@@ -72,7 +27,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          approved_status?: boolean | null
           created_at?: string
           email: string
           full_name: string
@@ -84,7 +38,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          approved_status?: boolean | null
           created_at?: string
           email?: string
           full_name?: string
@@ -105,7 +58,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      app_role: "student" | "faculty" | "bod" | "superadmin"
+      app_role: "student" | "faculty" | "bod"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -233,7 +186,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "faculty", "bod", "superadmin"],
+      app_role: ["student", "faculty", "bod"],
     },
   },
 } as const
