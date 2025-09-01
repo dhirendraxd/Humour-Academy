@@ -1,16 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Shield, GraduationCap, Users, Crown } from "lucide-react";
-import heroImage from "@/assets/ramay-institute-hero.jpg";
+import { Eye, EyeOff, Shield, GraduationCap, Users, Crown, Sparkles } from "lucide-react";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +22,7 @@ export default function Auth() {
     reason: ""
   });
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const cleanupAuthState = () => {
     Object.keys(localStorage).forEach((key) => {
@@ -52,7 +51,7 @@ export default function Auth() {
           title: "Welcome back!",
           description: "Successfully logged in",
         });
-        window.location.href = '/';
+        navigate('/', { replace: true });
       }
     } catch (error: any) {
       toast({
@@ -122,42 +121,34 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-academic flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        
-        {/* Hero Section */}
-        <div className="hidden lg:block">
-          <div className="relative h-96 rounded-lg overflow-hidden shadow-academic">
-            <img 
-              src={heroImage} 
-              alt="Ramay Institute" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-              <div className="p-6 text-white">
-                <h2 className="text-2xl font-bold mb-2">Welcome to Ramay Institute</h2>
-                <p className="text-white/90">Where humor meets academia in the most sophisticated way</p>
-              </div>
-            </div>
+      <div className="w-full max-w-md mx-auto">
+        {/* Modern Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-glow">
+            <Sparkles className="h-8 w-8 text-white" />
           </div>
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+            Ramay Institute
+          </h1>
+          <p className="text-muted-foreground">
+            Where humor meets academic excellence
+          </p>
         </div>
 
         {/* Auth Forms */}
-        <Card className="shadow-academic bg-gradient-glass/50 backdrop-blur-xl border-border/30">
-          <CardHeader className="text-center">
-            <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-              Ramay Institute
-            </div>
-            <CardTitle>Access Your Account</CardTitle>
+        <Card className="shadow-glass bg-card/50 backdrop-blur-xl border-border/50">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl">Access Your Account</CardTitle>
             <CardDescription>
-              Join our community of humor enthusiasts and academic excellence
+              Sign in to continue your journey with us
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
+                <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign In</TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign Up</TabsTrigger>
               </TabsList>
 
               {/* Login Tab */}
@@ -198,7 +189,7 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full shadow-button hover:shadow-glass-hover transition-all duration-300" disabled={isLoading}>
                     {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                 </form>
@@ -278,7 +269,7 @@ export default function Auth() {
                     </Select>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full shadow-button hover:shadow-glass-hover transition-all duration-300" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
