@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { 
   Home, 
   Users, 
@@ -123,6 +124,8 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               
               {getRoleBadge()}
               
+              <ProfileEditDialog />
+              
               <Button
                 variant="ghost"
                 size="sm"
@@ -134,7 +137,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
                     console.error('Error signing out:', error);
                   }
                 }}
-                className="ml-2"
+                className="ml-2 text-destructive hover:text-destructive-foreground hover:bg-destructive"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
