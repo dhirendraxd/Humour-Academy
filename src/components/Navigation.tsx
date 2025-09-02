@@ -106,41 +106,45 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
 
           </div>
 
-          {/* User Info */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-3">
-              {currentUser && currentUser.name && (
-                <div className="text-right hidden sm:block">
+          {/* User Menu */}
+          <div className="flex items-center space-x-3">
+            {currentUser && (
+              <div className="hidden md:flex items-center space-x-3">
+                <div className="text-right">
                   <div className="text-sm font-medium text-foreground">{currentUser.name}</div>
-                  <div className="text-xs text-muted-foreground">Level {currentUser.level}</div>
+                  <div className="text-xs text-muted-foreground">{currentUser.rank || 'Member'}</div>
                 </div>
-              )}
-              
-              <Avatar className="h-8 w-8 shadow-glass">
-                <AvatarFallback className="bg-gradient-primary text-primary-foreground">
+                {getRoleBadge()}
+              </div>
+            )}
+            
+            <div className="flex items-center space-x-2">
+              <Avatar className="h-10 w-10 shadow-glass border-2 border-border/20">
+                <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
                   {currentUser && currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
                 </AvatarFallback>
               </Avatar>
               
-              {getRoleBadge()}
-              
-              <ProfileEditDialog />
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={async () => {
-                  try {
-                    await supabase.auth.signOut();
-                    window.location.href = '/auth';
-                  } catch (error) {
-                    console.error('Error signing out:', error);
-                  }
-                }}
-                className="ml-2 text-destructive hover:text-destructive-foreground hover:bg-destructive"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center space-x-1">
+                <ProfileEditDialog />
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await supabase.auth.signOut();
+                      navigate('/auth');
+                    } catch (error) {
+                      console.error('Error signing out:', error);
+                    }
+                  }}
+                  className="text-muted-foreground hover:text-destructive"
+                  title="Sign out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

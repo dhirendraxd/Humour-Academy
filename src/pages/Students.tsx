@@ -86,15 +86,15 @@ export default function Students() {
 
   const getStudentStats = () => {
     const totalStudents = students.length;
-    const avgLevel = students.reduce((acc, s) => acc + s.level, 0) / totalStudents;
-    const topLevel = Math.max(...students.map(s => s.level));
+    const avgLevel = students.reduce((acc, s) => acc + s.level, 0) / totalStudents || 0;
+    const topLevel = students.length > 0 ? Math.max(...students.map(s => s.level)) : 0;
     
     return { totalStudents, avgLevel: Math.round(avgLevel * 10) / 10, topLevel };
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-academic">
+      <div className="min-h-screen bg-gradient-background">
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -106,7 +106,7 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-gradient-academic">
+    <div className="min-h-screen bg-gradient-background">
       <Navigation 
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
@@ -117,151 +117,151 @@ export default function Students() {
         onRoleChange={() => {}}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Student Directory</h1>
-          <p className="text-muted-foreground">
-            Explore our community of aspiring humorists and their academic journey
+      <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">Student Community</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Discover our vibrant community of aspiring humorists and their academic journey
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="shadow-elegant">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl">{stats.totalStudents}</CardTitle>
-                  <CardDescription>Total Students</CardDescription>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+            <CardContent className="space-y-4">
+              <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
+                <Users className="h-8 w-8 text-primary-foreground" />
               </div>
-            </CardHeader>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-foreground">{stats.totalStudents}</div>
+                <div className="text-muted-foreground">Total Students</div>
+              </div>
+            </CardContent>
           </Card>
 
-          <Card className="shadow-elegant">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-secondary/10 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl">{stats.avgLevel}</CardTitle>
-                  <CardDescription>Average Level</CardDescription>
-                </div>
+          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+            <CardContent className="space-y-4">
+              <div className="w-16 h-16 bg-gradient-secondary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
+                <TrendingUp className="h-8 w-8 text-secondary-foreground" />
               </div>
-            </CardHeader>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-foreground">{stats.avgLevel}</div>
+                <div className="text-muted-foreground">Average Level</div>
+              </div>
+            </CardContent>
           </Card>
 
-          <Card className="shadow-elegant">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-accent/10 rounded-lg">
-                  <Award className="h-5 w-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl">{stats.topLevel}</CardTitle>
-                  <CardDescription>Highest Level</CardDescription>
-                </div>
+          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+            <CardContent className="space-y-4">
+              <div className="w-16 h-16 bg-gradient-ocean rounded-2xl flex items-center justify-center mx-auto shadow-glow">
+                <Award className="h-8 w-8 text-white" />
               </div>
-            </CardHeader>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-foreground">{stats.topLevel}</div>
+                <div className="text-muted-foreground">Highest Level</div>
+              </div>
+            </CardContent>
           </Card>
         </div>
 
         {/* Top Performers */}
-        <section className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Star className="h-6 w-6 text-secondary" />
-            <h2 className="text-2xl font-bold text-foreground">Top Performers</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {topStudents.map((student, index) => (
-              <Card key={student.id} className={`shadow-academic ${index === 0 ? 'border-secondary/40 bg-gradient-to-br from-secondary/5 to-transparent' : ''}`}>
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <Avatar className="h-14 w-14 bg-gradient-primary">
-                        <AvatarFallback className="text-primary-foreground font-bold text-lg">
+        {topStudents.length > 0 && (
+          <section className="mb-16">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-foreground mb-4">Top Performers</h2>
+              <p className="text-muted-foreground text-lg">
+                Celebrating our highest-achieving students
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {topStudents.map((student, index) => (
+                <Card key={student.id} className={`shadow-glass bg-gradient-glass backdrop-blur-xl border transition-all duration-500 hover:scale-[1.02] group ${
+                  index === 0 ? 'border-primary/40 shadow-glow' : 'border-border/30 hover:shadow-glass-hover'
+                }`}>
+                  <CardHeader className="pb-6 text-center">
+                    <div className="relative mx-auto mb-4">
+                      <Avatar className="h-20 w-20 shadow-glow border-4 border-border/20">
+                        <AvatarFallback className="bg-gradient-primary text-primary-foreground font-bold text-xl">
                           {student.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      {index < 3 && (
-                        <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
-                          ${index === 0 ? 'bg-secondary text-secondary-foreground' : 
-                            index === 1 ? 'bg-muted text-muted-foreground' : 'bg-accent text-accent-foreground'}`}>
-                          {index + 1}
-                        </div>
-                      )}
+                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-button ${
+                        index === 0 ? 'bg-gradient-primary text-primary-foreground' : 
+                        index === 1 ? 'bg-gradient-secondary text-secondary-foreground' : 
+                        'bg-gradient-glass text-foreground border border-border/30'
+                      }`}>
+                        {index + 1}
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{student.full_name}</CardTitle>
-                      <CardDescription>{student.rank}</CardDescription>
+                    <div className="space-y-2">
+                      <CardTitle className="text-xl group-hover:text-primary transition-colors">{student.full_name}</CardTitle>
+                      <CardDescription>{student.rank || 'Student'}</CardDescription>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant={index === 0 ? 'secondary' : 'default'}>
-                      Level {student.level}
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-secondary fill-current" />
-                      <span className="text-sm font-medium">#{index + 1}</span>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="flex items-center justify-center gap-4">
+                      <Badge className={`shadow-button ${
+                        index === 0 ? 'bg-gradient-primary text-primary-foreground' : 'bg-gradient-glass text-foreground border border-border/30'
+                      }`}>
+                        Level {student.level}
+                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-5 w-5 text-primary fill-current" />
+                        <span className="font-semibold">#{index + 1}</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* All Students */}
         <section>
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Users className="h-6 w-6 text-primary" />
-              <h2 className="text-2xl font-bold text-foreground">All Students</h2>
-              <Badge variant="outline">{filteredStudents.length}</Badge>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
+            <div className="text-center sm:text-left">
+              <h2 className="text-4xl font-bold text-foreground mb-2">All Students</h2>
+              <p className="text-muted-foreground">Browse and search through our student directory</p>
             </div>
             
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-gradient-glass backdrop-blur-sm border-border/30 shadow-glass"
               />
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredStudents.map((student) => (
-              <Card key={student.id} className="shadow-elegant hover:shadow-academic transition-all duration-200">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-gradient-subtle">
-                      <AvatarFallback className="text-foreground font-medium">
+              <Card key={student.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-300 hover:scale-[1.02] group">
+                <CardHeader className="pb-4">
+                  <div className="text-center space-y-3">
+                    <Avatar className="h-14 w-14 mx-auto shadow-button border-2 border-border/20">
+                      <AvatarFallback className="bg-gradient-glass text-foreground font-semibold border border-border/30">
                         {student.full_name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base truncate">{student.full_name}</CardTitle>
-                      <CardDescription className="text-sm truncate">{student.rank}</CardDescription>
+                    <div className="space-y-1">
+                      <CardTitle className="text-base group-hover:text-primary transition-colors">{student.full_name}</CardTitle>
+                      <CardDescription className="text-sm">{student.rank || 'Student'}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="text-center">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="bg-gradient-glass text-foreground border border-border/30 text-xs">
                       Student
                     </Badge>
                     <div className="flex items-center gap-1">
-                      <Star className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs font-medium">Level {student.level}</span>
+                      <Star className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Level {student.level}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -270,13 +270,19 @@ export default function Students() {
           </div>
 
           {filteredStudents.length === 0 && searchTerm && (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No students found</h3>
-              <p className="text-muted-foreground">
-                Try adjusting your search terms or browse all students.
-              </p>
-            </div>
+            <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-16">
+              <CardContent className="space-y-6">
+                <div className="w-16 h-16 bg-gradient-glass rounded-2xl flex items-center justify-center mx-auto border border-border/30">
+                  <Search className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold text-foreground">No students found</h3>
+                  <p className="text-muted-foreground">
+                    Try adjusting your search terms or browse all students.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           )}
         </section>
       </main>

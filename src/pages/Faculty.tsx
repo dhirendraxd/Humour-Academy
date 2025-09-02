@@ -67,24 +67,6 @@ export default function Faculty() {
     }
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'bod': return <Trophy className="h-5 w-5 text-secondary" />;
-      case 'faculty': return <GraduationCap className="h-5 w-5 text-primary" />;
-      case 'student': return <Users className="h-5 w-5 text-muted-foreground" />;
-      default: return <Star className="h-5 w-5 text-primary" />;
-    }
-  };
-
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'bod': return 'secondary';
-      case 'faculty': return 'default';
-      case 'student': return 'outline';
-      default: return 'default';
-    }
-  };
-
   const groupedProfiles = {
     bod: profiles.filter(p => p.role === 'bod'),
     faculty: profiles.filter(p => p.role === 'faculty'),
@@ -93,7 +75,7 @@ export default function Faculty() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-academic">
+      <div className="min-h-screen bg-gradient-background">
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -102,7 +84,7 @@ export default function Faculty() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-academic">
+    <div className="min-h-screen bg-gradient-background">
       <Navigation 
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
@@ -113,135 +95,132 @@ export default function Faculty() {
         onRoleChange={() => {}}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Faculty & Community</h1>
-          <p className="text-muted-foreground">
-            Meet the distinguished members of Ramay Institute's academic community
+      <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">Faculty & Leadership</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Meet the distinguished educators and leaders who shape the future of comedy education at Ramay Institute
           </p>
         </div>
 
         {/* Board of Directors */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <Trophy className="h-6 w-6 text-secondary" />
-            <h2 className="text-2xl font-bold text-foreground">Board of Directors</h2>
-            <Badge variant="secondary">{groupedProfiles.bod.length}</Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedProfiles.bod.map((profile) => (
-              <Card key={profile.id} className="shadow-academic border-secondary/20">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12 bg-gradient-secondary">
-                      <AvatarFallback className="text-secondary-foreground font-semibold">
-                        {profile.full_name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{profile.full_name}</CardTitle>
-                      <CardDescription>{profile.rank}</CardDescription>
+        {groupedProfiles.bod.length > 0 && (
+          <section className="mb-20">
+            <div className="flex items-center justify-center gap-3 mb-12">
+              <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
+                <Trophy className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <h2 className="text-4xl font-bold text-foreground">Board of Directors</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {groupedProfiles.bod.map((profile) => (
+                <Card key={profile.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02] group">
+                  <CardHeader className="pb-6">
+                    <div className="text-center space-y-4">
+                      <Avatar className="h-20 w-20 mx-auto shadow-glow border-4 border-border/20">
+                        <AvatarFallback className="bg-gradient-primary text-primary-foreground font-bold text-2xl">
+                          {profile.full_name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-2">
+                        <CardTitle className="text-2xl group-hover:text-primary transition-colors">{profile.full_name}</CardTitle>
+                        <CardDescription className="text-base">{profile.rank || 'Board Member'}</CardDescription>
+                      </div>
                     </div>
-                    {getRoleIcon(profile.role)}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant={getRoleBadgeVariant(profile.role)} className="capitalize">
-                      {profile.role}
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-secondary fill-current" />
-                      <span className="text-sm font-medium">Level {profile.level}</span>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="flex items-center justify-center gap-6">
+                      <Badge className="bg-gradient-primary text-primary-foreground shadow-button">
+                        Board of Directors
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-5 w-5 text-primary fill-current" />
+                        <span className="font-semibold">Level {profile.level}</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Faculty Members */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <GraduationCap className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Faculty Members</h2>
-            <Badge variant="default">{groupedProfiles.faculty.length}</Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedProfiles.faculty.map((profile) => (
-              <Card key={profile.id} className="shadow-academic">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12 bg-gradient-primary">
-                      <AvatarFallback className="text-primary-foreground font-semibold">
-                        {profile.full_name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{profile.full_name}</CardTitle>
-                      <CardDescription>{profile.rank}</CardDescription>
+        {groupedProfiles.faculty.length > 0 && (
+          <section className="mb-20">
+            <div className="flex items-center justify-center gap-3 mb-12">
+              <div className="w-12 h-12 bg-gradient-secondary rounded-2xl flex items-center justify-center shadow-glow">
+                <GraduationCap className="h-6 w-6 text-secondary-foreground" />
+              </div>
+              <h2 className="text-4xl font-bold text-foreground">Faculty Members</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {groupedProfiles.faculty.map((profile) => (
+                <Card key={profile.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-300 hover:scale-[1.02] group">
+                  <CardHeader className="pb-4">
+                    <div className="text-center space-y-3">
+                      <Avatar className="h-16 w-16 mx-auto shadow-button border-2 border-border/20">
+                        <AvatarFallback className="bg-gradient-secondary text-secondary-foreground font-semibold text-lg">
+                          {profile.full_name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-1">
+                        <CardTitle className="text-lg group-hover:text-secondary transition-colors">{profile.full_name}</CardTitle>
+                        <CardDescription className="text-sm">{profile.rank || 'Faculty'}</CardDescription>
+                      </div>
                     </div>
-                    {getRoleIcon(profile.role)}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant={getRoleBadgeVariant(profile.role)} className="capitalize">
-                      {profile.role}
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-primary fill-current" />
-                      <span className="text-sm font-medium">Level {profile.level}</span>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="flex items-center justify-between">
+                      <Badge className="bg-gradient-secondary text-secondary-foreground shadow-button text-xs">
+                        Faculty
+                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-secondary fill-current" />
+                        <span className="text-sm font-medium">Level {profile.level}</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Students */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <Users className="h-6 w-6 text-muted-foreground" />
-            <h2 className="text-2xl font-bold text-foreground">Students</h2>
-            <Badge variant="outline">{groupedProfiles.students.length}</Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {groupedProfiles.students.map((profile) => (
-              <Card key={profile.id} className="shadow-elegant">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-muted">
-                      <AvatarFallback className="text-muted-foreground font-medium">
-                        {profile.full_name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base truncate">{profile.full_name}</CardTitle>
-                      <CardDescription className="text-sm truncate">{profile.rank}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
-                      Student
-                    </Badge>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs font-medium">Level {profile.level}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+        {/* Students Preview */}
+        {groupedProfiles.students.length > 0 && (
+          <section>
+            <div className="flex items-center justify-center gap-3 mb-12">
+              <div className="w-12 h-12 bg-gradient-glass backdrop-blur-sm rounded-2xl flex items-center justify-center border border-border/30">
+                <Users className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h2 className="text-4xl font-bold text-foreground">Student Community</h2>
+            </div>
+            
+            <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-12">
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="text-6xl font-bold text-primary">{groupedProfiles.students.length}</div>
+                  <h3 className="text-2xl font-semibold text-foreground">Active Students</h3>
+                  <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                    Join our vibrant community of aspiring humorists learning the art and science of comedy
+                  </p>
+                </div>
+                <Button 
+                  size="lg" 
+                  onClick={() => window.location.href = '/students'}
+                  className="bg-gradient-primary text-primary-foreground shadow-button hover:shadow-glow hover:scale-[1.05] transition-all duration-300"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  View All Students
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
+        )}
       </main>
     </div>
   );
