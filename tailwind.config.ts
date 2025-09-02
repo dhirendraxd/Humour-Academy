@@ -80,8 +80,10 @@ export default {
 				'gradient-ocean': 'var(--gradient-ocean)'
 			},
 			boxShadow: {
-				'academic': 'var(--shadow-academic)',
-				'glow': 'var(--shadow-glow)'
+				'glass': 'var(--shadow-glass)',
+				'glass-hover': 'var(--shadow-glass-hover)',
+				'glow': 'var(--shadow-glow)',
+				'button': 'var(--shadow-button)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
