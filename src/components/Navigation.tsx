@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Home, 
   Users, 
@@ -12,7 +20,9 @@ import {
   LogOut, 
   Shield,
   Crown,
-  Star
+  Star,
+  Settings,
+  ChevronDown
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -107,30 +117,44 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-3">
-            {currentUser && (
-              <div className="hidden md:flex items-center space-x-3">
-                <div className="text-right">
-                  <div className="text-sm font-medium text-foreground">{currentUser.name}</div>
-                  <div className="text-xs text-muted-foreground">{currentUser.rank || 'Member'}</div>
-                </div>
-                {getRoleBadge()}
-              </div>
-            )}
-            
-            <div className="flex items-center space-x-2">
-              <Avatar className="h-10 w-10 shadow-glass border-2 border-border/20">
-                <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
-                  {currentUser && currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
-                </AvatarFallback>
-              </Avatar>
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center space-x-2 h-auto p-2 hover:bg-accent/50">
+                  <Avatar className="h-9 w-9 shadow-glass border-2 border-border/20">
+                    <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
+                      {currentUser && currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
               
-              <div className="flex items-center space-x-1">
-                <ProfileEditDialog />
+              <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-sm border-border/50">
+                {currentUser && (
+                  <>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium text-foreground">{currentUser.name}</p>
+                        <p className="text-xs text-muted-foreground">{currentUser.rank || 'Member'}</p>
+                        <div className="pt-1">
+                          {getRoleBadge()}
+                        </div>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <DropdownMenuItem asChild>
+                  <div className="w-full">
+                    <ProfileEditDialog triggerAsMenuItem={true} />
+                  </div>
+                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuItem 
                   onClick={async () => {
                     try {
                       await supabase.auth.signOut();
@@ -139,13 +163,13 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
                       console.error('Error signing out:', error);
                     }
                   }}
-                  className="text-muted-foreground hover:text-destructive"
-                  title="Sign out"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

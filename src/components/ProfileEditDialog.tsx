@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Loader2 } from "lucide-react";
 
-export const ProfileEditDialog = () => {
+export const ProfileEditDialog = ({ triggerAsMenuItem = false }: { triggerAsMenuItem?: boolean }) => {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
@@ -53,13 +53,22 @@ export const ProfileEditDialog = () => {
     }
   };
 
+  const triggerElement = triggerAsMenuItem ? (
+    <div className="flex items-center w-full">
+      <Settings className="h-4 w-4 mr-2" />
+      Edit Profile
+    </div>
+  ) : (
+    <Button variant="outline" size="sm">
+      <Settings className="h-4 w-4 mr-2" />
+      Edit Profile
+    </Button>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Settings className="h-4 w-4 mr-2" />
-          Edit Profile
-        </Button>
+        {triggerElement}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
