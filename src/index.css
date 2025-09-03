@@ -12,10 +12,10 @@ All colors MUST be HSL.
     --background: 240 100% 99%;       /* Ultra light background */
     --foreground: 221 39% 11%;        /* Rich dark text */
 
-    --card: 0 0% 100% / 0.7;          /* Semi-transparent cards */
+    --card: 0 0% 100%;            /* Solid cards */
     --card-foreground: 221 39% 11%;
 
-    --popover: 0 0% 100% / 0.9;
+    --popover: 0 0% 100%;
     --popover-foreground: 221 39% 11%;
 
     --primary: 239 84% 67%;           /* Bright modern blue */
@@ -30,17 +30,17 @@ All colors MUST be HSL.
     --quaternary: 200 85% 55%;        /* Ocean blue */
     --quaternary-foreground: 0 0% 100%;
 
-    --muted: 240 20% 96% / 0.6;       /* Glass muted */
+    --muted: 240 20% 96%;             /* Solid muted */
     --muted-foreground: 221 13% 46%;  /* Medium gray */
 
-    --accent: 240 20% 96% / 0.4;      /* Glass accent */
+    --accent: 240 20% 94%;            /* Solid accent */
     --accent-foreground: 221 39% 11%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 80% / 0.2;      /* Glass borders */
-    --input: 0 0% 100% / 0.5;         /* Glass inputs */
+    --border: 240 20% 80%;            /* Solid borders */
+    --input: 0 0% 100%;               /* Solid inputs */
     --ring: 239 84% 67%;
 
     /* Glass gradients */
@@ -76,10 +76,10 @@ All colors MUST be HSL.
     --background: 221 39% 4%;         
     --foreground: 0 0% 95%;           
 
-    --card: 221 39% 7% / 0.6;         /* Glass dark cards */
+    --card: 221 39% 10%;             /* Dark solid cards */
     --card-foreground: 0 0% 95%;
 
-    --popover: 221 39% 4% / 0.9;
+    --popover: 221 39% 8%;
     --popover-foreground: 0 0% 95%;
 
     --primary: 239 84% 67%;           
@@ -93,17 +93,17 @@ All colors MUST be HSL.
     --quaternary: 200 85% 55%;        /* Ocean blue */
     --quaternary-foreground: 0 0% 100%;
 
-    --muted: 221 39% 11% / 0.6;       /* Glass muted dark */
+    --muted: 221 39% 15%;             /* Dark solid muted */
     --muted-foreground: 221 13% 65%;  
 
-    --accent: 221 39% 15% / 0.4;      /* Glass accent dark */
+    --accent: 221 39% 18%;            /* Dark solid accent */
     --accent-foreground: 0 0% 95%;
 
     --destructive: 0 76% 65%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 30% / 0.2;      /* Glass borders dark */
-    --input: 221 39% 15% / 0.5;       /* Glass inputs dark */
+    --border: 240 20% 25%;            /* Dark solid borders */
+    --input: 221 39% 15%;             /* Dark solid inputs */
     --ring: 239 84% 67%;
 
     /* Dark glass gradients */
