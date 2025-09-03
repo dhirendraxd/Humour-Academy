@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, BookOpen, BarChart3 } from "lucide-react";
+import { Users, BookOpen, BarChart3, Star } from "lucide-react";
+import { UserManagement } from "@/components/UserManagement";
+import { useState } from "react";
 
 interface FacultyDashboardProps {
   user: {
@@ -11,6 +13,37 @@ interface FacultyDashboardProps {
 }
 
 export const FacultyDashboard = ({ user }: FacultyDashboardProps) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'students'>('overview');
+
+  if (activeTab === 'students') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center space-x-2">
+              <Star className="h-6 w-6 text-primary" />
+              <span>Student Management</span>
+            </h1>
+            <p className="text-muted-foreground">Manage your students and track their progress</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveTab('overview')}
+          >
+            Back to Overview
+          </Button>
+        </div>
+        <UserManagement
+          currentUserRole="faculty"
+          allowedRoles={['student']}
+          title="My Students"
+          description="Manage student accounts, grades, and academic progress"
+          canEdit={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
@@ -66,8 +99,11 @@ export const FacultyDashboard = ({ user }: FacultyDashboardProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Button className="w-full bg-gradient-primary border-0 hover:shadow-glow">
-                View All Students
+              <Button 
+                className="w-full bg-gradient-primary border-0 hover:shadow-glow"
+                onClick={() => setActiveTab('students')}
+              >
+                Manage Students
               </Button>
               <Button className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic">
                 Grade Assignments

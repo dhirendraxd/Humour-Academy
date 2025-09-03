@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Trophy, BookOpen, Target } from "lucide-react";
+import { Trophy, BookOpen, Target, GraduationCap } from "lucide-react";
+import { UserManagement } from "@/components/UserManagement";
+import { useState } from "react";
 
 interface StudentDashboardProps {
   user: {
@@ -12,6 +14,37 @@ interface StudentDashboardProps {
 }
 
 export const StudentDashboard = ({ user }: StudentDashboardProps) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'classmates'>('overview');
+
+  if (activeTab === 'classmates') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center space-x-2">
+              <GraduationCap className="h-6 w-6 text-primary" />
+              <span>Classmates</span>
+            </h1>
+            <p className="text-muted-foreground">Connect with fellow students in your institute</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveTab('overview')}
+          >
+            Back to Dashboard
+          </Button>
+        </div>
+        <UserManagement
+          currentUserRole="student"
+          allowedRoles={['student']}
+          title="Fellow Students"
+          description="View and connect with other students in the institute"
+          canEdit={false}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
@@ -60,13 +93,16 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         <Card className="shadow-academic">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Target className="h-5 w-5 text-primary" />
-              <span>Assignments</span>
+              <GraduationCap className="h-5 w-5 text-primary" />
+              <span>Classmates</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic">
-              View Assignments
+            <Button 
+              className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic"
+              onClick={() => setActiveTab('classmates')}
+            >
+              View Classmates
             </Button>
           </CardContent>
         </Card>

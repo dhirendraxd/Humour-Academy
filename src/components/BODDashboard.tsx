@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Crown, Users, TrendingUp, Settings } from "lucide-react";
+import { UserManagement } from "@/components/UserManagement";
+import { useState } from "react";
 
 interface BODDashboardProps {
   user: {
@@ -11,6 +13,66 @@ interface BODDashboardProps {
 }
 
 export const BODDashboard = ({ user }: BODDashboardProps) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'faculty' | 'students'>('overview');
+
+  if (activeTab === 'faculty') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center space-x-2">
+              <Crown className="h-6 w-6 text-primary" />
+              <span>Faculty Management</span>
+            </h1>
+            <p className="text-muted-foreground">Manage faculty members and their permissions</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveTab('overview')}
+          >
+            Back to Overview
+          </Button>
+        </div>
+        <UserManagement
+          currentUserRole="bod"
+          allowedRoles={['faculty']}
+          title="Faculty Members"
+          description="Manage faculty accounts, roles, and permissions"
+          canEdit={true}
+        />
+      </div>
+    );
+  }
+
+  if (activeTab === 'students') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center space-x-2">
+              <Crown className="h-6 w-6 text-primary" />
+              <span>Student Management</span>
+            </h1>
+            <p className="text-muted-foreground">Manage student accounts and academic progress</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveTab('overview')}
+          >
+            Back to Overview
+          </Button>
+        </div>
+        <UserManagement
+          currentUserRole="bod"
+          allowedRoles={['student']}
+          title="Student Body"
+          description="Manage student accounts, levels, and academic status"
+          canEdit={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
@@ -69,11 +131,17 @@ export const BODDashboard = ({ user }: BODDashboardProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Button className="w-full bg-gradient-primary border-0 hover:shadow-glow">
-                View All Faculty
+              <Button 
+                className="w-full bg-gradient-primary border-0 hover:shadow-glow"
+                onClick={() => setActiveTab('faculty')}
+              >
+                Manage Faculty
               </Button>
-              <Button className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic">
-                Performance Reviews
+              <Button 
+                className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic"
+                onClick={() => setActiveTab('students')}
+              >
+                Manage Students
               </Button>
             </div>
           </CardContent>
