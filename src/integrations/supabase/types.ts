@@ -14,6 +14,146 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessment_submissions: {
+        Row: {
+          assessment_id: string
+          graded_at: string | null
+          graded_by: string | null
+          id: string
+          is_graded: boolean | null
+          student_id: string
+          submitted_at: string
+          total_score: number | null
+        }
+        Insert: {
+          assessment_id: string
+          graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          is_graded?: boolean | null
+          student_id: string
+          submitted_at?: string
+          total_score?: number | null
+        }
+        Update: {
+          assessment_id?: string
+          graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          is_graded?: boolean | null
+          student_id?: string
+          submitted_at?: string
+          total_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_submissions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessments: {
+        Row: {
+          created_at: string
+          description: string | null
+          due_date: string | null
+          faculty_id: string
+          id: string
+          is_published: boolean | null
+          title: string
+          total_points: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          faculty_id: string
+          id?: string
+          is_published?: boolean | null
+          title: string
+          total_points?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          faculty_id?: string
+          id?: string
+          is_published?: boolean | null
+          title?: string
+          total_points?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      materials: {
+        Row: {
+          created_at: string
+          description: string | null
+          faculty_id: string
+          file_url: string | null
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          faculty_id: string
+          file_url?: string | null
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          faculty_id?: string
+          file_url?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -49,6 +189,95 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      question_answers: {
+        Row: {
+          answer_text: string | null
+          created_at: string
+          feedback: string | null
+          id: string
+          question_id: string
+          score: number | null
+          submission_id: string
+        }
+        Insert: {
+          answer_text?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          question_id: string
+          score?: number | null
+          submission_id: string
+        }
+        Update: {
+          answer_text?: string | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          question_id?: string
+          score?: number | null
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_answers_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          assessment_id: string
+          correct_answer: string | null
+          created_at: string
+          id: string
+          options: Json | null
+          order_index: number | null
+          points: number | null
+          question_text: string
+          question_type: string
+        }
+        Insert: {
+          assessment_id: string
+          correct_answer?: string | null
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number | null
+          points?: number | null
+          question_text: string
+          question_type: string
+        }
+        Update: {
+          assessment_id?: string
+          correct_answer?: string | null
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number | null
+          points?: number | null
+          question_text?: string
+          question_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

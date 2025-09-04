@@ -37,7 +37,7 @@ const Index = () => {
       case 'student':
         return <StudentDashboard user={userData} />;
       case 'faculty':
-        return <FacultyDashboard user={userData} />;
+        return <FacultyDashboard user={userData} userId={user.id} />;
       case 'bod':
         return <BODDashboard user={userData} />;
       default:
