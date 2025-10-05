@@ -13,12 +13,11 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface Question {
   id: string;
-  question_type: 'mcq' | 'written';
-  question_text: string;
+  type: 'mcq' | 'written';
+  question: string;
   points: number;
   options?: string[];
-  correct_answer?: string;
-  order_index: number;
+  correctAnswer?: string;
 }
 
 interface AssessmentCreationProps {
@@ -27,10 +26,13 @@ interface AssessmentCreationProps {
 }
 
 export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: AssessmentCreationProps) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [isPublished, setIsPublished] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    type: 'quiz' as 'quiz' | 'assignment' | 'exam' | 'practice',
+    totalMarks: 100,
+    dueDate: "",
+  });
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
@@ -38,12 +40,11 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
   const addQuestion = (type: 'mcq' | 'written') => {
     const newQuestion: Question = {
       id: `temp-${Date.now()}`,
-      question_type: type,
-      question_text: '',
+      type,
+      question: '',
       points: 1,
       options: type === 'mcq' ? ['', '', '', ''] : undefined,
-      correct_answer: '',
-      order_index: questions.length
+      correctAnswer: '',
     };
     setQuestions([...questions, newQuestion]);
   };
@@ -65,7 +66,7 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
   };
 
   const createAssessment = async () => {
-    if (!title.trim()) {
+    if (!formData.title.trim()) {
       toast({
         title: "Error",
         description: "Please enter an assessment title",
@@ -87,30 +88,32 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
 
     try {
       // Create assessment
-      const { data: assessment, error: assessmentError } = await supabase
+      const { data: assessmentData, error: assessmentError } = await supabase
         .from('assessments')
-        .insert({
-          title,
-          description,
-          faculty_id: facultyId,
-          due_date: dueDate ? new Date(dueDate).toISOString() : null,
-          total_points: questions.reduce((sum, q) => sum + q.points, 0),
-          is_published: isPublished
-        })
+        .insert([
+          {
+            title: formData.title,
+            description: formData.description,
+            assessment_type: formData.type,
+            faculty_id: facultyId,
+            total_marks: formData.totalMarks,
+            due_date: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
+          }
+        ])
         .select()
         .single();
 
       if (assessmentError) throw assessmentError;
 
       // Create questions
-      const questionsToInsert = questions.map((q, index) => ({
-        assessment_id: assessment.id,
-        question_type: q.question_type,
-        question_text: q.question_text,
-        points: q.points,
-        options: q.options ? JSON.stringify(q.options) : null,
-        correct_answer: q.correct_answer,
-        order_index: index
+      const questionsToInsert = questions.map((q, idx) => ({
+        assessment_id: assessmentData.id,
+        question_type: q.type,
+        question_text: q.question,
+        marks: q.points,
+        options: q.type === 'mcq' ? q.options : null,
+        correct_answer: q.type === 'mcq' ? q.correctAnswer : null,
+        order_number: idx,
       }));
 
       const { error: questionsError } = await supabase
@@ -119,38 +122,19 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
 
       if (questionsError) throw questionsError;
 
-      // Send notifications to students if published
-      if (isPublished) {
-        const { data: students } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('role', 'student');
-
-        if (students && students.length > 0) {
-          const notifications = students.map(student => ({
-            user_id: student.user_id,
-            title: "New Assessment Available",
-            message: `New assessment "${title}" has been published`,
-            type: 'assessment',
-            data: { assessment_id: assessment.id }
-          }));
-
-          await supabase
-            .from('notifications')
-            .insert(notifications);
-        }
-      }
-
       toast({
         title: "Success",
-        description: `Assessment "${title}" has been created successfully`,
+        description: `Assessment "${formData.title}" has been created successfully`,
       });
 
       // Reset form
-      setTitle("");
-      setDescription("");
-      setDueDate("");
-      setIsPublished(false);
+      setFormData({
+        title: "",
+        description: "",
+        type: 'quiz',
+        totalMarks: 100,
+        dueDate: "",
+      });
       setQuestions([]);
       onAssessmentCreated?.();
 
@@ -185,19 +169,24 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
               <Label htmlFor="title">Assessment Title</Label>
               <Input
                 id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Enter assessment title"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dueDate">Due Date (Optional)</Label>
-              <Input
-                id="dueDate"
-                type="datetime-local"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
+              <Label htmlFor="type">Assessment Type</Label>
+              <Select value={formData.type} onValueChange={(value: any) => setFormData({ ...formData, type: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="quiz">Quiz</SelectItem>
+                  <SelectItem value="assignment">Assignment</SelectItem>
+                  <SelectItem value="exam">Exam</SelectItem>
+                  <SelectItem value="practice">Practice</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -205,23 +194,11 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Enter assessment description (optional)"
               rows={3}
             />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="published"
-              checked={isPublished}
-              onCheckedChange={setIsPublished}
-            />
-            <Label htmlFor="published" className="flex items-center gap-2">
-              {isPublished ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-              {isPublished ? 'Published (students can see)' : 'Draft (hidden from students)'}
-            </Label>
           </div>
         </CardContent>
       </Card>
@@ -236,8 +213,8 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
             <Card key={question.id} className="border-l-4 border-l-primary/50">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Badge variant={question.question_type === 'mcq' ? 'default' : 'secondary'}>
-                    {question.question_type === 'mcq' ? 'Multiple Choice' : 'Written Answer'}
+                  <Badge variant={question.type === 'mcq' ? 'default' : 'secondary'}>
+                    {question.type === 'mcq' ? 'Multiple Choice' : 'Written Answer'}
                   </Badge>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm">Points:</Label>
@@ -264,14 +241,14 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                 <div className="space-y-2">
                   <Label>Question Text</Label>
                   <Textarea
-                    value={question.question_text}
-                    onChange={(e) => updateQuestion(index, { question_text: e.target.value })}
+                    value={question.question}
+                    onChange={(e) => updateQuestion(index, { question: e.target.value })}
                     placeholder="Enter your question here..."
                     rows={2}
                   />
                 </div>
 
-                {question.question_type === 'mcq' && (
+                {question.type === 'mcq' && (
                   <div className="space-y-3">
                     <Label>Answer Options</Label>
                     {question.options?.map((option, optionIndex) => (
@@ -290,8 +267,8 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                     <div className="space-y-2">
                       <Label>Correct Answer</Label>
                       <Select
-                        value={question.correct_answer}
-                        onValueChange={(value) => updateQuestion(index, { correct_answer: value })}
+                        value={question.correctAnswer}
+                        onValueChange={(value) => updateQuestion(index, { correctAnswer: value })}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select correct answer" />
@@ -335,7 +312,7 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
       <div className="flex justify-end">
         <Button
           onClick={createAssessment}
-          disabled={isCreating || !title.trim() || questions.length === 0}
+          disabled={isCreating || !formData.title.trim() || questions.length === 0}
           className="bg-gradient-primary border-0 hover:shadow-glow px-8"
         >
           <Save className="h-4 w-4 mr-2" />

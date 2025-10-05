@@ -13,11 +13,10 @@ import { useToast } from "@/components/ui/use-toast";
 interface Material {
   id: string;
   title: string;
-  description: string;
-  file_url: string;
+  description: string | null;
+  file_url: string | null;
   faculty_id: string;
   created_at: string;
-  updated_at: string;
 }
 
 interface MaterialsManagerProps {
@@ -97,26 +96,6 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
 
         if (error) throw error;
 
-        // Send notification to students
-        const { data: students } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('role', 'student');
-
-        if (students && students.length > 0) {
-          const notifications = students.map(student => ({
-            user_id: student.user_id,
-            title: "New Material Added",
-            message: `New study material "${title}" has been uploaded`,
-            type: 'general',
-            data: { material_title: title }
-          }));
-
-          await supabase
-            .from('notifications')
-            .insert(notifications);
-        }
-
         toast({
           title: "Success",
           description: "Material added successfully",
@@ -140,8 +119,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
   const handleEdit = (material: Material) => {
     setEditingMaterial(material);
     setTitle(material.title);
-    setDescription(material.description);
-    setFileUrl(material.file_url);
+    setDescription(material.description || "");
+    setFileUrl(material.file_url || "");
     setIsDialogOpen(true);
   };
 
@@ -236,9 +215,6 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                   onChange={(e) => setFileUrl(e.target.value)}
                   placeholder="Enter file URL or upload link"
                 />
-                <p className="text-xs text-muted-foreground">
-                  You can paste a link to Google Drive, Dropbox, or any other file hosting service
-                </p>
               </div>
               
               <div className="flex justify-end space-x-2">
@@ -266,13 +242,6 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
             <p className="text-muted-foreground mb-4">
               Start by adding study materials and resources for your students
             </p>
-            <Button 
-              onClick={() => setIsDialogOpen(true)}
-              className="bg-gradient-primary border-0 hover:shadow-glow"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Your First Material
-            </Button>
           </CardContent>
         </Card>
       ) : (

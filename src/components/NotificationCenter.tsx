@@ -75,10 +75,10 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const markAsRead = async (notificationId: string) => {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', notificationId);
 
       if (error) throw error;
 
