@@ -2,6 +2,7 @@ import { PublicNavigation } from "@/components/PublicNavigation";
 import { ParticleField } from "@/components/ParticleField";
 import { HeroBackground } from "@/components/HeroBackground";
 import { Footer } from "@/components/Footer";
+import { SkipToContent } from "@/components/SkipToContent";
 
 interface PageLayoutProps {
     children: React.ReactNode;
@@ -20,10 +21,11 @@ export const PageLayout = ({
 }: PageLayoutProps) => {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20 relative">
+            <SkipToContent />
             <HeroBackground />
             <ParticleField />
             {customNav ? customNav : (showNav && <PublicNavigation />)}
-            <main className="flex-grow z-10 relative">
+            <main id="main-content" className="flex-grow z-10 relative">
                 {children}
             </main>
             {showFooter && <Footer intensity={footerIntensity} />}

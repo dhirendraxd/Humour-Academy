@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { History, Target, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { SEO } from "@/components/SEO";
 
 export default function About() {
     const navigate = useNavigate();
 
     return (
         <PageLayout>
+            <SEO
+                title="About Us"
+                description="Learn about Ramay Humour Academy - the world's first institution dedicated to the Serious Business of Comedy. Founded in 2010, we democratize access to social superpowers."
+                keywords="about ramay, comedy education, leadership training, humor academy, executive coaching"
+            />
             <FadeIn>
                 <div className="max-w-7xl mx-auto px-6 py-24 text-center z-10 relative">
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8">

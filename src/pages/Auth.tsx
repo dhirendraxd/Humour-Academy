@@ -34,14 +34,6 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // const cleanupAuthState = () => {
-  //   Object.keys(localStorage).forEach((key) => {
-  //     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-  //       localStorage.removeItem(key);
-  //     }
-  //   });
-  // };
-
   const { signIn, signUp } = useAuth(); // Destructure methods from context instead of using supabase directly
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -49,7 +41,6 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // cleanupAuthState();
 
       // Use mock signIn
       await signIn(loginData.email);

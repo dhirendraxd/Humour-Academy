@@ -11,6 +11,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { MOCK_PROFILES, Profile } from "@/data/mockData";
 import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 export default function Faculty() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -70,6 +71,11 @@ export default function Faculty() {
         />
       }
     >
+      <SEO
+        title="Faculty & Leadership"
+        description="Meet the distinguished educators and leaders who shape the future of comedy education at Ramay Institute. Experienced faculty and board members."
+        keywords="faculty, teachers, instructors, board of directors, leadership team, comedy educators"
+      />
       <FadeIn>
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
           {/* Header */}
