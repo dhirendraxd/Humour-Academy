@@ -66,7 +66,7 @@ export default function Students() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-background">
+      <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -78,7 +78,7 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-screen bg-background">
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
@@ -100,10 +100,10 @@ export default function Students() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+          <Card className="shadow-sm bg-card border border-border text-center p-8">
             <CardContent className="space-y-4">
-              <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
-                <Users className="h-8 w-8 text-primary-foreground" />
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
+                <Users className="h-8 w-8 text-primary" />
               </div>
               <div className="space-y-2">
                 <div className="text-4xl font-bold text-foreground">{stats.totalStudents}</div>
@@ -112,10 +112,10 @@ export default function Students() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+          <Card className="shadow-sm bg-card border border-border text-center p-8">
             <CardContent className="space-y-4">
-              <div className="w-16 h-16 bg-gradient-secondary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
-                <TrendingUp className="h-8 w-8 text-secondary-foreground" />
+              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mx-auto">
+                <TrendingUp className="h-8 w-8 text-foreground" />
               </div>
               <div className="space-y-2">
                 <div className="text-4xl font-bold text-foreground">{stats.avgLevel}</div>
@@ -124,10 +124,10 @@ export default function Students() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-8">
+          <Card className="shadow-sm bg-card border border-border text-center p-8">
             <CardContent className="space-y-4">
-              <div className="w-16 h-16 bg-gradient-ocean rounded-2xl flex items-center justify-center mx-auto shadow-glow">
-                <Award className="h-8 w-8 text-white" />
+              <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto">
+                <Award className="h-8 w-8 text-primary" />
               </div>
               <div className="space-y-2">
                 <div className="text-4xl font-bold text-foreground">{stats.topLevel}</div>
@@ -149,30 +149,30 @@ export default function Students() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {topStudents.map((student, index) => (
-                <Card key={student.id} className={`shadow-glass bg-gradient-glass backdrop-blur-xl border transition-all duration-500 hover:scale-[1.02] group ${index === 0 ? 'border-primary/40 shadow-glow' : 'border-border/30 hover:shadow-glass-hover'
+                <Card key={student.id} className={`shadow-sm bg-card transition-all duration-300 hover:-translate-y-1 ${index === 0 ? 'border-primary/50 ring-1 ring-primary/20' : 'border-border'
                   }`}>
                   <CardHeader className="pb-6 text-center">
                     <div className="relative mx-auto mb-4">
-                      <Avatar className="h-20 w-20 shadow-glow border-4 border-border/20">
-                        <AvatarFallback className="bg-gradient-primary text-primary-foreground font-bold text-xl">
+                      <Avatar className="h-20 w-20 border-2 border-border">
+                        <AvatarFallback className="bg-secondary text-foreground font-bold text-xl">
                           {student.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-button ${index === 0 ? 'bg-gradient-primary text-primary-foreground' :
-                        index === 1 ? 'bg-gradient-secondary text-secondary-foreground' :
-                          'bg-gradient-glass text-foreground border border-border/30'
+                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${index === 0 ? 'bg-primary text-primary-foreground' :
+                        index === 1 ? 'bg-secondary text-secondary-foreground' :
+                          'bg-muted text-muted-foreground border border-border'
                         }`}>
                         {index + 1}
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors">{student.full_name}</CardTitle>
+                      <CardTitle className="text-xl">{student.full_name}</CardTitle>
                       <CardDescription>{student.rank || 'Student'}</CardDescription>
                     </div>
                   </CardHeader>
                   <CardContent className="text-center">
                     <div className="flex items-center justify-center gap-4">
-                      <Badge className={`shadow-button ${index === 0 ? 'bg-gradient-primary text-primary-foreground' : 'bg-gradient-glass text-foreground border border-border/30'
+                      <Badge className={`shadow-none ${index === 0 ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
                         }`}>
                         Level {student.level}
                       </Badge>
@@ -202,30 +202,30 @@ export default function Students() {
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gradient-glass backdrop-blur-sm border-border/30 shadow-glass"
+                className="pl-10 bg-background border-border"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredStudents.map((student) => (
-              <Card key={student.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-300 hover:scale-[1.02] group">
+              <Card key={student.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300">
                 <CardHeader className="pb-4">
                   <div className="text-center space-y-3">
-                    <Avatar className="h-14 w-14 mx-auto shadow-button border-2 border-border/20">
-                      <AvatarFallback className="bg-gradient-glass text-foreground font-semibold border border-border/30">
+                    <Avatar className="h-14 w-14 mx-auto border border-border">
+                      <AvatarFallback className="bg-secondary text-foreground font-semibold">
                         {student.full_name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1">
-                      <CardTitle className="text-base group-hover:text-primary transition-colors">{student.full_name}</CardTitle>
+                      <CardTitle className="text-base">{student.full_name}</CardTitle>
                       <CardDescription className="text-sm">{student.rank || 'Student'}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="flex items-center justify-between">
-                    <Badge className="bg-gradient-glass text-foreground border border-border/30 text-xs">
+                    <Badge variant="outline" className="text-xs">
                       Student
                     </Badge>
                     <div className="flex items-center gap-1">
@@ -239,9 +239,9 @@ export default function Students() {
           </div>
 
           {filteredStudents.length === 0 && searchTerm && (
-            <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-16">
+            <Card className="shadow-none border border-border bg-muted/30 text-center p-16">
               <CardContent className="space-y-6">
-                <div className="w-16 h-16 bg-gradient-glass rounded-2xl flex items-center justify-center mx-auto border border-border/30">
+                <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center mx-auto border border-border">
                   <Search className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <div className="space-y-2">

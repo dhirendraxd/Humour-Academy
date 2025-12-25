@@ -107,14 +107,14 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-academic flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto">
         {/* Modern Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-glow">
-            <Sparkles className="h-8 w-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-4">
+            <span className="text-4xl text-primary">▲</span>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Ramay Institute
           </h1>
           <p className="text-muted-foreground">
@@ -123,7 +123,7 @@ export default function Auth() {
         </div>
 
         {/* Auth Forms */}
-        <Card className="shadow-glass bg-card/50 backdrop-blur-xl border-border/50">
+        <Card className="shadow-lg border-border bg-card">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-xl">Access Your Account</CardTitle>
             <CardDescription>
@@ -133,7 +133,7 @@ export default function Auth() {
 
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary">
                 <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign In</TabsTrigger>
                 <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign Up</TabsTrigger>
               </TabsList>

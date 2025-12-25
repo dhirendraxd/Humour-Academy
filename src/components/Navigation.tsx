@@ -69,13 +69,13 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
   };
 
   return (
-    <nav className="bg-gradient-glass/50 backdrop-blur-xl border-b border-border/30 sticky top-0 z-50">
+    <nav className="bg-background border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-6">
-            <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Ramay Institute
+            <div className="text-2xl font-bold text-primary flex items-center gap-2">
+              <span>▲</span> Ramay Institute
             </div>
           </div>
 
