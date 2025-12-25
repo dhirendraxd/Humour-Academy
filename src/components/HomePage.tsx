@@ -19,16 +19,16 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
       <main className="flex-grow flex flex-col items-center relative overflow-hidden">
 
         {/* Hero Section */}
-        <section className="pt-24 pb-32 px-6 text-center max-w-5xl mx-auto space-y-10 z-10 relative">
+        <section className="min-h-[80vh] flex flex-col justify-center pt-32 pb-40 px-6 text-center max-w-4xl mx-auto space-y-16 z-10 relative">
           <FadeIn delay={100}>
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-foreground leading-[0.95]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
               <span className="text-blue-600">Master Leadership</span> <br />
               through the Art of Humor
             </h1>
           </FadeIn>
 
           <FadeIn delay={300}>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-lg text-muted-foreground/80 max-w-xl mx-auto font-light leading-loose tracking-wide">
               We use comedy mechanics to build world-class communication, confidence, and leadership skills.
               Join the premier institution for soft skills development.
             </p>
@@ -55,23 +55,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         </section>
 
         {/* Stats Section */}
-        <section className="w-full py-16 border-y border-border/40 bg-secondary/20">
-          <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { label: "Active Leaders", value: "500+" },
-              { label: "Corporate Partners", value: "12" },
-              { label: "Executive Coaches", value: "25+" },
-              { label: "Global Alumni", value: "2k+" },
-            ].map((stat, i) => (
-              <FadeIn key={i} delay={i * 100} direction="up">
-                <div className="space-y-1">
-                  <div className="text-4xl font-bold tracking-tight text-blue-600">{stat.value}</div>
-                  <div className="text-sm text-foreground font-medium uppercase tracking-wider">{stat.label}</div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </section>
+
 
 
 

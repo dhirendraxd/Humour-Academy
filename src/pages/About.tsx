@@ -27,6 +27,25 @@ export default function About() {
 
                 <section className="max-w-5xl mx-auto px-6 pb-32 z-10 relative space-y-24">
 
+                    {/* Stats Section */}
+                    <FadeIn direction="up">
+                        <div className="w-full py-8 border-y border-border/40 bg-secondary/5 mb-12">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                {[
+                                    { label: "Active Leaders", value: "500+" },
+                                    { label: "Corporate Partners", value: "12" },
+                                    { label: "Executive Coaches", value: "25+" },
+                                    { label: "Global Alumni", value: "2k+" },
+                                ].map((stat, i) => (
+                                    <div key={i} className="space-y-1">
+                                        <div className="text-4xl font-bold tracking-tight text-blue-600">{stat.value}</div>
+                                        <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </FadeIn>
+
                     {/* Mission */}
                     <FadeIn direction="left">
                         <div className="flex flex-col md:flex-row gap-12 items-center">
