@@ -17,15 +17,15 @@ export const ParticleField = () => {
   useEffect(() => {
     const particleCount = 50;
     const colors = [
-      'hsl(239, 84%, 67%)',  // Primary blue
-      'hsl(172, 66%, 50%)',  // Tertiary teal
-      'hsl(200, 85%, 55%)',  // Quaternary ocean
-      'hsl(262, 83%, 58%)',  // Secondary purple
+      'hsl(199, 89%, 48%)',  // Sky Blue (Primary)
+      'hsl(199, 89%, 60%)',  // Lighter Sky
+      'hsl(199, 89%, 80%)',  // Very Light Sky
+      'hsl(0, 0%, 80%)',     // Light Gray
     ];
 
     const generateParticles = () => {
       const newParticles: Particle[] = [];
-      
+
       for (let i = 0; i < particleCount; i++) {
         newParticles.push({
           id: i,
@@ -38,7 +38,7 @@ export const ParticleField = () => {
           color: colors[Math.floor(Math.random() * colors.length)],
         });
       }
-      
+
       setParticles(newParticles);
     };
 

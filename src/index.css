@@ -27,9 +27,9 @@ All colors MUST be HSL.
     --primary-glow: 239 76% 78%;
     /* Lighter blue */
 
-    --secondary: 262 83% 58%;
-    /* Purple accent */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    /* Light Gray */
+    --secondary-foreground: 0 0% 10%;
 
     --tertiary: 172 66% 50%;
     /* Subtle teal-green */
@@ -38,14 +38,12 @@ All colors MUST be HSL.
     /* Ocean blue */
     --quaternary-foreground: 0 0% 100%;
 
-    --muted: 240 20% 96%;
-    /* Solid muted */
-    --muted-foreground: 221 13% 46%;
-    /* Medium gray */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 240 20% 94%;
-    /* Solid accent */
-    --accent-foreground: 221 39% 11%;
+    --accent: 199 89% 96%;
+    /* Very light blue accent */
+    --accent-foreground: 199 89% 48%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
