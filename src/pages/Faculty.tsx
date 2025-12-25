@@ -6,45 +6,72 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Users, GraduationCap, Trophy, Star } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { ParticleField } from "@/components/ParticleField";
+import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
-// import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { MOCK_PROFILES, Profile } from "@/data/mockData";
 import { useAuth } from "@/components/AuthProvider";
-import { HeroBackground } from "@/components/HeroBackground";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Faculty() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  // ... rest of state ...
+  const [loading, setLoading] = useState(true);
+  const { profile: currentUser } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // ... fetchProfiles ...
+  useEffect(() => {
+    fetchProfiles();
+  }, []);
+
+  const fetchProfiles = async () => {
+    try {
+      // Mock API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setProfiles(MOCK_PROFILES);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to load faculty data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const groupedProfiles = {
+    bod: profiles.filter(p => p.role === 'bod'),
+    faculty: profiles.filter(p => p.role === 'faculty'),
+    students: profiles.filter(p => p.role === 'student'),
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
         </div>
+        <p className="mt-4 text-muted-foreground animate-pulse">Loading Academy...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative">
-      <HeroBackground />
-      <Navigation
-        currentRole={currentUser?.role || 'student'}
-        currentUser={currentUser ? {
-          name: currentUser.full_name,
-          rank: currentUser.rank,
-          level: currentUser.level
-        } : null}
-        onRoleChange={() => { }}
-      />
-      <ParticleField />
-
+    <PageLayout
+      customNav={
+        <Navigation
+          currentRole={currentUser?.role || 'student'}
+          currentUser={currentUser ? {
+            name: currentUser.full_name,
+            rank: currentUser.rank,
+            level: currentUser.level
+          } : null}
+          onRoleChange={() => { }}
+        />
+      }
+    >
       <FadeIn>
-        <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">Faculty & Leadership</h1>
@@ -65,7 +92,7 @@ export default function Faculty() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {groupedProfiles.bod.map((profile) => (
-                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                     <CardHeader className="pb-6">
                       <div className="text-center space-y-4">
                         <Avatar className="h-24 w-24 mx-auto border-2 border-border bg-background">
@@ -113,7 +140,7 @@ export default function Faculty() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {groupedProfiles.faculty.map((profile) => (
-                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                     <CardHeader className="pb-4">
                       <div className="text-center space-y-3">
                         <Avatar className="h-20 w-20 mx-auto border border-border bg-background">
@@ -180,8 +207,8 @@ export default function Faculty() {
               </Card>
             </section>
           )}
-        </main>
+        </div>
       </FadeIn>
-    </div>
+    </PageLayout>
   );
 }

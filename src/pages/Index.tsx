@@ -5,7 +5,7 @@ import { Navigation } from "@/components/Navigation";
 import { StudentDashboard } from "@/components/StudentDashboard";
 import { FacultyDashboard } from "@/components/FacultyDashboard";
 import { BODDashboard } from "@/components/BODDashboard";
-import { ParticleField } from "@/components/ParticleField";
+import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
 
 
@@ -52,24 +52,25 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation
-        currentRole={profile.role}
-        currentUser={{
-          name: profile.full_name,
-          rank: profile.rank || 'Member',
-          level: profile.level
-        }}
-        onRoleChange={() => { }}
-      />
-      <ParticleField />
-
+    <PageLayout
+      customNav={
+        <Navigation
+          currentRole={profile.role}
+          currentUser={{
+            name: profile.full_name,
+            rank: profile.rank || 'Member',
+            level: profile.level
+          }}
+          onRoleChange={() => { }}
+        />
+      }
+    >
       <FadeIn>
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {renderDashboard()}
-        </main>
+        </div>
       </FadeIn>
-    </div>
+    </PageLayout>
   );
 };
 

@@ -5,41 +5,39 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Users, Search, Star, Award, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { ParticleField } from "@/components/ParticleField";
+import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
-// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { MOCK_PROFILES, Profile } from "@/data/mockData";
-import { HeroBackground } from "@/components/HeroBackground";
-
-// interface Profile ... (Removed locally defined interface, imported from mockData)
 
 export default function Students() {
   const [students, setStudents] = useState<Profile[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<Profile[]>([]);
-  const { user, profile: currentUser } = useAuth(); // Use useAuth
+  const { user, profile: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchStudents();
-    // getCurrentUser(); // Removed
   }, []);
 
-  //   useEffect(() => { ... (No change needed here, depends on students state)
+  useEffect(() => {
+    const filtered = students.filter(student =>
+      student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (student.rank && student.rank.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredStudents(filtered);
+  }, [searchTerm, students]);
 
   const fetchStudents = async () => {
     try {
-      // Mock API call
       await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Filter for students from mock data
       const studentProfiles = MOCK_PROFILES.filter(p => p.role === 'student')
         .sort((a, b) => b.level - a.level);
-
       setStudents(studentProfiles);
+      setFilteredStudents(studentProfiles);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -50,8 +48,6 @@ export default function Students() {
       setLoading(false);
     }
   };
-
-  // const getCurrentUser = ... (Removed)
 
   const getTopStudents = () => {
     return [...students]
@@ -69,10 +65,11 @@ export default function Students() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
         </div>
+        <p className="mt-4 text-muted-foreground animate-pulse">Loading Academy Community...</p>
       </div>
     );
   }
@@ -81,21 +78,21 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative">
-      <HeroBackground />
-      <Navigation
-        currentRole={currentUser?.role || 'student'}
-        currentUser={currentUser ? {
-          name: currentUser.full_name,
-          rank: currentUser.rank,
-          level: currentUser.level
-        } : null}
-        onRoleChange={() => { }}
-      />
-      <ParticleField />
-
+    <PageLayout
+      customNav={
+        <Navigation
+          currentRole={currentUser?.role || 'student'}
+          currentUser={currentUser ? {
+            name: currentUser.full_name,
+            rank: currentUser.rank,
+            level: currentUser.level
+          } : null}
+          onRoleChange={() => { }}
+        />
+      }
+    >
       <FadeIn>
-        <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">Student Community</h1>
@@ -106,7 +103,7 @@ export default function Students() {
 
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <Card className="shadow-sm bg-card border border-border text-center p-8">
+            <Card className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 text-center p-8">
               <CardContent className="space-y-4">
                 <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center mx-auto">
                   <Users className="h-8 w-8 text-blue-600" />
@@ -118,9 +115,9 @@ export default function Students() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-sm bg-card border border-border text-center p-8">
+            <Card className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 text-center p-8">
               <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 bg-secondary/50 rounded-2xl flex items-center justify-center mx-auto">
                   <TrendingUp className="h-8 w-8 text-foreground" />
                 </div>
                 <div className="space-y-2">
@@ -130,7 +127,7 @@ export default function Students() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-sm bg-card border border-border text-center p-8">
+            <Card className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 text-center p-8">
               <CardContent className="space-y-4">
                 <div className="w-16 h-16 bg-blue-600/5 rounded-2xl flex items-center justify-center mx-auto">
                   <Award className="h-8 w-8 text-blue-600" />
@@ -220,7 +217,7 @@ export default function Students() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredStudents.map((student) => (
-                <Card key={student.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                <Card key={student.id} className="shadow-sm bg-background/60 backdrop-blur-md border border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                   <CardHeader className="pb-4">
                     <div className="text-center space-y-3">
                       <Avatar className="h-16 w-16 mx-auto border border-border bg-background">
@@ -245,7 +242,7 @@ export default function Students() {
                         Student
                       </Badge>
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-muted-foreground" />
+                        <Star className="h-4 w-4 text-muted-foreground font-bold" />
                         <span className="text-sm font-medium">Level {student.level}</span>
                       </div>
                     </div>
@@ -270,8 +267,8 @@ export default function Students() {
               </Card>
             )}
           </section>
-        </main>
+        </div>
       </FadeIn>
-    </div>
+    </PageLayout>
   );
 }

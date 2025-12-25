@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { ParticleField } from "@/components/ParticleField";
 import { FadeIn } from "@/components/FadeIn";
-import { PublicNavigation } from "@/components/PublicNavigation";
 import { FooterParticles } from "@/components/FooterParticles";
-import { HeroBackground } from "@/components/HeroBackground";
+import { Link } from "react-router-dom";
+import { PageLayout } from "@/components/PageLayout";
 
 interface HomePageProps {
   onLoginClick: () => void;
@@ -11,15 +10,10 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20 relative">
-      <HeroBackground />
-      <ParticleField />
-      <PublicNavigation />
-
-      <main className="flex-grow flex flex-col items-center relative overflow-hidden">
-
+    <PageLayout>
+      <div className="flex flex-col items-center overflow-hidden">
         {/* Hero Section */}
-        <section className="min-h-[80vh] flex flex-col justify-center pt-32 pb-40 px-6 text-center max-w-4xl mx-auto space-y-16 z-10 relative">
+        <section className="min-h-[80vh] flex flex-col justify-center pt-32 pb-40 px-6 text-center max-w-4xl mx-auto space-y-16 relative">
           <FadeIn delay={100}>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
               <span className="text-blue-600">Master Leadership</span> <br />
@@ -54,15 +48,9 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           </FadeIn>
         </section>
 
-        {/* Stats Section */}
-
-
-
-
-        {/* Timeline "The Journey" Section */}
+        {/* Journey Timeline Section */}
         <section className="w-full py-32 px-6 relative">
           <div className="max-w-4xl mx-auto relative">
-            {/* Central Line */}
             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-blue-500/30 transform md:-translate-x-1/2"></div>
 
             {[
@@ -89,10 +77,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             ].map((item, index) => (
               <FadeIn key={index} direction={index % 2 === 0 ? "right" : "left"} delay={index * 200}>
                 <div className={`flex flex-col md:flex-row gap-8 items-center mb-24 relative ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}>
-                  {/* Node on Line */}
                   <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-background transform -translate-x-1/2 z-10"></div>
-
-                  {/* Content Card */}
                   <div className="ml-12 md:ml-0 md:w-1/2 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-blue-500/30 transition-colors">
                     <div className="text-3xl mb-4">{item.icon}</div>
                     <h3 className="text-xl font-bold mb-2">{item.title}</h3>
@@ -100,8 +85,6 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
                       {item.desc}
                     </p>
                   </div>
-
-                  {/* Empty spacer for alternating layout */}
                   <div className="hidden md:block md:w-1/2"></div>
                 </div>
               </FadeIn>
@@ -109,7 +92,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* CTA Section */}
         <section className="w-full py-32 px-6">
           <FadeIn direction="up">
             <div className="max-w-4xl mx-auto text-center space-y-8 p-12 rounded-[3rem] bg-primary text-primary-foreground relative overflow-hidden shadow-2xl hover:shadow-primary/50 transition-shadow duration-500">
@@ -132,11 +115,9 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             </div>
           </FadeIn>
         </section>
-
-      </main>
+      </div>
 
       <footer className="py-12 px-6 border-t border-blue-600/10 text-center text-sm text-muted-foreground relative overflow-hidden">
-        {/* Footer Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-b from-background via-blue-900/5 to-blue-900/10 pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none" />
         <FooterParticles />
@@ -149,24 +130,24 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           <div>
             <div className="font-bold text-foreground mb-4">Programs</div>
             <ul className="space-y-2">
-              <li><a href="/executive-presence" className="hover:text-primary transition-colors">Executive Presence</a></li>
-              <li><a href="/team-dynamics" className="hover:text-primary transition-colors">Team Dynamics</a></li>
-              <li><a href="/storytelling" className="hover:text-primary transition-colors">Storytelling</a></li>
+              <li><Link to="/executive-presence" className="hover:text-primary transition-colors">Executive Presence</Link></li>
+              <li><Link to="/team-dynamics" className="hover:text-primary transition-colors">Team Dynamics</Link></li>
+              <li><Link to="/storytelling" className="hover:text-primary transition-colors">Storytelling</Link></li>
             </ul>
           </div>
           <div>
             <div className="font-bold text-foreground mb-4">Community</div>
             <ul className="space-y-2">
-              <li><a href="/alumni" className="hover:text-primary transition-colors">Alumni</a></li>
-              <li><a href="/events" className="hover:text-primary transition-colors">Events</a></li>
-              <li><a href="/open-mics" className="hover:text-primary transition-colors">Open Mics</a></li>
+              <li><Link to="/alumni" className="hover:text-primary transition-colors">Alumni</Link></li>
+              <li><Link to="/events" className="hover:text-primary transition-colors">Events</Link></li>
+              <li><Link to="/open-mics" className="hover:text-primary transition-colors">Open Mics</Link></li>
             </ul>
           </div>
           <div>
             <div className="font-bold text-foreground mb-4">Legal</div>
             <ul className="space-y-2">
-              <li><a href="/privacy" className="hover:text-primary transition-colors">Privacy</a></li>
-              <li><a href="/terms" className="hover:text-primary transition-colors">Terms</a></li>
+              <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link></li>
+              <li><Link to="/terms" className="hover:text-primary transition-colors">Terms</Link></li>
             </ul>
           </div>
         </div>
@@ -178,7 +159,6 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           </div>
         </div>
       </footer>
-
-    </div>
+    </PageLayout>
   );
 };

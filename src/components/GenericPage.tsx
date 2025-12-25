@@ -1,7 +1,5 @@
-import { PublicNavigation } from "@/components/PublicNavigation";
-import { ParticleField } from "@/components/ParticleField";
+import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
-import { HeroBackground } from "@/components/HeroBackground";
 
 interface GenericPageProps {
     title: string;
@@ -11,29 +9,23 @@ interface GenericPageProps {
 
 export const GenericPage = ({ title, subtitle, children }: GenericPageProps) => {
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20 relative">
-            <HeroBackground />
-            <ParticleField />
-            <PublicNavigation />
+        <PageLayout>
+            <FadeIn>
+                <div className="max-w-7xl mx-auto px-6 py-24 text-center">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8">
+                        {title}
+                    </h1>
+                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+                        {subtitle}
+                    </p>
+                </div>
+            </FadeIn>
 
-            <main className="flex-grow">
-                <FadeIn>
-                    <div className="max-w-7xl mx-auto px-6 py-24 text-center z-10 relative">
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8">
-                            {title}
-                        </h1>
-                        <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-                            {subtitle}
-                        </p>
-                    </div>
-                </FadeIn>
-
-                <section className="max-w-4xl mx-auto px-6 pb-32 z-10 relative">
-                    <div className="bg-background/60 backdrop-blur-md border border-border/50 p-8 md:p-12 rounded-3xl shadow-lg space-y-6 text-lg text-muted-foreground leading-relaxed">
-                        {children}
-                    </div>
-                </section>
-            </main>
-        </div>
+            <section className="max-w-4xl mx-auto px-6 pb-32">
+                <div className="bg-background/60 backdrop-blur-md border border-border/50 p-8 md:p-12 rounded-3xl shadow-lg space-y-6 text-lg text-muted-foreground leading-relaxed">
+                    {children}
+                </div>
+            </section>
+        </PageLayout>
     );
 };
