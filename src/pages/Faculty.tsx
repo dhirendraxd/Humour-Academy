@@ -62,7 +62,7 @@ export default function Faculty() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background glacier-theme">
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
@@ -94,7 +94,7 @@ export default function Faculty() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {groupedProfiles.bod.map((profile) => (
-                <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300">
+                <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                   <CardHeader className="pb-6">
                     <div className="text-center space-y-4">
                       <Avatar className="h-20 w-20 mx-auto border-2 border-border">
@@ -137,7 +137,7 @@ export default function Faculty() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {groupedProfiles.faculty.map((profile) => (
-                <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300">
+                <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                   <CardHeader className="pb-4">
                     <div className="text-center space-y-3">
                       <Avatar className="h-16 w-16 mx-auto border border-border">

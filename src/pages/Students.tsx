@@ -78,7 +78,7 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background glacier-theme">
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
@@ -209,7 +209,7 @@ export default function Students() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredStudents.map((student) => (
-              <Card key={student.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300">
+              <Card key={student.id} className="shadow-sm bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                 <CardHeader className="pb-4">
                   <div className="text-center space-y-3">
                     <Avatar className="h-14 w-14 mx-auto border border-border">

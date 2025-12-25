@@ -147,14 +147,56 @@ All colors MUST be HSL.
     --sidebar-border: 214 32% 15%;
     --sidebar-ring: 214 84% 64%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+  /* Glacier Theme (Icy/Cool/Deep) */
+  .glacier-theme {
+    --background: 212 53% 11%;
+    /* #0D1B2A */
+    --foreground: 187 71% 93%;
+    /* #E0F7FA */
 
-  body {
-    @apply bg-background text-foreground;
+    --card: 212 56% 24%;
+    /* #1B3B5F */
+    --card-foreground: 187 71% 93%;
+    /* #E0F7FA */
+
+    --popover: 212 56% 24%;
+    /* #1B3B5F */
+    --popover-foreground: 187 71% 93%;
+    /* #E0F7FA */
+
+    --primary: 179 48% 77%;
+    /* #A7E0E0 (Highlights/Headings) */
+    --primary-foreground: 212 53% 11%;
+    /* #0D1B2A */
+
+    --secondary: 228 100% 86%;
+    /* #B8C6FF (Icy Lavender) */
+    --secondary-foreground: 212 53% 11%;
+    /* #0D1B2A */
+
+    --muted: 212 31% 24%;
+    /* #2A3C50 (UI Elements) */
+    --muted-foreground: 203 11% 66%;
+    /* #9EABB3 (Secondary Elements) */
+
+    --accent: 199 92% 64%;
+    /* #4FC3F7 (Bright Icy Blue) */
+    --accent-foreground: 212 53% 11%;
+    /* #0D1B2A */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 203 11% 66%;
+    /* #9EABB3 */
+    --input: 212 31% 24%;
+    /* #2A3C50 */
+    --ring: 199 92% 64%;
+    /* #4FC3F7 */
+
+    /* Override base styles within this scope */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
