@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Users, Trophy, ChevronRight, BookOpen, Mic } from "lucide-react";
 import { ParticleField } from "@/components/ParticleField";
 import { FadeIn } from "@/components/FadeIn";
 import { PublicNavigation } from "@/components/PublicNavigation";
@@ -71,100 +70,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           </div>
         </section>
 
-        {/* Curriculum Preview */}
-        <section id="curriculum" className="w-full py-32 px-6">
-          <div className="max-w-6xl mx-auto">
-            <FadeIn>
-              <div className="mb-16 text-center space-y-4">
-                <span className="text-blue-600 font-bold tracking-wider uppercase text-sm">Professional Development</span>
-                <h2 className="text-4xl md:text-5xl font-bold">The Science of Soft Skills</h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Our curriculum translates comedic principles into executive superpowers.
-                  Master the physics of timing and the chemistry of connection.
-                </p>
-              </div>
-            </FadeIn>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: BookOpen,
-                  title: "Emotional Intelligence & Wit",
-                  desc: "A deep dive into reading rooms, navigating tension, and building instant rapport."
-                },
-                {
-                  icon: Mic,
-                  title: "Public Speaking & Presence",
-                  desc: "Practical lab work focusing on delivery, stage command, and authentic storytelling."
-                },
-                {
-                  icon: Users,
-                  title: "Adaptive Leadership",
-                  desc: "Real-time decision making and collaborative dynamic adjustment under pressure."
-                }
-              ].map((course, i) => (
-                <FadeIn key={i} delay={i * 200}>
-                  <div className="bg-card border border-border p-8 rounded-3xl hover:border-primary/50 transition-all duration-300 group cursor-default hover:-translate-y-2 hover:shadow-xl">
-                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                      <course.icon className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3">{course.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{course.desc}</p>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Philosophy / About */}
-        <section id="about" className="w-full py-32 px-6 bg-secondary/30">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
-            <div className="flex-1 space-y-8">
-              <FadeIn direction="left">
-                <span className="text-primary font-bold tracking-wider uppercase text-sm">Our Philosophy</span>
-                <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                  "Humour is the ultimate soft skill."
-                </h2>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  At Ramay Academy, we reject the notion that leadership must be rigid.
-                  Humor is a tool for connection, resilience, and influence. We provide the laboratory
-                  where you experiment with the boundaries of authentic leadership.
-                </p>
-                <div className="flex flex-col gap-4 pt-4">
-                  {[
-                    "Psychology-backed methodologies",
-                    "Corporate simulation environments",
-                    "Global network of industry leaders"
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 font-medium">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                        <ChevronRight className="w-4 h-4 text-primary" />
-                      </div>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </FadeIn>
-            </div>
-
-            {/* Abstract Visual Representation */}
-            <div className="flex-1 w-full h-[500px] relative">
-              <FadeIn direction="right" delay={200} className="w-full h-full">
-                <div className="absolute inset-0 bg-white border border-border rounded-3xl overflow-hidden shadow-sm flex items-center justify-center hover:shadow-lg transition-shadow duration-500">
-                  <div className="relative z-10 text-center space-y-6 p-8">
-                    <div className="text-9xl font-black text-primary/10 select-none animate-pulse">HA</div>
-                    <div className="text-9xl font-black text-primary/20 select-none absolute -top-8 left-1/2 -translate-x-1/2" style={{ animationDelay: '100ms' }}>HA</div>
-                    <div className="text-9xl font-black text-primary/30 select-none absolute -top-16 left-1/2 -translate-x-1/2" style={{ animationDelay: '200ms' }}>HA</div>
-                    <p className="font-mono text-sm text-muted-foreground mt-8 bg-secondary/50 px-4 py-2 rounded-full inline-block">
-                      fig 1.1: The recursive nature of laughter
-                    </p>
-                  </div>
-                </div>
-              </FadeIn>
-            </div>
-          </div>
-        </section>
 
         {/* CTA */}
         <section className="w-full py-32 px-6">

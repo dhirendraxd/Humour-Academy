@@ -91,7 +91,12 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-blue-600/10 transition-colors">
-                <Avatar className="h-10 w-10 border-2 border-transparent hover:border-blue-600 transition-all">
+                <Avatar className="h-10 w-10 border-2 border-transparent hover:border-blue-600 transition-all bg-background">
+                  <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.name}`}
+                    alt={currentUser.name}
+                    className="h-full w-full object-cover"
+                  />
                   <AvatarFallback className="bg-blue-600/10 text-blue-600 font-bold">
                     {currentUser.name.charAt(0)}
                   </AvatarFallback>

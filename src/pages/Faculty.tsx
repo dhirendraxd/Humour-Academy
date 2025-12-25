@@ -98,10 +98,15 @@ export default function Faculty() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {groupedProfiles.bod.map((profile) => (
-                  <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                     <CardHeader className="pb-6">
                       <div className="text-center space-y-4">
-                        <Avatar className="h-20 w-20 mx-auto border-2 border-border">
+                        <Avatar className="h-24 w-24 mx-auto border-2 border-border bg-background">
+                          <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.full_name}`}
+                            alt={profile.full_name}
+                            className="h-full w-full object-cover"
+                          />
                           <AvatarFallback className="bg-blue-600 text-white font-bold text-2xl">
                             {profile.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
@@ -141,10 +146,15 @@ export default function Faculty() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {groupedProfiles.faculty.map((profile) => (
-                  <Card key={profile.id} className="shadow-sm bg-card border border-border hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                  <Card key={profile.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                     <CardHeader className="pb-4">
                       <div className="text-center space-y-3">
-                        <Avatar className="h-16 w-16 mx-auto border border-border">
+                        <Avatar className="h-20 w-20 mx-auto border border-border bg-background">
+                          <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.full_name}`}
+                            alt={profile.full_name}
+                            className="h-full w-full object-cover"
+                          />
                           <AvatarFallback className="bg-secondary text-foreground font-semibold text-lg">
                             {profile.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>

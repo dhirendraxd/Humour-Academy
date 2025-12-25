@@ -66,7 +66,7 @@ export default function Curriculum() {
                     <div className="grid md:grid-cols-2 gap-8">
                         {courses.map((course, i) => (
                             <FadeIn key={i} delay={i * 100} direction="up">
-                                <Card className="h-full border-border hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group">
+                                <Card className="h-full bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group">
                                     <CardHeader>
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">

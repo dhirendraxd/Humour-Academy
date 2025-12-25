@@ -86,7 +86,7 @@ export default function About() {
 
                     {/* CTA */}
                     <FadeIn direction="up">
-                        <div className="bg-secondary/30 rounded-3xl p-12 text-center space-y-8 border border-border">
+                        <div className="bg-background/60 backdrop-blur-md rounded-3xl p-12 text-center space-y-8 border border-border/50 shadow-sm">
                             <h2 className="text-4xl font-bold">Ready to take the stage?</h2>
                             <p className="text-muted-foreground max-w-xl mx-auto">
                                 Whether you're looking to lead a boardroom or just conquer your fear of public speaking,

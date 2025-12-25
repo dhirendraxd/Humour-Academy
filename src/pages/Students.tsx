@@ -153,11 +153,16 @@ export default function Students() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {topStudents.map((student, index) => (
-                  <Card key={student.id} className={`shadow-sm bg-card transition-all duration-300 hover:-translate-y-1 ${index === 0 ? 'border-blue-600/50 ring-1 ring-blue-600/20' : 'border-border'
+                  <Card key={student.id} className={`shadow-sm bg-background/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 ${index === 0 ? 'border-blue-600/50 ring-1 ring-blue-600/20' : 'border-border/50'
                     }`}>
                     <CardHeader className="pb-6 text-center">
                       <div className="relative mx-auto mb-4">
-                        <Avatar className="h-20 w-20 border-2 border-border">
+                        <Avatar className="h-24 w-24 border-2 border-border bg-background">
+                          <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.full_name}`}
+                            alt={student.full_name}
+                            className="h-full w-full object-cover"
+                          />
                           <AvatarFallback className="bg-secondary text-foreground font-bold text-xl">
                             {student.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
@@ -206,17 +211,22 @@ export default function Students() {
                   placeholder="Search students..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-background border-border"
+                  className="pl-10 bg-background/50 border-border"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredStudents.map((student) => (
-                <Card key={student.id} className="shadow-sm bg-card border border-border hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                <Card key={student.id} className="shadow-sm bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
                   <CardHeader className="pb-4">
                     <div className="text-center space-y-3">
-                      <Avatar className="h-14 w-14 mx-auto border border-border">
+                      <Avatar className="h-16 w-16 mx-auto border border-border bg-background">
+                        <img
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${student.full_name}`}
+                          alt={student.full_name}
+                          className="h-full w-full object-cover"
+                        />
                         <AvatarFallback className="bg-secondary text-foreground font-semibold">
                           {student.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>

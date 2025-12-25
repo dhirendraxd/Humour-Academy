@@ -63,7 +63,7 @@ export default function Events() {
                 <section className="max-w-5xl mx-auto px-6 pb-32 z-10 relative space-y-6">
                     {events.map((event, i) => (
                         <FadeIn key={i} delay={i * 100} direction="up">
-                            <Card className="border-border hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg group">
+                            <Card className="bg-background/60 backdrop-blur-md border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg group">
                                 <CardContent className="p-8 flex flex-col md:flex-row gap-8 items-center md:items-start">
                                     {/* Date Block */}
                                     <div className="flex-shrink-0 w-24 h-24 bg-secondary rounded-2xl flex flex-col items-center justify-center text-center border border-border group-hover:border-blue-600/30 transition-colors">
