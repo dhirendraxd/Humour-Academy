@@ -116,7 +116,7 @@ export default function Auth() {
   };
 
   return (
-    <PageLayout showNav={false}>
+    <PageLayout showNav={false} showFooter={false}>
       <div className="min-h-screen flex items-center justify-center p-4">
         <FadeIn>
           <div className="w-full max-w-md mx-auto relative z-10">

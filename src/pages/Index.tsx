@@ -53,6 +53,7 @@ const Index = () => {
 
   return (
     <PageLayout
+      showFooter={false}
       customNav={
         <Navigation
           currentRole={profile.role}
