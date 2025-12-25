@@ -149,24 +149,24 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           <div>
             <div className="font-bold text-foreground mb-4">Programs</div>
             <ul className="space-y-2">
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Executive Presence</a></li>
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Team Dynamics</a></li>
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Storytelling</a></li>
+              <li><a href="/executive-presence" className="hover:text-primary transition-colors">Executive Presence</a></li>
+              <li><a href="/team-dynamics" className="hover:text-primary transition-colors">Team Dynamics</a></li>
+              <li><a href="/storytelling" className="hover:text-primary transition-colors">Storytelling</a></li>
             </ul>
           </div>
           <div>
             <div className="font-bold text-foreground mb-4">Community</div>
             <ul className="space-y-2">
-              <li><a href="#about" className="hover:text-primary transition-colors">Alumni</a></li>
-              <li><a href="#events" className="hover:text-primary transition-colors">Events</a></li>
-              <li><a href="#about" className="hover:text-primary transition-colors">Open Mics</a></li>
+              <li><a href="/alumni" className="hover:text-primary transition-colors">Alumni</a></li>
+              <li><a href="/events" className="hover:text-primary transition-colors">Events</a></li>
+              <li><a href="/open-mics" className="hover:text-primary transition-colors">Open Mics</a></li>
             </ul>
           </div>
           <div>
             <div className="font-bold text-foreground mb-4">Legal</div>
             <ul className="space-y-2">
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Terms</a></li>
+              <li><a href="/privacy" className="hover:text-primary transition-colors">Privacy</a></li>
+              <li><a href="/terms" className="hover:text-primary transition-colors">Terms</a></li>
             </ul>
           </div>
         </div>

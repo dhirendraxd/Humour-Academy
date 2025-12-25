@@ -12,6 +12,13 @@ import Students from "./pages/Students";
 import About from "./pages/About";
 import Curriculum from "./pages/Curriculum";
 import Events from "./pages/Events";
+import ExecutivePresence from "./pages/ExecutivePresence";
+import TeamDynamics from "./pages/TeamDynamics";
+import Storytelling from "./pages/Storytelling";
+import Alumni from "./pages/Alumni";
+import OpenMics from "./pages/OpenMics";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +38,15 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/events" element={<Events />} />
+
+            {/* New Pages */}
+            <Route path="/executive-presence" element={<ExecutivePresence />} />
+            <Route path="/team-dynamics" element={<TeamDynamics />} />
+            <Route path="/storytelling" element={<Storytelling />} />
+            <Route path="/alumni" element={<Alumni />} />
+            <Route path="/open-mics" element={<OpenMics />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -17,10 +17,10 @@ export const ParticleField = () => {
   useEffect(() => {
     const particleCount = 50;
     const colors = [
-      'hsl(199, 89%, 48%)',  // Sky Blue (Primary)
-      'hsl(199, 89%, 60%)',  // Lighter Sky
-      'hsl(199, 89%, 80%)',  // Very Light Sky
-      'hsl(0, 0%, 80%)',     // Light Gray
+      'hsl(180, 100%, 85%)',   // Ice Cyan
+      'hsl(200, 100%, 90%)',   // Bright Sky
+      'hsl(0, 0%, 100%)',      // Pure White (Snow)
+      'hsl(190, 80%, 70%)',    // Soft CyanAccent
     ];
 
     const generateParticles = () => {
@@ -31,10 +31,10 @@ export const ParticleField = () => {
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
-          size: Math.random() * 4 + 1,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          opacity: Math.random() * 0.6 + 0.2,
+          size: Math.random() * 3 + 1, // Slightly smaller snow-like
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.5 + 0.3,
           color: colors[Math.floor(Math.random() * colors.length)],
         });
       }
@@ -59,7 +59,7 @@ export const ParticleField = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {particles.map(particle => (
         <div
           key={particle.id}
@@ -69,8 +69,8 @@ export const ParticleField = () => {
             top: `${particle.y}%`,
             width: `${particle.size}px`,
             height: `${particle.size}px`,
-            backgroundColor: `hsla(var(--brand), ${particle.opacity})`,
-            boxShadow: `0 0 ${particle.size * 3}px ${particle.color}`,
+            backgroundColor: particle.color, // Use direct color for "snow"
+            boxShadow: `0 0 ${particle.size * 5}px ${particle.color}`, // Intense glow
           }}
         />
       ))}
