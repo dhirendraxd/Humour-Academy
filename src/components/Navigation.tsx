@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  Home, 
-  Users, 
-  GraduationCap, 
-  User, 
-  LogOut, 
+import {
+  Home,
+  Users,
+  GraduationCap,
+  User,
+  LogOut,
   Shield,
   Crown,
   Star,
@@ -36,8 +36,11 @@ interface NavigationProps {
   onRoleChange: (role: 'student' | 'faculty' | 'bod') => void;
 }
 
+import { useAuth } from "@/components/AuthProvider";
+
 export const Navigation = ({ currentRole, currentUser, onRoleChange }: NavigationProps) => {
   const navigate = useNavigate();
+  const { signOut: onSignOut } = useAuth(); // Get signOut from context
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
 
@@ -53,10 +56,10 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
   const getRoleBadge = () => {
     const variants = {
       student: 'bg-gradient-secondary text-secondary-foreground shadow-button',
-      faculty: 'bg-gradient-primary text-primary-foreground shadow-button', 
+      faculty: 'bg-gradient-primary text-primary-foreground shadow-button',
       bod: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-button'
     };
-    
+
     return (
       <Badge className={`${variants[currentRole]} border-0 backdrop-blur-sm`}>
         {getRoleIcon(currentRole)}
@@ -129,7 +132,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              
+
               <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-sm border-border/50">
                 {currentUser && (
                   <>
@@ -145,19 +148,20 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
                     <DropdownMenuSeparator />
                   </>
                 )}
-                
+
                 <DropdownMenuItem asChild>
                   <div className="w-full">
                     <ProfileEditDialog triggerAsMenuItem={true} />
                   </div>
                 </DropdownMenuItem>
-                
+
                 <DropdownMenuSeparator />
-                
-                <DropdownMenuItem 
+
+                <DropdownMenuItem
                   onClick={async () => {
                     try {
-                      await supabase.auth.signOut();
+                      // await supabase.auth.signOut();
+                      await onSignOut(); // Assuming we pass this or use useAuth
                       navigate('/auth');
                     } catch (error) {
                       console.error('Error signing out:', error);

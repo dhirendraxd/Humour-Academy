@@ -1,16 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-
-interface Profile {
-  id: string;
-  full_name: string;
-  email: string;
-  level?: string;
-  rank?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+import { MOCK_PROFILES, MOCK_USER, Profile } from '@/data/mockData';
 
 interface AuthContextType {
   user: User | null;
@@ -18,6 +8,8 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  signIn: (email: string, role?: 'student' | 'faculty' | 'bod') => Promise<void>;
+  signUp: (email: string, fullName: string, role: 'student' | 'faculty' | 'bod') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,7 +17,9 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   profile: null,
   loading: true,
-  signOut: async () => {},
+  signOut: async () => { },
+  signIn: async () => { },
+  signUp: async () => { },
 });
 
 export const useAuth = () => {
@@ -47,65 +41,65 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Fetch user profile
-          setTimeout(() => {
-            fetchUserProfile(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-      }
-    );
+    // Check local storage for mock session
+    const storedUser = localStorage.getItem('mock_user_role');
+    if (storedUser) {
+      const role = storedUser as 'student' | 'faculty' | 'bod';
+      // Find a mock profile that matches the role, or default to first student
+      const mockProfile = MOCK_PROFILES.find(p => p.role === role) || MOCK_PROFILES[0];
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+      setUser({ ...MOCK_USER, id: mockProfile.user_id } as User);
+      setProfile(mockProfile);
+      setSession({ user: { ...MOCK_USER, id: mockProfile.user_id } } as Session);
+    }
+    setLoading(false);
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+  const signIn = async (email: string, role: 'student' | 'faculty' | 'bod' = 'student') => {
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        setProfile(null);
-      } else {
-        setProfile(data);
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-    } finally {
-      setLoading(false);
-    }
+    // For demo purposes, we'll assign a profile based on the requested role
+    // In a real mock, we might lookup by email, but here we just want to switch roles easily
+    const mockProfile = MOCK_PROFILES.find(p => p.role === role) || MOCK_PROFILES[0];
+
+    setUser({ ...MOCK_USER, id: mockProfile.user_id } as User);
+    setProfile(mockProfile);
+    setSession({ user: { ...MOCK_USER, id: mockProfile.user_id } } as Session);
+
+    localStorage.setItem('mock_user_role', role);
+    setLoading(false);
+  };
+
+  const signUp = async (email: string, fullName: string, role: 'student' | 'faculty' | 'bod') => {
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const newProfile: Profile = {
+      id: `new-${Date.now()}`,
+      user_id: `new-user-${Date.now()}`,
+      full_name: fullName,
+      email: email,
+      role: role,
+      level: 1,
+      rank: 'Newcomer'
+    };
+
+    // Note: This won't persist across reloads since MOCK_PROFILES is constant
+    // But it works for the current session
+    setUser({ ...MOCK_USER, id: newProfile.user_id } as User);
+    setProfile(newProfile);
+    setSession({ user: { ...MOCK_USER, id: newProfile.user_id } } as Session);
+
+    localStorage.setItem('mock_user_role', role);
+    setLoading(false);
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-    }
+    setUser(null);
+    setProfile(null);
+    setSession(null);
+    localStorage.removeItem('mock_user_role');
   };
 
   return (
@@ -116,6 +110,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         profile,
         loading,
         signOut,
+        signIn,
+        signUp,
       }}
     >
       {children}

@@ -5,50 +5,38 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Users, Search, Star, Award, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
+import { MOCK_PROFILES, Profile } from "@/data/mockData";
 
-interface Profile {
-  id: string;
-  user_id: string;
-  full_name: string;
-  email: string;
-  role: 'student' | 'faculty' | 'bod';
-  level: number;
-  rank: string;
-}
+// interface Profile ... (Removed locally defined interface, imported from mockData)
 
 export default function Students() {
   const [students, setStudents] = useState<Profile[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<Profile[]>([]);
-  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
+  const { user, profile: currentUser } = useAuth(); // Use useAuth
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchStudents();
-    getCurrentUser();
+    // getCurrentUser(); // Removed
   }, []);
 
-  useEffect(() => {
-    const filtered = students.filter(student =>
-      student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (student.rank && student.rank.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-    setFilteredStudents(filtered);
-  }, [students, searchTerm]);
+  //   useEffect(() => { ... (No change needed here, depends on students state)
 
   const fetchStudents = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', 'student')
-        .order('level', { ascending: false });
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      if (error) throw error;
-      setStudents(data || []);
+      // Filter for students from mock data
+      const studentProfiles = MOCK_PROFILES.filter(p => p.role === 'student')
+        .sort((a, b) => b.level - a.level);
+
+      setStudents(studentProfiles);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -60,23 +48,7 @@ export default function Students() {
     }
   };
 
-  const getCurrentUser = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error) throw error;
-        setCurrentUser(data);
-      }
-    } catch (error: any) {
-      console.error('Error fetching current user:', error);
-    }
-  };
+  // const getCurrentUser = ... (Removed)
 
   const getTopStudents = () => {
     return [...students]
@@ -88,7 +60,7 @@ export default function Students() {
     const totalStudents = students.length;
     const avgLevel = students.reduce((acc, s) => acc + s.level, 0) / totalStudents || 0;
     const topLevel = students.length > 0 ? Math.max(...students.map(s => s.level)) : 0;
-    
+
     return { totalStudents, avgLevel: Math.round(avgLevel * 10) / 10, topLevel };
   };
 
@@ -107,16 +79,16 @@ export default function Students() {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      <Navigation 
+      <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
           name: currentUser.full_name,
           rank: currentUser.rank,
           level: currentUser.level
         } : null}
-        onRoleChange={() => {}}
+        onRoleChange={() => { }}
       />
-      
+
       <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
         {/* Header */}
         <div className="text-center mb-16">
@@ -174,12 +146,11 @@ export default function Students() {
                 Celebrating our highest-achieving students
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {topStudents.map((student, index) => (
-                <Card key={student.id} className={`shadow-glass bg-gradient-glass backdrop-blur-xl border transition-all duration-500 hover:scale-[1.02] group ${
-                  index === 0 ? 'border-primary/40 shadow-glow' : 'border-border/30 hover:shadow-glass-hover'
-                }`}>
+                <Card key={student.id} className={`shadow-glass bg-gradient-glass backdrop-blur-xl border transition-all duration-500 hover:scale-[1.02] group ${index === 0 ? 'border-primary/40 shadow-glow' : 'border-border/30 hover:shadow-glass-hover'
+                  }`}>
                   <CardHeader className="pb-6 text-center">
                     <div className="relative mx-auto mb-4">
                       <Avatar className="h-20 w-20 shadow-glow border-4 border-border/20">
@@ -187,11 +158,10 @@ export default function Students() {
                           {student.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-button ${
-                        index === 0 ? 'bg-gradient-primary text-primary-foreground' : 
-                        index === 1 ? 'bg-gradient-secondary text-secondary-foreground' : 
-                        'bg-gradient-glass text-foreground border border-border/30'
-                      }`}>
+                      <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-button ${index === 0 ? 'bg-gradient-primary text-primary-foreground' :
+                        index === 1 ? 'bg-gradient-secondary text-secondary-foreground' :
+                          'bg-gradient-glass text-foreground border border-border/30'
+                        }`}>
                         {index + 1}
                       </div>
                     </div>
@@ -202,9 +172,8 @@ export default function Students() {
                   </CardHeader>
                   <CardContent className="text-center">
                     <div className="flex items-center justify-center gap-4">
-                      <Badge className={`shadow-button ${
-                        index === 0 ? 'bg-gradient-primary text-primary-foreground' : 'bg-gradient-glass text-foreground border border-border/30'
-                      }`}>
+                      <Badge className={`shadow-button ${index === 0 ? 'bg-gradient-primary text-primary-foreground' : 'bg-gradient-glass text-foreground border border-border/30'
+                        }`}>
                         Level {student.level}
                       </Badge>
                       <div className="flex items-center gap-1">
@@ -226,7 +195,7 @@ export default function Students() {
               <h2 className="text-4xl font-bold text-foreground mb-2">All Students</h2>
               <p className="text-muted-foreground">Browse and search through our student directory</p>
             </div>
-            
+
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -237,7 +206,7 @@ export default function Students() {
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredStudents.map((student) => (
               <Card key={student.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-300 hover:scale-[1.02] group">

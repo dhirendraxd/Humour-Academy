@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Shield, GraduationCap, Users, Crown, Sparkles } from "lucide-react";
 
@@ -24,39 +25,36 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const cleanupAuthState = () => {
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-        localStorage.removeItem(key);
-      }
-    });
-  };
+  // const cleanupAuthState = () => {
+  //   Object.keys(localStorage).forEach((key) => {
+  //     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+  //       localStorage.removeItem(key);
+  //     }
+  //   });
+  // };
+
+  const { signIn, signUp } = useAuth(); // Destructure methods from context instead of using supabase directly
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      cleanupAuthState();
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
+      // cleanupAuthState();
+
+      // Use mock signIn
+      await signIn(loginData.email);
+
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in",
       });
+      navigate('/', { replace: true });
 
-      if (error) throw error;
-
-      if (data.user) {
-        toast({
-          title: "Welcome back!",
-          description: "Successfully logged in",
-        });
-        navigate('/', { replace: true });
-      }
     } catch (error: any) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: error.message || "Failed to login",
         variant: "destructive"
       });
     } finally {
@@ -69,40 +67,29 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // Create the auth user with metadata
-      const { data, error } = await supabase.auth.signUp({
-        email: signupData.email,
-        password: signupData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: signupData.fullName,
-            role: signupData.role
-          }
-        }
+      // Use mock signUp
+      await signUp(signupData.email, signupData.fullName, signupData.role);
+
+      toast({
+        title: "Registration Successful!",
+        description: "Account created successfully. Logging you in...",
       });
 
-      if (error) throw error;
+      navigate('/', { replace: true });
 
-      if (data.user) {
-        toast({
-          title: "Registration Successful!",
-          description: "Account created successfully. You can now log in.",
-        });
+      // Reset form (though we navigate away)
+      setSignupData({
+        email: "",
+        password: "",
+        fullName: "",
+        role: "student",
+        reason: ""
+      });
 
-        // Reset form
-        setSignupData({
-          email: "",
-          password: "",
-          fullName: "",
-          role: "student",
-          reason: ""
-        });
-      }
     } catch (error: any) {
       toast({
         title: "Registration Failed",
-        description: error.message,
+        description: error.message || "Failed to sign up",
         variant: "destructive"
       });
     } finally {
@@ -165,7 +152,7 @@ export default function Auth() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
@@ -221,7 +208,7 @@ export default function Auth() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="signupPassword">Password</Label>
                     <Input
@@ -237,9 +224,9 @@ export default function Auth() {
 
                   <div>
                     <Label htmlFor="role">Requesting Role</Label>
-                    <Select 
-                      value={signupData.role} 
-                      onValueChange={(value: 'student' | 'faculty' | 'bod') => 
+                    <Select
+                      value={signupData.role}
+                      onValueChange={(value: 'student' | 'faculty' | 'bod') =>
                         setSignupData({ ...signupData, role: value })
                       }
                     >

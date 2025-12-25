@@ -5,39 +5,31 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Users, GraduationCap, Trophy, Star } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-interface Profile {
-  id: string;
-  user_id: string;
-  full_name: string;
-  email: string;
-  role: 'student' | 'faculty' | 'bod';
-  level: number;
-  rank: string;
-}
+import { useAuth } from "@/components/AuthProvider";
+import { MOCK_PROFILES, Profile } from "@/data/mockData";
 
 export default function Faculty() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
+  const { user, profile: currentUser } = useAuth(); // Use useAuth instead of separate fetch
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchProfiles();
-    getCurrentUser();
+    // getCurrentUser(); // No longer needed, handled by useAuth
   }, []);
 
   const fetchProfiles = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('level', { ascending: false });
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      if (error) throw error;
-      setProfiles(data || []);
+      // Use mock data
+      const sortedProfiles = [...MOCK_PROFILES].sort((a, b) => b.level - a.level);
+      setProfiles(sortedProfiles);
+
     } catch (error: any) {
       toast({
         title: "Error",
@@ -49,23 +41,7 @@ export default function Faculty() {
     }
   };
 
-  const getCurrentUser = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error) throw error;
-        setCurrentUser(data);
-      }
-    } catch (error: any) {
-      console.error('Error fetching current user:', error);
-    }
-  };
+  // const getCurrentUser = ... (Removed)
 
   const groupedProfiles = {
     bod: profiles.filter(p => p.role === 'bod'),
@@ -85,16 +61,16 @@ export default function Faculty() {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      <Navigation 
+      <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
           name: currentUser.full_name,
           rank: currentUser.rank,
           level: currentUser.level
         } : null}
-        onRoleChange={() => {}}
+        onRoleChange={() => { }}
       />
-      
+
       <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
         {/* Header */}
         <div className="text-center mb-16">
@@ -113,7 +89,7 @@ export default function Faculty() {
               </div>
               <h2 className="text-4xl font-bold text-foreground">Board of Directors</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {groupedProfiles.bod.map((profile) => (
                 <Card key={profile.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02] group">
@@ -156,7 +132,7 @@ export default function Faculty() {
               </div>
               <h2 className="text-4xl font-bold text-foreground">Faculty Members</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {groupedProfiles.faculty.map((profile) => (
                 <Card key={profile.id} className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 hover:shadow-glass-hover transition-all duration-300 hover:scale-[1.02] group">
@@ -199,7 +175,7 @@ export default function Faculty() {
               </div>
               <h2 className="text-4xl font-bold text-foreground">Student Community</h2>
             </div>
-            
+
             <Card className="shadow-glass bg-gradient-glass backdrop-blur-xl border border-border/30 text-center p-12">
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -209,8 +185,8 @@ export default function Faculty() {
                     Join our vibrant community of aspiring humorists learning the art and science of comedy
                   </p>
                 </div>
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   onClick={() => window.location.href = '/students'}
                   className="bg-gradient-primary text-primary-foreground shadow-button hover:shadow-glow hover:scale-[1.05] transition-all duration-300"
                 >
