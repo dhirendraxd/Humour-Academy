@@ -69,8 +69,7 @@ export const ParticleField = () => {
             top: `${particle.y}%`,
             width: `${particle.size}px`,
             height: `${particle.size}px`,
-            backgroundColor: particle.color,
-            opacity: particle.opacity,
+            backgroundColor: `hsla(var(--brand), ${particle.opacity})`,
             boxShadow: `0 0 ${particle.size * 3}px ${particle.color}`,
           }}
         />

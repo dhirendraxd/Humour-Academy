@@ -5,6 +5,8 @@ import { Navigation } from "@/components/Navigation";
 import { StudentDashboard } from "@/components/StudentDashboard";
 import { FacultyDashboard } from "@/components/FacultyDashboard";
 import { BODDashboard } from "@/components/BODDashboard";
+import { ParticleField } from "@/components/ParticleField";
+import { FadeIn } from "@/components/FadeIn";
 
 
 const Index = () => {
@@ -60,10 +62,13 @@ const Index = () => {
         }}
         onRoleChange={() => { }}
       />
+      <ParticleField />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderDashboard()}
-      </main>
+      <FadeIn>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+          {renderDashboard()}
+        </main>
+      </FadeIn>
     </div>
   );
 };

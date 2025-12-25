@@ -13,18 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Home,
   Users,
   GraduationCap,
   User,
   LogOut,
-  Shield,
   Crown,
-  Star,
   Settings,
-  ChevronDown
+  Star
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface NavigationProps {
   currentRole: 'student' | 'faculty' | 'bod';
@@ -40,143 +36,118 @@ import { useAuth } from "@/components/AuthProvider";
 
 export const Navigation = ({ currentRole, currentUser, onRoleChange }: NavigationProps) => {
   const navigate = useNavigate();
-  const { signOut: onSignOut } = useAuth(); // Get signOut from context
+  const { signOut: onSignOut } = useAuth();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState(location.pathname);
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'student': return <GraduationCap className="h-4 w-4" />;
-      case 'faculty': return <Star className="h-4 w-4" />;
-      case 'bod': return <Crown className="h-4 w-4" />;
-      default: return <User className="h-4 w-4" />;
+  const handleLogout = async () => {
+    try {
+      await onSignOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
-  const getRoleBadge = () => {
-    const variants = {
-      student: 'bg-gradient-secondary text-secondary-foreground shadow-button',
-      faculty: 'bg-gradient-primary text-primary-foreground shadow-button',
-      bod: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-button'
-    };
-
-    return (
-      <Badge className={`${variants[currentRole]} border-0 backdrop-blur-sm`}>
-        {getRoleIcon(currentRole)}
-        <span className="ml-1 capitalize">{currentRole}</span>
-      </Badge>
-    );
-  };
-
   return (
-    <nav className="bg-background/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-6">
-            <div className="text-2xl font-bold text-primary flex items-center gap-2">
-              <span>▲</span> Ramay Academy
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button
-              variant={activeTab === '/' ? 'default' : 'ghost'}
-              onClick={() => {
-                setActiveTab('/');
-                navigate('/');
-              }}
-              className="flex items-center space-x-2 backdrop-blur-sm"
-            >
-              <Home className="h-4 w-4" />
-              <span>Dashboard</span>
-            </Button>
-
-            <Button
-              variant={activeTab === '/faculty' ? 'default' : 'ghost'}
-              onClick={() => {
-                setActiveTab('/faculty');
-                navigate('/faculty');
-              }}
-              className="flex items-center space-x-2 backdrop-blur-sm"
-            >
-              <Star className="h-4 w-4" />
-              <span>Faculty</span>
-            </Button>
-
-            <Button
-              variant={activeTab === '/students' ? 'default' : 'ghost'}
-              onClick={() => {
-                setActiveTab('/students');
-                navigate('/students');
-              }}
-              className="flex items-center space-x-2 backdrop-blur-sm"
-            >
-              <GraduationCap className="h-4 w-4" />
-              <span>Students</span>
-            </Button>
-
-          </div>
-
-          {/* User Menu */}
-          <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2 h-auto p-2 hover:bg-accent/50">
-                  <Avatar className="h-9 w-9 shadow-glass border-2 border-border/20">
-                    <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
-                      {currentUser && currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('') : '?'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-sm border-border/50">
-                {currentUser && (
-                  <>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium text-foreground">{currentUser.name}</p>
-                        <p className="text-xs text-muted-foreground">{currentUser.rank || 'Member'}</p>
-                        <div className="pt-1">
-                          {getRoleBadge()}
-                        </div>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-
-                <DropdownMenuItem asChild>
-                  <div className="w-full">
-                    <ProfileEditDialog triggerAsMenuItem={true} />
-                  </div>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  onClick={async () => {
-                    try {
-                      // await supabase.auth.signOut();
-                      await onSignOut(); // Assuming we pass this or use useAuth
-                      navigate('/auth');
-                    } catch (error) {
-                      console.error('Error signing out:', error);
-                    }
-                  }}
-                  className="text-destructive focus:text-destructive cursor-pointer"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+    <header className="w-full py-6 px-6 md:px-12 lg:px-16 flex items-center bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border/40 mb-8 transition-all duration-300">
+      <div
+        className="flex items-center gap-2 mr-12 cursor-pointer"
+        onClick={() => navigate('/')}
+      >
+        <div className="text-xl font-bold tracking-tight flex items-center gap-2">
+          <span className="text-blue-600 text-2xl">▲</span>
+          Ramay Academy
         </div>
       </div>
-    </nav>
+
+      <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/students')}
+          className={`hover:text-blue-600 transition-colors ${location.pathname === '/students' ? 'text-blue-600' : ''}`}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          Students
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/faculty')}
+          className={`hover:text-blue-600 transition-colors ${location.pathname === '/faculty' ? 'text-blue-600' : ''}`}
+        >
+          <GraduationCap className="w-4 h-4 mr-2" />
+          Faculty
+        </Button>
+        {currentRole === 'bod' && (
+          <Button variant="ghost" disabled className="opacity-50 cursor-not-allowed">
+            <Crown className="w-4 h-4 mr-2" />
+            Board
+          </Button>
+        )}
+      </nav>
+
+      <div className="ml-auto flex items-center gap-4">
+        {currentUser ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-blue-600/10 transition-colors">
+                <Avatar className="h-10 w-10 border-2 border-transparent hover:border-blue-600 transition-all">
+                  <AvatarFallback className="bg-blue-600/10 text-blue-600 font-bold">
+                    {currentUser.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{currentUser.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {currentUser.rank} • Lvl {currentUser.level}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setShowProfileDialog(true)}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onRoleChange('student')}>
+                <Users className="mr-2 h-4 w-4" />
+                Student View
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onRoleChange('faculty')}>
+                <GraduationCap className="mr-2 h-4 w-4" />
+                Faculty View
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onRoleChange('bod')}>
+                <Crown className="mr-2 h-4 w-4" />
+                Board View
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button onClick={() => navigate('/auth')}>Sign In</Button>
+        )}
+      </div>
+
+      <ProfileEditDialog
+        open={showProfileDialog}
+        onOpenChange={setShowProfileDialog}
+      />
+    </header>
   );
 };

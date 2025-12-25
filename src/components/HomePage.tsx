@@ -9,7 +9,7 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20">
       <ParticleField />
 
       {/* Navigation */}
@@ -17,16 +17,16 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         <div className="flex items-center gap-2 mr-12 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
           {/* Simple Logo */}
           <div className="text-xl font-bold tracking-tight flex items-center gap-2">
-            <span className="text-primary text-2xl">▲</span> {/* Abstract triangle icon */}
+            <span className="text-blue-600 text-2xl">▲</span> {/* Abstract triangle icon */}
             Ramay Academy
           </div>
         </div>
 
         <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center">
-          <a href="#curriculum" className="hover:text-primary transition-colors">Curriculum</a>
-          <a href="#faculty" className="hover:text-primary transition-colors">Faculty</a>
-          <a href="#events" className="hover:text-primary transition-colors">Events</a>
-          <a href="#about" className="hover:text-primary transition-colors">About</a>
+          <a href="#curriculum" className="hover:text-blue-600 transition-colors">Curriculum</a>
+          <a href="#faculty" className="hover:text-blue-600 transition-colors">Faculty</a>
+          <a href="#events" className="hover:text-blue-600 transition-colors">Events</a>
+          <a href="#about" className="hover:text-blue-600 transition-colors">About</a>
         </nav>
 
         <div className="ml-auto">
@@ -45,7 +45,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         <section className="pt-24 pb-32 px-6 text-center max-w-5xl mx-auto space-y-10 z-10">
           <FadeIn delay={100}>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-foreground leading-[0.95]">
-              <span className="text-primary">Master Leadership</span> <br />
+              <span className="text-blue-600">Master Leadership</span> <br />
               through the Art of Humor
             </h1>
           </FadeIn>
@@ -88,7 +88,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             ].map((stat, i) => (
               <FadeIn key={i} delay={i * 100} direction="up">
                 <div className="space-y-1">
-                  <div className="text-4xl font-bold tracking-tight text-primary">{stat.value}</div>
+                  <div className="text-4xl font-bold tracking-tight text-blue-600">{stat.value}</div>
                   <div className="text-sm text-foreground font-medium uppercase tracking-wider">{stat.label}</div>
                 </div>
               </FadeIn>
@@ -101,7 +101,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           <div className="max-w-6xl mx-auto">
             <FadeIn>
               <div className="mb-16 text-center space-y-4">
-                <span className="text-primary font-bold tracking-wider uppercase text-sm">Professional Development</span>
+                <span className="text-blue-600 font-bold tracking-wider uppercase text-sm">Professional Development</span>
                 <h2 className="text-4xl md:text-5xl font-bold">The Science of Soft Skills</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Our curriculum translates comedic principles into executive superpowers.

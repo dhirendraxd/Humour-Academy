@@ -8,11 +8,33 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Loader2 } from "lucide-react";
 
-export const ProfileEditDialog = ({ triggerAsMenuItem = false }: { triggerAsMenuItem?: boolean }) => {
+interface ProfileEditDialogProps {
+  triggerAsMenuItem?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const ProfileEditDialog = ({
+  triggerAsMenuItem = false,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen
+}: ProfileEditDialogProps) => {
   const { profile } = useAuth();
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+  // Use a safe setter that checks if setControlledOpen is defined before calling
+  const setIsOpen = (value: boolean) => {
+    if (isControlled && setControlledOpen) {
+      setControlledOpen(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
+
   const [formData, setFormData] = useState({
     full_name: profile?.full_name || "",
     rank: profile?.rank || ""
@@ -38,7 +60,7 @@ export const ProfileEditDialog = ({ triggerAsMenuItem = false }: { triggerAsMenu
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",
       });
-      
+
       setIsOpen(false);
       // The profile will be automatically updated via the AuthProvider
     } catch (error) {
@@ -88,7 +110,7 @@ export const ProfileEditDialog = ({ triggerAsMenuItem = false }: { triggerAsMenu
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="rank">Rank/Title (Optional)</Label>
             <Input

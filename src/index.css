@@ -8,143 +8,87 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern Glass Design System */
-    --background: 240 100% 99%;
-    /* Ultra light background */
-    --foreground: 221 39% 11%;
-    /* Rich dark text */
+    /* Strict Antigravity System */
+    --background: 0 0% 100%;
+    /* Pure White */
+    --foreground: 0 0% 0%;
+    /* Pure Black */
 
     --card: 0 0% 100%;
-    /* Solid cards */
-    --card-foreground: 221 39% 11%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 221 39% 11%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 239 84% 67%;
-    /* Bright modern blue */
+    --primary: 0 0% 0%;
+    /* Black for Buttons/Text */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 239 76% 78%;
-    /* Lighter blue */
+    /* White Text on Black Button */
+
+    --brand: 221 83% 53%;
+    /* Strong Blue for "Plates"/Accents */
 
     --secondary: 0 0% 96%;
     /* Light Gray */
-    --secondary-foreground: 0 0% 10%;
-
-    --tertiary: 172 66% 50%;
-    /* Subtle teal-green */
-    --tertiary-foreground: 0 0% 100%;
-    --quaternary: 200 85% 55%;
-    /* Ocean blue */
-    --quaternary-foreground: 0 0% 100%;
+    --secondary-foreground: 0 0% 0%;
 
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 199 89% 96%;
-    /* Very light blue accent */
-    --accent-foreground: 199 89% 48%;
+    --accent: 0 0% 96%;
+    /* Gray accent backgrounds */
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 80%;
-    /* Solid borders */
+    --border: 0 0% 90%;
     --input: 0 0% 100%;
-    /* Solid inputs */
-    --ring: 239 84% 67%;
+    --ring: 0 0% 0%;
 
-    /* Glass gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(262 83% 58%));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.25), hsl(240 20% 96% / 0.1));
-    --gradient-hero: linear-gradient(135deg, hsl(239 84% 67% / 0.1) 0%, hsl(262 83% 58% / 0.05) 100%);
-    --gradient-background: radial-gradient(ellipse at top, hsl(239 50% 98%) 0%, hsl(240 100% 99%) 100%);
-    --gradient-ocean: linear-gradient(135deg, hsl(172 66% 50% / 0.2) 0%, hsl(200 85% 55% / 0.15) 100%);
-    --gradient-academic: linear-gradient(135deg, hsl(200 85% 55% / 0.1), hsl(172 66% 50% / 0.05));
+    --radius: 0.5rem;
 
-    /* Glass shadows */
-    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.1), 0 2px 16px 0 hsl(0 0% 0% / 0.05);
-    --shadow-glass-hover: 0 16px 48px 0 hsl(0 0% 0% / 0.15), 0 4px 24px 0 hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 32px hsl(239 84% 67% / 0.3);
-    --shadow-button: 0 4px 16px 0 hsl(239 84% 67% / 0.3);
-    --shadow-academic: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    /* Clean, no gradients */
+    --gradient-primary: none;
+    --gradient-glass: none;
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100% / 0) 0%, hsl(221 83% 53% / 0.03) 100%);
 
-    --radius: 0.75rem;
-
-    --sidebar-background: 214 32% 97%;
-    --sidebar-foreground: 214 31% 17%;
-    --sidebar-primary: 214 84% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 32% 91%;
-    --sidebar-accent-foreground: 214 84% 16%;
-    --sidebar-border: 214 32% 87%;
-    --sidebar-ring: 214 84% 56%;
+    /* Simple shadows */
+    --shadow-glass: none;
+    --shadow-glass-hover: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+    --shadow-button: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
   }
 
   .dark {
-    /* Dark glass mode */
-    --background: 221 39% 4%;
-    --foreground: 0 0% 95%;
+    /* Not focusing on dark mode, but keeping it functional/standard */
+    --background: 0 0% 3%;
+    --foreground: 0 0% 98%;
 
-    --card: 221 39% 10%;
-    /* Dark solid cards */
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 221 39% 8%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 239 84% 67%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 262 83% 58%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --tertiary: 172 66% 50%;
-    /* Subtle teal-green */
-    --tertiary-foreground: 0 0% 100%;
-    --quaternary: 200 85% 55%;
-    /* Ocean blue */
-    --quaternary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
 
-    --muted: 221 39% 15%;
-    /* Dark solid muted */
-    --muted-foreground: 221 13% 65%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 98%;
 
-    --accent: 221 39% 18%;
-    /* Dark solid accent */
-    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --destructive: 0 76% 65%;
-    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 98%;
 
-    --border: 240 20% 25%;
-    /* Dark solid borders */
-    --input: 221 39% 15%;
-    /* Dark solid inputs */
-    --ring: 239 84% 67%;
-
-    /* Dark glass gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(262 83% 58%));
-    --gradient-glass: linear-gradient(135deg, hsl(221 39% 15% / 0.4), hsl(221 39% 7% / 0.2));
-    --gradient-hero: linear-gradient(135deg, hsl(239 84% 67% / 0.1) 0%, hsl(262 83% 58% / 0.05) 100%);
-    --gradient-background: radial-gradient(ellipse at top, hsl(221 39% 6%) 0%, hsl(221 39% 4%) 100%);
-    --gradient-ocean: linear-gradient(135deg, hsl(172 66% 50% / 0.3) 0%, hsl(200 85% 55% / 0.2) 100%);
-    --gradient-academic: linear-gradient(135deg, hsl(200 85% 55% / 0.15), hsl(172 66% 50% / 0.1));
-
-    /* Dark glass shadows */
-    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4), 0 2px 16px 0 hsl(0 0% 0% / 0.2);
-    --shadow-glass-hover: 0 16px 48px 0 hsl(0 0% 0% / 0.6), 0 4px 24px 0 hsl(0 0% 0% / 0.3);
-    --shadow-glow: 0 0 32px hsl(239 84% 67% / 0.4);
-    --shadow-academic: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
-    --shadow-button: 0 4px 16px 0 hsl(239 84% 67% / 0.4);
-
-    --sidebar-background: 214 50% 5%;
-    --sidebar-foreground: 214 32% 91%;
-    --sidebar-primary: 214 84% 64%;
-    --sidebar-primary-foreground: 214 50% 5%;
-    --sidebar-accent: 214 32% 15%;
-    --sidebar-accent-foreground: 214 32% 91%;
-    --sidebar-border: 214 32% 15%;
-    --sidebar-ring: 214 84% 64%;
+    --brand: 217 91% 60%;
   }
 }
