@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/FadeIn";
 import { PageLayout } from "@/components/PageLayout";
+import { useNavigate } from "react-router-dom";
 
 interface HomePageProps {
   onLoginClick: () => void;
 }
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
+  const navigate = useNavigate();
+
   return (
     <PageLayout footerIntensity="low">
       <div className="flex flex-col items-center overflow-hidden">
@@ -38,9 +41,10 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               <Button
                 size="lg"
                 variant="secondary"
+                onClick={() => navigate('/curriculum')}
                 className="rounded-full px-8 h-12 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all border border-border hover:scale-105"
               >
-                View Syllabus
+                View Curriculum
               </Button>
             </div>
           </FadeIn>

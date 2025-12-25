@@ -10,15 +10,15 @@ export const HeroBackground = () => {
             <div className="absolute inset-0 bg-gradient-hero opacity-100"></div>
 
             {/* Gradient Mesh / Waves */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-30">
+            <div className="absolute top-0 left-0 w-full h-full opacity-40">
                 {/* Large Cyan Blob (Top Left) */}
-                <div className="absolute top-[-20%] left-[-20%] w-[100vw] h-[100vh] bg-blue-600/5 rounded-full mix-blend-multiply filter blur-[120px] animate-blob"></div>
+                <div className="absolute top-[-30%] left-[-20%] w-[100vw] h-[100vh] bg-blue-600/[0.03] rounded-full mix-blend-multiply filter blur-[160px] animate-blob"></div>
 
                 {/* Large Sky Blob (Top Right) */}
-                <div className="absolute top-[-20%] right-[-20%] w-[100vw] h-[100vh] bg-cyan-400/5 rounded-full mix-blend-multiply filter blur-[120px] animate-blob animation-delay-2000"></div>
+                <div className="absolute top-[-30%] right-[-20%] w-[100vw] h-[100vh] bg-cyan-400/[0.03] rounded-full mix-blend-multiply filter blur-[160px] animate-blob animation-delay-2000"></div>
 
                 {/* Bottom Center Depth */}
-                <div className="absolute bottom-[-30%] left-[-10%] w-[120vw] h-[100vh] bg-blue-400/5 rounded-full mix-blend-multiply filter blur-[120px] animate-blob animation-delay-4000"></div>
+                <div className="absolute bottom-[-40%] left-[-10%] w-[120vw] h-[100vh] bg-blue-400/[0.03] rounded-full mix-blend-multiply filter blur-[160px] animate-blob animation-delay-4000"></div>
             </div>
 
             {/* Noise Texture layer for "Frost" feel */}

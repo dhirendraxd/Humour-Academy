@@ -12,10 +12,10 @@ export const Footer = ({ intensity = 'low' }: FooterProps) => {
         <footer className="py-12 px-6 border-t border-blue-600/10 text-center text-sm text-muted-foreground relative overflow-hidden">
             {/* Atmospheric Gradients */}
             <div
-                className={`absolute inset-0 bg-gradient-to-b from-background via-blue-900/${isHigh ? '10' : '5'} to-blue-900/${isHigh ? '20' : '10'} pointer-events-none transition-all duration-500`}
+                className={`absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/${isHigh ? '10' : '5'} to-cyan-500/${isHigh ? '15' : '8'} pointer-events-none transition-all duration-500`}
             />
             <div
-                className={`absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-600/${isHigh ? '20' : '10'} via-transparent to-transparent pointer-events-none transition-all duration-500`}
+                className={`absolute inset-0 bg-[radial-gradient(circle_at_bottom,_var(--tw-gradient-stops))] from-blue-400/${isHigh ? '25' : '15'} via-transparent to-transparent pointer-events-none transition-all duration-500`}
             />
             <FooterParticles />
 

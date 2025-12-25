@@ -3,8 +3,11 @@ import { FadeIn } from "@/components/FadeIn";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { History, Target, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function About() {
+    const navigate = useNavigate();
+
     return (
         <PageLayout>
             <FadeIn>
@@ -106,7 +109,11 @@ export default function About() {
                             Whether you're looking to lead a boardroom or just conquer your fear of public speaking,
                             there is a place for you at Ramay.
                         </p>
-                        <Button size="lg" className="rounded-full px-8 h-12 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 shadow-button">
+                        <Button
+                            size="lg"
+                            onClick={() => navigate('/auth')}
+                            className="rounded-full px-8 h-12 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 shadow-button"
+                        >
                             Join the Academy
                         </Button>
                     </div>
