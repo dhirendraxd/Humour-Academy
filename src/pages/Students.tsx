@@ -78,7 +78,7 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-background glacier-theme">
+    <div className="min-h-screen bg-background">
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {

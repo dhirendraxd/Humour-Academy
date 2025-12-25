@@ -50,7 +50,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background glacier-theme">
+    <div className="min-h-screen bg-background">
       <Navigation
         currentRole={profile.role}
         currentUser={{

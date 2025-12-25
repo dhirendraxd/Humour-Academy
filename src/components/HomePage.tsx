@@ -45,15 +45,15 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         <section className="pt-24 pb-32 px-6 text-center max-w-5xl mx-auto space-y-10 z-10">
           <FadeIn delay={100}>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-foreground leading-[0.95]">
-              <span className="text-primary">Next-generation</span> <br />
-              comedy school
+              <span className="text-primary">Master Leadership</span> <br />
+              through the Art of Humor
             </h1>
           </FadeIn>
 
           <FadeIn delay={300}>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
-              We don't just teach you how to be funny. We engineer the science of laughter.
-              Join the world's premier institution for comedic arts.
+              We use comedy mechanics to build world-class communication, confidence, and leadership skills.
+              Join the premier institution for soft skills development.
             </p>
           </FadeIn>
 
@@ -81,10 +81,10 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         <section className="w-full py-16 border-y border-border/40 bg-secondary/20">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { label: "Active Students", value: "500+" },
-              { label: "Certified Courses", value: "12" },
-              { label: "Guest Lecturers", value: "25+" },
-              { label: "Alumni Network", value: "2k+" },
+              { label: "Active Leaders", value: "500+" },
+              { label: "Corporate Partners", value: "12" },
+              { label: "Executive Coaches", value: "25+" },
+              { label: "Global Alumni", value: "2k+" },
             ].map((stat, i) => (
               <FadeIn key={i} delay={i * 100} direction="up">
                 <div className="space-y-1">
@@ -101,11 +101,11 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
           <div className="max-w-6xl mx-auto">
             <FadeIn>
               <div className="mb-16 text-center space-y-4">
-                <span className="text-primary font-bold tracking-wider uppercase text-sm">Academic Rigor</span>
-                <h2 className="text-4xl md:text-5xl font-bold">The Science of Humor</h2>
+                <span className="text-primary font-bold tracking-wider uppercase text-sm">Professional Development</span>
+                <h2 className="text-4xl md:text-5xl font-bold">The Science of Soft Skills</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Our curriculum breaks down comedy into its fundamental particles.
-                  Master the physics of timing and the chemistry of wit.
+                  Our curriculum translates comedic principles into executive superpowers.
+                  Master the physics of timing and the chemistry of connection.
                 </p>
               </div>
             </FadeIn>
@@ -114,18 +114,18 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               {[
                 {
                   icon: BookOpen,
-                  title: "Theory of Irony",
-                  desc: "A deep dive into the dissonance between expectation and reality."
+                  title: "Emotional Intelligence & Wit",
+                  desc: "A deep dive into reading rooms, navigating tension, and building instant rapport."
                 },
                 {
                   icon: Mic,
-                  title: "Applied Stand-up",
-                  desc: "Practical lab work focusing on delivery, crowd work, and heckler management."
+                  title: "Public Speaking & Presence",
+                  desc: "Practical lab work focusing on delivery, stage command, and authentic storytelling."
                 },
                 {
                   icon: Users,
-                  title: "Improvisational Dynamics",
-                  desc: "Real-time comedic synthesis and collaborative scene building."
+                  title: "Adaptive Leadership",
+                  desc: "Real-time decision making and collaborative dynamic adjustment under pressure."
                 }
               ].map((course, i) => (
                 <FadeIn key={i} delay={i * 200}>
@@ -149,18 +149,18 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               <FadeIn direction="left">
                 <span className="text-primary font-bold tracking-wider uppercase text-sm">Our Philosophy</span>
                 <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                  "Funny is serious business."
+                  "Humour is the ultimate soft skill."
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  At Ramay Academy, we reject the notion that you're just "born with it."
-                  Humor is a discipline, a muscle, and a science. We provide the laboratory
-                  where you experiment with the boundaries of what makes people laugh.
+                  At Ramay Academy, we reject the notion that leadership must be rigid.
+                  Humor is a tool for connection, resilience, and influence. We provide the laboratory
+                  where you experiment with the boundaries of authentic leadership.
                 </p>
                 <div className="flex flex-col gap-4 pt-4">
                   {[
-                    "Research-backed methodologies",
-                    "Industry-standard performance spaces",
-                    "Global network of comedy clubs"
+                    "Psychology-backed methodologies",
+                    "Corporate simulation environments",
+                    "Global network of industry leaders"
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 font-medium">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
@@ -198,10 +198,10 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
               <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-              <h2 className="text-4xl md:text-5xl font-bold relative z-10">Ready to take the mic?</h2>
+              <h2 className="text-4xl md:text-5xl font-bold relative z-10">Unlock Your Potential?</h2>
               <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto relative z-10">
-                Admissions for the upcoming semester close in 14 days.
-                Secure your spot in the spotlight.
+                Admissions for the upcoming executive cohort close in 14 days.
+                Secure your place in the boardroom.
               </p>
               <div className="pt-4 relative z-10">
                 <Button
@@ -221,14 +221,14 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12 text-left">
           <div>
             <div className="font-bold text-foreground mb-4">Ramay Academy</div>
-            <p className="leading-relaxed">Educating the next generation of humorists since 2010.</p>
+            <p className="leading-relaxed">Building leaders through the power of humor since 2010.</p>
           </div>
           <div>
             <div className="font-bold text-foreground mb-4">Programs</div>
             <ul className="space-y-2">
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Stand-up</a></li>
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Improv</a></li>
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Sketch Writing</a></li>
+              <li><a href="#curriculum" className="hover:text-primary transition-colors">Executive Presence</a></li>
+              <li><a href="#curriculum" className="hover:text-primary transition-colors">Team Dynamics</a></li>
+              <li><a href="#curriculum" className="hover:text-primary transition-colors">Storytelling</a></li>
             </ul>
           </div>
           <div>
