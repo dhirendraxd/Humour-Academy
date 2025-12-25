@@ -1,25 +1,13 @@
 import { Link } from "react-router-dom";
-import { FooterParticles } from "@/components/FooterParticles";
 
 interface FooterProps {
     intensity?: 'low' | 'high';
 }
 
 export const Footer = ({ intensity = 'low' }: FooterProps) => {
-    const isHigh = intensity === 'high';
-
     return (
-        <footer className="py-12 px-6 border-t border-blue-600/10 text-center text-sm text-muted-foreground relative overflow-hidden">
-            {/* Atmospheric Gradients */}
-            <div
-                className={`absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/${isHigh ? '10' : '5'} to-cyan-500/${isHigh ? '15' : '8'} pointer-events-none transition-all duration-500`}
-            />
-            <div
-                className={`absolute inset-0 bg-[radial-gradient(circle_at_bottom,_var(--tw-gradient-stops))] from-blue-400/${isHigh ? '25' : '15'} via-transparent to-transparent pointer-events-none transition-all duration-500`}
-            />
-            <FooterParticles />
-
-            <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12 text-left relative z-10">
+        <footer className="py-12 px-6 border-t border-border text-center text-sm text-muted-foreground relative">
+            <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12 text-left">
                 <div>
                     <div className="font-bold text-foreground mb-4">Ramay Academy</div>
                     <p className="leading-relaxed">Building leaders through the power of humor since 2010.</p>
@@ -48,7 +36,7 @@ export const Footer = ({ intensity = 'low' }: FooterProps) => {
                     </ul>
                 </div>
             </div>
-            <div className="flex justify-between items-center max-w-6xl mx-auto pt-8 border-t border-border/20 relative z-10">
+            <div className="flex justify-between items-center max-w-6xl mx-auto pt-8 border-t border-border/20">
                 <p>&copy; 2024 Ramay Institute of Humour.</p>
                 <div className="flex gap-4">
                     <a href="#" className="hover:text-foreground transition-colors">Twitter</a>
