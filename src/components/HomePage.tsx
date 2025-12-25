@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Users, Trophy, ChevronRight, Play, BookOpen, Star, Sparkles, Mic } from "lucide-react";
+import { GraduationCap, Users, Trophy, ChevronRight, BookOpen, Mic } from "lucide-react";
 import { ParticleField } from "@/components/ParticleField";
 import { FadeIn } from "@/components/FadeIn";
+import { PublicNavigation } from "@/components/PublicNavigation";
 
 interface HomePageProps {
   onLoginClick: () => void;
@@ -11,33 +12,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20">
       <ParticleField />
-
-      {/* Navigation */}
-      <header className="w-full py-6 px-6 md:px-12 lg:px-16 flex items-center bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border/40">
-        <div className="flex items-center gap-2 mr-12 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-          {/* Simple Logo */}
-          <div className="text-xl font-bold tracking-tight flex items-center gap-2">
-            <span className="text-blue-600 text-2xl">▲</span> {/* Abstract triangle icon */}
-            Ramay Academy
-          </div>
-        </div>
-
-        <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center">
-          <a href="#curriculum" className="hover:text-blue-600 transition-colors">Curriculum</a>
-          <a href="#faculty" className="hover:text-blue-600 transition-colors">Faculty</a>
-          <a href="#events" className="hover:text-blue-600 transition-colors">Events</a>
-          <a href="#about" className="hover:text-blue-600 transition-colors">About</a>
-        </nav>
-
-        <div className="ml-auto">
-          <Button
-            onClick={onLoginClick}
-            className="rounded-full px-6 font-medium bg-foreground text-background hover:bg-foreground/90 transition-opacity shadow-none h-10"
-          >
-            Student Portal
-          </Button>
-        </div>
-      </header>
+      <PublicNavigation />
 
       <main className="flex-grow flex flex-col items-center relative overflow-hidden">
 
