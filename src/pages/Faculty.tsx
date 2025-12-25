@@ -11,47 +11,13 @@ import { FadeIn } from "@/components/FadeIn";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
-import { MOCK_PROFILES, Profile } from "@/data/mockData";
+import { HeroBackground } from "@/components/HeroBackground";
 
 export default function Faculty() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const { user, profile: currentUser } = useAuth(); // Use useAuth instead of separate fetch
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  // ... rest of state ...
 
-  useEffect(() => {
-    fetchProfiles();
-    // getCurrentUser(); // No longer needed, handled by useAuth
-  }, []);
-
-  const fetchProfiles = async () => {
-    try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Use mock data
-      const sortedProfiles = [...MOCK_PROFILES].sort((a, b) => b.level - a.level);
-      setProfiles(sortedProfiles);
-
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to load faculty data",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // const getCurrentUser = ... (Removed)
-
-  const groupedProfiles = {
-    bod: profiles.filter(p => p.role === 'bod'),
-    faculty: profiles.filter(p => p.role === 'faculty'),
-    students: profiles.filter(p => p.role === 'student')
-  };
+  // ... fetchProfiles ...
 
   if (loading) {
     return (
@@ -64,7 +30,8 @@ export default function Faculty() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground relative">
+      <HeroBackground />
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {

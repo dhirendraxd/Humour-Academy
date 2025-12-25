@@ -59,6 +59,56 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
 
 
 
+        {/* Timeline "The Journey" Section */}
+        <section className="w-full py-32 px-6 relative">
+          <div className="max-w-4xl mx-auto relative">
+            {/* Central Line */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-blue-500/30 transform md:-translate-x-1/2"></div>
+
+            {[
+              {
+                title: "The Spark",
+                desc: "You identify the gap between your competence and your impact.",
+                icon: "✨"
+              },
+              {
+                title: "The Mechanics",
+                desc: "Learn to deconstruct tension and rebuild it as influence.",
+                icon: "🛠️"
+              },
+              {
+                title: "The Stage",
+                desc: "Practice high-stakes communication in low-stakes environments.",
+                icon: "🎙️"
+              },
+              {
+                title: "The Leader",
+                desc: "Return to your boardroom with magnetism, wit, and authority.",
+                icon: "🚀"
+              }
+            ].map((item, index) => (
+              <FadeIn key={index} direction={index % 2 === 0 ? "right" : "left"} delay={index * 200}>
+                <div className={`flex flex-col md:flex-row gap-8 items-center mb-24 relative ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}>
+                  {/* Node on Line */}
+                  <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-background transform -translate-x-1/2 z-10"></div>
+
+                  {/* Content Card */}
+                  <div className="ml-12 md:ml-0 md:w-1/2 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-blue-500/30 transition-colors">
+                    <div className="text-3xl mb-4">{item.icon}</div>
+                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  {/* Empty spacer for alternating layout */}
+                  <div className="hidden md:block md:w-1/2"></div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="w-full py-32 px-6">
           <FadeIn direction="up">

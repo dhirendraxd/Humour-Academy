@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Mic, Users, Brain, Sparkles, Download } from "lucide-react";
+import { HeroBackground } from "@/components/HeroBackground";
 
 export default function Curriculum() {
     const courses = [
@@ -39,7 +40,8 @@ export default function Curriculum() {
     ];
 
     return (
-        <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-blue-600/20">
+        <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20 relative">
+            <HeroBackground />
             <ParticleField />
             <PublicNavigation />
 

@@ -11,6 +11,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { MOCK_PROFILES, Profile } from "@/data/mockData";
+import { HeroBackground } from "@/components/HeroBackground";
 
 // interface Profile ... (Removed locally defined interface, imported from mockData)
 
@@ -80,7 +81,8 @@ export default function Students() {
   const topStudents = getTopStudents();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground relative">
+      <HeroBackground />
       <Navigation
         currentRole={currentUser?.role || 'student'}
         currentUser={currentUser ? {
