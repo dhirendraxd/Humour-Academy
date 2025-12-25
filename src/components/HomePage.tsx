@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { ParticleField } from "@/components/ParticleField";
 import { FadeIn } from "@/components/FadeIn";
 import { PublicNavigation } from "@/components/PublicNavigation";
+import { FooterParticles } from "@/components/FooterParticles";
+import { HeroBackground } from "@/components/HeroBackground";
 
 interface HomePageProps {
   onLoginClick: () => void;
@@ -9,14 +11,15 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-blue-600/20 relative">
+      <HeroBackground />
       <ParticleField />
       <PublicNavigation />
 
       <main className="flex-grow flex flex-col items-center relative overflow-hidden">
 
         {/* Hero Section */}
-        <section className="pt-24 pb-32 px-6 text-center max-w-5xl mx-auto space-y-10 z-10">
+        <section className="pt-24 pb-32 px-6 text-center max-w-5xl mx-auto space-y-10 z-10 relative">
           <FadeIn delay={100}>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-foreground leading-[0.95]">
               <span className="text-blue-600">Master Leadership</span> <br />
@@ -98,8 +101,13 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
 
       </main>
 
-      <footer className="py-12 px-6 border-t border-border/40 text-center text-sm text-muted-foreground bg-secondary/5">
-        <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12 text-left">
+      <footer className="py-12 px-6 border-t border-blue-600/10 text-center text-sm text-muted-foreground relative overflow-hidden">
+        {/* Footer Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-blue-900/5 to-blue-900/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none" />
+        <FooterParticles />
+
+        <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12 text-left relative z-10">
           <div>
             <div className="font-bold text-foreground mb-4">Ramay Academy</div>
             <p className="leading-relaxed">Building leaders through the power of humor since 2010.</p>
@@ -128,7 +136,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
             </ul>
           </div>
         </div>
-        <div className="flex justify-between items-center max-w-6xl mx-auto pt-8 border-t border-border/20">
+        <div className="flex justify-between items-center max-w-6xl mx-auto pt-8 border-t border-border/20 relative z-10">
           <p>&copy; 2024 Ramay Institute of Humour.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-foreground transition-colors">Twitter</a>
