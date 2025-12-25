@@ -115,7 +115,7 @@ export default function Auth() {
             <span className="text-4xl text-primary">▲</span>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Ramay Institute
+            Ramay Academy
           </h1>
           <p className="text-muted-foreground">
             Where humor meets academic excellence

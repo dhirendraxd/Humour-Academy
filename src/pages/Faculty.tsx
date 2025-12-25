@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export default function Faculty() {
   const { user, profile: currentUser } = useAuth(); // Use useAuth instead of separate fetch
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProfiles();
@@ -187,7 +189,7 @@ export default function Faculty() {
                 </div>
                 <Button
                   size="lg"
-                  onClick={() => window.location.href = '/students'}
+                  onClick={() => navigate('/students')}
                   className="bg-primary text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
                 >
                   <Users className="mr-2 h-5 w-5" />
