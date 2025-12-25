@@ -78,7 +78,7 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               <FadeIn key={index} direction={index % 2 === 0 ? "right" : "left"} delay={index * 200}>
                 <div className={`flex flex-col md:flex-row gap-8 items-center mb-24 relative ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}>
                   <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-background transform -translate-x-1/2 z-10"></div>
-                  <div className="ml-12 md:ml-0 md:w-1/2 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-blue-500/30 transition-colors">
+                  <div className="ml-12 md:ml-0 md:w-1/2 p-6 rounded-2xl bg-gradient-glass backdrop-blur-md border border-white/20 hover:border-blue-500/30 shadow-sm hover:shadow-md transition-all">
                     <div className="text-3xl mb-4">{item.icon}</div>
                     <h3 className="text-xl font-bold mb-2">{item.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">
@@ -95,12 +95,12 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
         {/* CTA Section */}
         <section className="w-full py-32 px-6">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto text-center space-y-8 p-12 rounded-[3rem] bg-primary text-primary-foreground relative overflow-hidden shadow-2xl hover:shadow-primary/50 transition-shadow duration-500">
+            <div className="max-w-4xl mx-auto text-center space-y-8 p-12 rounded-[3rem] bg-gradient-primary text-primary-foreground relative overflow-hidden shadow-button hover:shadow-glow transition-all duration-500">
               <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
               <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
               <h2 className="text-4xl md:text-5xl font-bold relative z-10">Unlock Your Potential?</h2>
-              <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto relative z-10">
+              <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto relative z-10">
                 Admissions for the upcoming executive cohort close in 14 days.
                 Secure your place in the boardroom.
               </p>
