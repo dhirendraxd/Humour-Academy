@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Users, Trophy, BookOpen, Sparkles, ChevronRight } from "lucide-react";
-import { ParticleField } from "./ParticleField";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GraduationCap, Users, Trophy, ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface HomePageProps {
   onLoginClick: () => void;
@@ -9,207 +8,180 @@ interface HomePageProps {
 
 export const HomePage = ({ onLoginClick }: HomePageProps) => {
   return (
-    <div className="min-h-screen bg-gradient-background relative overflow-hidden">
-      <ParticleField />
-      
-      {/* Navigation */}
-      <header className="relative z-50">
-        <nav className="border-b border-border/20 bg-gradient-glass/40 backdrop-blur-xl sticky top-0">
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-            <div className="flex justify-between items-center h-20">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow animate-pulse">
-                  <Sparkles className="h-6 w-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                    Ramay Institute
-                  </h1>
-                  <p className="text-xs text-muted-foreground font-medium tracking-wide">
-                    COMEDY EXCELLENCE
-                  </p>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={onLoginClick}
-                size="lg"
-                className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.05] transition-all duration-300 backdrop-blur-sm group"
-              >
-                <span className="group-hover:animate-pulse">Join the Academy</span>
-                <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+
+      {/* Minimal Navigation */}
+      <header className="w-full py-6 px-6 md:px-12 lg:px-24 flex justify-between items-center bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          {/* Simple Logo Concept */}
+          <div className="text-xl font-bold tracking-tight text-primary">Ramay Institute</div>
+        </div>
+
+        <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground">
+          <a href="#" className="hover:text-primary transition-colors">Academy</a>
+          <a href="#" className="hover:text-primary transition-colors">Faculty</a>
+          <a href="#" className="hover:text-primary transition-colors">Admissions</a>
         </nav>
+
+        <Button
+          onClick={onLoginClick}
+          className="rounded-full px-6 bg-primary text-primary-foreground hover:opacity-90 transition-opacity shadow-none"
+        >
+          Portal Login
+        </Button>
       </header>
 
-      {/* Hero Section */}
-      <main className="relative">
-        <section className="relative py-32 px-6 sm:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center space-y-12">
-              {/* Main Headline */}
-              <div className="space-y-8">
-                <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-glass backdrop-blur-sm border border-border/30 shadow-glass">
-                  <Sparkles className="h-5 w-5 text-primary mr-2 animate-pulse" />
-                  <span className="text-sm font-medium text-foreground">Welcome to Excellence</span>
-                </div>
-                
-                <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight">
-                  <span className="block text-foreground">The Future of</span>
-                  <span className="block bg-gradient-primary bg-clip-text text-transparent mt-2">
-                    Comedy Education
-                  </span>
-                </h1>
-                
-                <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed font-light max-w-4xl mx-auto">
-                  Join the most prestigious academy where humor meets academic rigor. 
-                  Master the art of comedy through structured learning and expert guidance.
-                </p>
-              </div>
-              
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <Button 
-                  size="lg" 
-                  onClick={onLoginClick}
-                  className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.05] transition-all duration-300 text-lg px-12 py-6 group"
-                >
-                  <Sparkles className="mr-3 h-6 w-6 group-hover:animate-spin" />
-                  Begin Your Journey
-                  <ChevronRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-16">
-                {[
-                  { icon: BookOpen, label: "Students", value: "500+" },
-                  { icon: Users, label: "Faculty", value: "25+" },
-                  { icon: Trophy, label: "Awards", value: "15+" }
-                ].map((stat, index) => (
-                  <div key={index} className="text-center space-y-3">
-                    <div className="w-16 h-16 bg-gradient-glass backdrop-blur-sm rounded-2xl border border-border/30 flex items-center justify-center mx-auto shadow-glass">
-                      <stat.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-3xl font-bold text-foreground">{stat.value}</div>
-                      <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="py-24 md:py-32 px-6 md:px-12 lg:px-24 text-center max-w-6xl mx-auto space-y-8">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-xs font-semibold tracking-wide uppercase">
+              <span className="w-2 h-2 rounded-full bg-primary/40"></span>
+              Accepting Applications for Fall 2025
             </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Features Section */}
-      <section className="relative py-32 px-6 sm:px-8 lg:px-12 bg-gradient-glass/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-8 tracking-tight">
-              Master the Art of{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Academic Humor
-              </span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
-              Join our distinguished community of humorists, educators, and leaders.
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-primary leading-[1.1]">
+              Experience the future <br className="hidden md:block" />
+              of comedy education.
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
+              Ramay Institute combines academic rigor with the art of humor.
+              Join a community tailored for the world's most aspiring humorists.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+            <Button
+              size="lg"
+              onClick={onLoginClick}
+              className="rounded-full px-10 h-14 text-base bg-primary text-primary-foreground hover:opacity-90 shadow-none transition-all"
+            >
+              Start Your Journey
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="rounded-full px-10 h-14 text-base border-input hover:bg-secondary transition-all"
+            >
+              View Curriculum
+            </Button>
+          </div>
+        </section>
+
+        {/* Minimal Stats Grid */}
+        <section className="py-16 border-y border-border/40">
+          <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { label: "Active Students", value: "500+" },
+              { label: "Expert Faculty", value: "25+" },
+              { label: "Years of Legacy", value: "10+" },
+              { label: "Global Alumni", value: "2k+" },
+            ].map((stat, i) => (
+              <div key={i} className="space-y-1">
+                <div className="text-3xl font-bold tracking-tight text-primary">{stat.value}</div>
+                <div className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Feature Highlights */}
+        <section className="py-32 px-6 md:px-12 lg:px-24 bg-secondary/30">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12">
             {[
               {
-                icon: BookOpen,
-                title: "Students",
-                description: "Begin your humor journey with structured learning and mentorship",
-                gradient: "from-primary/20 to-secondary/10"
+                icon: GraduationCap,
+                title: "Structured Learning",
+                desc: "A comprehensive curriculum designed to deconstruct the mechanics of humor."
               },
               {
                 icon: Users,
-                title: "Faculty",
-                description: "Experienced humorists who guide and shape the next generation",
-                gradient: "from-secondary/20 to-tertiary/10"
+                title: "Mentorship",
+                desc: "Direct access to industry veterans and academic scholars in the field of comedy."
               },
               {
                 icon: Trophy,
-                title: "Board of Directors",
-                description: "Elite humorists who lead comedy education into the future",
-                gradient: "from-tertiary/20 to-quaternary/10"
+                title: "Recognition",
+                desc: "Earn prestigious ranks and levels as you master new techniques and theories."
               }
-            ].map((feature, index) => (
-              <Card key={index} className="shadow-glass border border-border/20 bg-gradient-glass backdrop-blur-xl hover:shadow-glass-hover transition-all duration-500 hover:scale-[1.02] group">
-                <CardHeader className="pb-6 text-center">
-                  <div className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-button group-hover:shadow-glow transition-all duration-300`}>
-                    <feature.icon className="h-10 w-10 text-primary" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold mb-3">{feature.title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="relative py-32 px-6 sm:px-8 lg:px-12">
-        <div className="max-w-5xl mx-auto text-center">
-          <Card className="shadow-glass-hover bg-gradient-glass backdrop-blur-xl border border-border/30 overflow-hidden">
-            <CardContent className="p-16 relative">
-              <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
-              <div className="relative space-y-10">
-                <div className="inline-flex items-center px-6 py-3 rounded-full bg-primary/10 border border-primary/20">
-                  <GraduationCap className="h-5 w-5 text-primary mr-2" />
-                  <span className="text-sm font-medium text-primary">Ready to Begin?</span>
+            ].map((feature, i) => (
+              <div key={i} className="space-y-4 group">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                
-                <h3 className="text-5xl font-bold text-foreground tracking-tight mb-6">
-                  Join Our Academy Today
-                </h3>
-                
-                <p className="text-xl text-muted-foreground leading-relaxed font-light max-w-3xl mx-auto">
-                  Take the first step toward mastering the art of humor. Apply for access and begin your transformative journey with the Ramay Institute.
+                <h3 className="text-xl font-bold text-primary">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.desc}
                 </p>
-                
-                <div className="pt-4">
-                  <Button 
-                    size="lg" 
-                    onClick={onLoginClick}
-                    className="bg-gradient-primary text-primary-foreground border-0 shadow-button hover:shadow-glow hover:scale-[1.05] transition-all duration-300 text-lg px-16 py-8 group"
-                  >
-                    <Sparkles className="mr-3 h-6 w-6 group-hover:animate-pulse" />
-                    Request Academy Access
-                    <ChevronRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                <div className="pt-2 flex items-center text-sm font-semibold text-primary cursor-pointer hover:underline">
+                  Learn more <ArrowRight className="w-4 h-4 ml-2" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border/20 py-16 px-6 sm:px-8 lg:px-12 bg-gradient-glass/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto text-center space-y-6">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-              <Sparkles className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Ramay Institute
-            </span>
+            ))}
           </div>
-          <p className="text-muted-foreground text-lg font-light">
-            © 2024 Ramay Institute. Where humor meets academic excellence.
-          </p>
+        </section>
+
+        {/* Community Section */}
+        <section className="py-32 px-6 md:px-12 lg:px-24">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            <div className="flex-1 space-y-8">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+                Join a community of <br />
+                lifelong learners.
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                At Ramay, we believe humor is a serious discipline. Our community is
+                dedicated to exploring the boundaries of comedy through academic excellence.
+              </p>
+              <ul className="space-y-4 pt-4">
+                {[
+                  "Access to exclusive workshops",
+                  "Weekly peer reviews and critiques",
+                  "Annual humor research symposium"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-primary font-medium">
+                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex-1 w-full">
+              <Card className="bg-primary text-primary-foreground p-8 md:p-12 rounded-3xl border-0 shadow-2xl">
+                <CardHeader className="p-0 mb-6">
+                  <CardTitle className="text-3xl font-bold">Ready to apply?</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 space-y-6">
+                  <p className="text-primary-foreground/80 text-lg">
+                    Take the first step towards your diploma in comedic arts.
+                    Applications are reviewed on a rolling basis.
+                  </p>
+                  <Button
+                    onClick={onLoginClick}
+                    className="w-full bg-white text-primary hover:bg-white/90 font-bold h-12 rounded-xl text-lg shadow-none"
+                  >
+                    Create Student Account
+                  </Button>
+                  <p className="text-xs text-center text-primary-foreground/60">
+                    * No prior comedy experience required. Just a willingness to learn.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer className="py-12 px-6 border-t border-border/40 text-center text-sm text-muted-foreground">
+        <div className="flex justify-center gap-6 mb-8 font-medium">
+          <a href="#" className="hover:text-primary">Twitter</a>
+          <a href="#" className="hover:text-primary">Instagram</a>
+          <a href="#" className="hover:text-primary">LinkedIn</a>
         </div>
+        <p>&copy; 2024 Ramay Institute of Humour. All rights reserved.</p>
       </footer>
+
     </div>
   );
 };
