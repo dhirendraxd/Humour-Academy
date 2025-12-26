@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, User as UserIcon, GraduationCap } from "lucide-react";
+import { BookOpen, Calendar, User as UserIcon, GraduationCap, Clock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -107,10 +107,18 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
                                                                     {module.description}
                                                                 </p>
                                                                 {upcomingCohort && (
-                                                                    <p className="text-[10px] text-blue-600 font-bold mt-2 flex items-center gap-1">
-                                                                        <Calendar className="h-3 w-3" />
-                                                                        Registration Closes: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}
-                                                                    </p>
+                                                                    <div className="flex flex-col gap-1 mt-2">
+                                                                        <p className="text-[10px] text-blue-600 font-bold flex items-center gap-1">
+                                                                            <Calendar className="h-3 w-3" />
+                                                                            Registration Closes: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}
+                                                                        </p>
+                                                                        <p className="text-[9px] text-slate-400 font-medium flex items-center gap-1">
+                                                                            <Clock className="w-3 h-3 text-slate-300" />
+                                                                            Batch Duration: {
+                                                                                Math.max(1, Math.min(3, Math.ceil((new Date(upcomingCohort.end_date).getTime() - new Date(upcomingCohort.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30.44))))
+                                                                            } Months
+                                                                        </p>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                             <div className="flex flex-col items-end gap-1">

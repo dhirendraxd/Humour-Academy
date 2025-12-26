@@ -80,18 +80,18 @@ class EnrollmentController extends Controller
         // 2. Sequential Progression Enforcement (only if not Module 1)
         if ($module->order_index > 1) {
             $prevModuleIndex = $module->order_index - 1;
-            $hasCompletedPrereq = Enrollment::where('student_id', $student->id)
+            $prereqEnrollment = Enrollment::where('student_id', $student->id)
                 ->whereHas('cohort', function ($q) use ($module, $prevModuleIndex) {
                     $q->whereHas('module', function ($mq) use ($module, $prevModuleIndex) {
                         $mq->where('curriculum_id', $module->curriculum_id)
                             ->where('order_index', $prevModuleIndex);
                     });
                 })->whereIn('status', ['approved', 'completed'])
-                ->exists();
+                ->first();
 
-            if (!$hasCompletedPrereq) {
+            if (!$prereqEnrollment) {
                 return response()->json([
-                    'message' => "Prerequisite required: You must complete the previous module (" . $prevModuleIndex . ") before applying for this one."
+                    'message' => "Prerequisite required: You must be enrolled and approved for the previous module before applying for this one."
                 ], 403);
             }
         }
@@ -130,6 +130,23 @@ class EnrollmentController extends Controller
         $request->validate([
             'status' => 'required|in:approved,rejected,completed'
         ]);
+
+        // Enforcement: If approving (status=approved) and NOT Module 1, check if previous module is COMPLETED
+        if ($request->status === 'approved' && $enrollment->cohort->module->order_index > 1) {
+            $prevIndex = $enrollment->cohort->module->order_index - 1;
+            $prevCompleted = Enrollment::where('student_id', $enrollment->student_id)
+                ->whereHas('cohort', function ($q) use ($enrollment, $prevIndex) {
+                    $q->whereHas('module', function ($mq) use ($enrollment, $prevIndex) {
+                        $mq->where('curriculum_id', $enrollment->cohort->module->curriculum_id)
+                            ->where('order_index', $prevIndex);
+                    });
+                })->where('status', 'completed')
+                ->exists();
+
+            if (!$prevCompleted) {
+                return response()->json(['message' => 'Cannot approve yet. The student must first complete the previous module.'], 403);
+            }
+        }
 
         $enrollment->update(['status' => $request->status]);
 

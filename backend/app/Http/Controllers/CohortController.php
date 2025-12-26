@@ -25,10 +25,19 @@ class CohortController extends Controller
         $request->validate([
             'module_id' => 'required|exists:modules,id',
             'title' => 'required|string|max:255',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
             'status' => 'required|in:planned,active,completed'
         ]);
+
+        // Validate Duration: 1 month min, 3 months max
+        $start = \Carbon\Carbon::parse($request->start_date);
+        $end = \Carbon\Carbon::parse($request->end_date);
+        $diffInMonths = $start->diffInMonths($end);
+
+        if ($diffInMonths < 1 || $diffInMonths > 3) {
+            return response()->json(['message' => 'Cohort duration must be between 1 and 3 months.'], 422);
+        }
 
         $module = Module::findOrFail($request->module_id);
 
@@ -37,7 +46,20 @@ class CohortController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $cohort = $module->cohorts()->create($request->all());
+        $data = $request->all();
+
+        // Linked Deadline Logic: Registration for this batch closes when the previous batch ends
+        $previousCohort = $module->cohorts()->orderBy('end_date', 'desc')->first();
+        if ($previousCohort) {
+            $data['application_deadline'] = $previousCohort->end_date;
+        } else {
+            // If first cohort, default deadline to 1 day before start if not provided
+            if (!isset($data['application_deadline'])) {
+                $data['application_deadline'] = $start->subDay()->toDateString();
+            }
+        }
+
+        $cohort = $module->cohorts()->create($data);
 
         return response()->json($cohort, 201);
     }
@@ -48,6 +70,22 @@ class CohortController extends Controller
 
         if ($cohort->module->teacher_id !== $request->user()->id) {
             abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'start_date' => 'sometimes|required|date',
+            'end_date' => 'sometimes|required|date|after:start_date',
+            'status' => 'sometimes|required|in:planned,active,completed'
+        ]);
+
+        if ($request->has('start_date') || $request->has('end_date')) {
+            $start = \Carbon\Carbon::parse($request->start_date ?? $cohort->start_date);
+            $end = \Carbon\Carbon::parse($request->end_date ?? $cohort->end_date);
+            $diffInMonths = $start->diffInMonths($end);
+
+            if ($diffInMonths < 1 || $diffInMonths > 3) {
+                return response()->json(['message' => 'Cohort duration must be between 1 and 3 months.'], 422);
+            }
         }
 
         $cohort->update($request->all());

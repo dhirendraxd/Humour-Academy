@@ -32,10 +32,29 @@ export const CohortManager = ({ moduleId }: CohortManagerProps) => {
         end_date: "",
         status: "planned" as const
     });
+    const [duration, setDuration] = useState<number>(3); // Default 3 months
 
     useEffect(() => {
         fetchCohorts();
     }, [moduleId]);
+
+    // Automatically calculate end_date whenever start_date or duration changes
+    useEffect(() => {
+        if (newCohort.start_date) {
+            const start = new Date(newCohort.start_date);
+            const end = new Date(start);
+            end.setMonth(start.getMonth() + duration);
+            setNewCohort(prev => ({ ...prev, end_date: end.toISOString().split('T')[0] }));
+        }
+    }, [newCohort.start_date, duration]);
+
+    // Autopopulate deadline when form opens to match previous cohort's end date
+    useEffect(() => {
+        if (showAddForm && cohorts.length > 0) {
+            const latest = [...cohorts].sort((a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime())[0];
+            setNewCohort(prev => ({ ...prev, application_deadline: latest.end_date }));
+        }
+    }, [showAddForm, cohorts]);
 
     const fetchCohorts = async () => {
         setLoading(true);
@@ -89,27 +108,32 @@ export const CohortManager = ({ moduleId }: CohortManagerProps) => {
             {showAddForm && (
                 <Card className="border-2 border-blue-100 bg-blue-50/30 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
                     <CardContent className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="title">Batch Name (e.g., Spring 2026 Batch A)</Label>
+                                <Label htmlFor="title">Batch Name</Label>
                                 <Input
                                     id="title"
-                                    placeholder="Batch Name"
+                                    placeholder="e.g., Spring 2026 Batch A"
                                     value={newCohort.title}
                                     onChange={e => setNewCohort(prev => ({ ...prev, title: e.target.value }))}
                                     className="rounded-xl border-slate-200 bg-white"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="deadline">Application Deadline</Label>
-                                <Input
-                                    id="deadline"
-                                    type="date"
-                                    value={newCohort.application_deadline}
-                                    onChange={e => setNewCohort(prev => ({ ...prev, application_deadline: e.target.value }))}
-                                    className="rounded-xl border-slate-200 bg-white"
-                                />
-                                <p className="text-[10px] text-slate-500 italic">Registration will close at the end of this day.</p>
+                                <Label>Duration (Months)</Label>
+                                <div className="flex gap-2">
+                                    {[1, 2, 3].map(m => (
+                                        <Button
+                                            key={m}
+                                            type="button"
+                                            variant={duration === m ? "default" : "outline"}
+                                            onClick={() => setDuration(m)}
+                                            className="flex-1 rounded-xl h-10"
+                                        >
+                                            {m} Month{m > 1 ? 's' : ''}
+                                        </Button>
+                                    ))}
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="start">Start Date</Label>
@@ -121,20 +145,37 @@ export const CohortManager = ({ moduleId }: CohortManagerProps) => {
                                     className="rounded-xl border-slate-200 bg-white"
                                 />
                             </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="end">End Date (Estimated)</Label>
+                                <Label htmlFor="end">End Date (Calculated)</Label>
                                 <Input
                                     id="end"
                                     type="date"
+                                    disabled
                                     value={newCohort.end_date}
-                                    onChange={e => setNewCohort(prev => ({ ...prev, end_date: e.target.value }))}
-                                    className="rounded-xl border-slate-200 bg-white"
+                                    className="rounded-xl border-slate-200 bg-slate-100 italic"
                                 />
                             </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="deadline" className="flex items-center gap-2">
+                                    Application Deadline
+                                    <Badge variant="outline" className="text-[9px] py-0">Linked to Previous</Badge>
+                                </Label>
+                                <Input
+                                    id="deadline"
+                                    type="date"
+                                    value={newCohort.application_deadline}
+                                    onChange={e => setNewCohort(prev => ({ ...prev, application_deadline: e.target.value }))}
+                                    className="rounded-xl border-slate-200 bg-white font-bold text-blue-600"
+                                />
+                                <p className="text-[10px] text-slate-500 italic">Registration closes when the previous batch ends.</p>
+                            </div>
                         </div>
-                        <div className="mt-6 flex justify-end">
-                            <Button onClick={handleCreate} className="px-8 rounded-xl bg-blue-600 hover:bg-blue-700">
-                                Create Schedule
+                        <div className="mt-8 flex justify-end gap-3">
+                            <Button variant="ghost" onClick={() => setShowAddForm(false)} className="rounded-xl">Cancel</Button>
+                            <Button onClick={handleCreate} className="px-10 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200">
+                                Schedule Batch
                             </Button>
                         </div>
                     </CardContent>

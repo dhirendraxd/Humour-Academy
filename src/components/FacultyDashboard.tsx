@@ -170,8 +170,13 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
       await moduleService.updateStatus(id, status);
       toast({ title: `Request ${status}` });
       setRequests(prev => prev.filter(r => r.id !== id));
-    } catch (error) {
-      toast({ title: "Operation failed", variant: "destructive" });
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Operation failed";
+      toast({
+        title: "Action Restricted",
+        description: message,
+        variant: "destructive"
+      });
     }
   };
 
