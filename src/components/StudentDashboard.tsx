@@ -334,7 +334,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         {/* Header */}
         <header className="flex items-center justify-between mb-10 shrink-0 gap-8">
           {/* Dashboard Navigation Tabs (Simplified) */}
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
             {sidebarItems.map((item) => (
               <button
                 key={item.id}

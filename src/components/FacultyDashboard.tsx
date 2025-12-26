@@ -62,8 +62,7 @@ interface FacultyDashboardProps {
 }
 
 const sidebarItems = [
-  { icon: LayoutDashboard, id: 'overview', label: 'Dashboard' },
-  { icon: MessageSquare, id: 'messages', label: 'Messages' },
+  { icon: LayoutDashboard, id: 'overview', label: 'Analytics' },
   { icon: FileText, id: 'materials', label: 'Materials' },
   { icon: Calendar, id: 'events', label: 'Events' },
   { icon: GraduationCap, id: 'students', label: 'Students' },
@@ -363,7 +362,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
         {/* Header */}
         <header className="flex items-center justify-between mb-10 shrink-0 gap-8">
           {/* Dashboard Navigation Tabs (Simplified) */}
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
             {sidebarItems.map((item) => (
               <button
                 key={item.id}

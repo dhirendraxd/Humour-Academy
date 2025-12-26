@@ -112,7 +112,7 @@ export const Navigation = ({
         </div>
       </div>
 
-      <nav className={`hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center ${location.pathname === '/dashboard' ? "mx-auto" : ""}`}>
+      <nav className={`hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center ${role === 'faculty' ? "mx-auto" : (location.pathname === '/dashboard' ? "mx-auto" : "")}`}>
         {filteredNavItems.map((item) => (
           <Button
             key={item.path}
