@@ -35,8 +35,10 @@ import { FadeIn } from "@/components/FadeIn";
 import { Badge } from "@/components/ui/badge";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { StudentCourses } from "@/components/StudentCourses";
+import { ContentBrowser } from "@/components/ContentBrowser";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { moduleService, Enrollment } from "@/lib/modules";
+import { useToast } from "@/hooks/use-toast";
 import {
   ResponsiveContainer,
   RadialBarChart,
@@ -67,7 +69,7 @@ interface StudentDashboardProps {
 
 const sidebarItems = [
   { icon: LayoutDashboard, id: 'overview', label: 'Dashboard' },
-  { icon: BookOpen, id: 'courses', label: 'My Courses' },
+  { icon: BookOpen, id: 'courses', label: 'Course Explorer' },
   { icon: Target, id: 'assignments', label: 'Assignments' },
   { icon: GraduationCap, id: 'classmates', label: 'Classmates' },
   { icon: Calendar, id: 'events', label: 'Events' },
@@ -124,10 +126,12 @@ const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color 
 export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements'>('overview');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewingContent, setViewingContent] = useState<{ cohortId: number, title: string } | null>(null);
 
   useEffect(() => {
     fetchEnrollments();
@@ -158,6 +162,16 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   };
 
   const renderContent = () => {
+    if (viewingContent) {
+      return (
+        <ContentBrowser
+          cohortId={viewingContent.cohortId}
+          moduleTitle={viewingContent.title}
+          onBack={() => setViewingContent(null)}
+        />
+      );
+    }
+
     switch (activeTab) {
       case 'classmates':
         return (
@@ -214,7 +228,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricCard title="Active Modules" value={activeEnrollments.length} label="Modules in progress" trend={activeEnrollments.length > 0 ? "up" : null} trendValue="+1" icon={BookOpen} color="blue-600" />
+                <MetricCard title="Active Courses" value={activeEnrollments.length} label="Courses in progress" trend={activeEnrollments.length > 0 ? "up" : null} trendValue="+1" icon={BookOpen} color="blue-600" />
                 <MetricCard title="Community Points" value="1,250" label="Top 10% performance" trend="up" trendValue="15%" icon={Star} color="purple-600" />
                 <MetricCard title="Enrollment" value={pendingEnrollments.length} label="Pending approval" icon={Target} color="orange-600" />
                 <MetricCard title="Time Spent" value="24h" label="Learning this week" trend="up" trendValue="12.5%" icon={Clock} color="green-600" />
@@ -227,49 +241,83 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle className="text-xl font-bold text-slate-800">My Academic Path</CardTitle>
-                        <CardDescription>Progress through your enrolled programs</CardDescription>
+                        <CardTitle className="text-xl font-bold text-slate-800">My Course Roadmap</CardTitle>
+                        <CardDescription>Progress through your enrolled courses</CardDescription>
                       </div>
                       <Badge variant="outline" className="border-blue-100 text-blue-600 bg-blue-50 px-3">
-                        {activeEnrollments.length} Active {activeEnrollments.length === 1 ? 'Program' : 'Programs'}
+                        {activeEnrollments.length} Active {activeEnrollments.length === 1 ? 'Course' : 'Courses'}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     {activeEnrollments.length > 0 ? (
-                      <div className="space-y-8">
+                      <div className="space-y-10">
                         {activeEnrollments.map((enrollment) => (
-                          <div key={enrollment.id} className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
-                            <div className="flex items-center justify-between mb-6">
-                              <div className="flex items-center gap-4">
-                                <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200">
-                                  <GraduationCap className="h-6 w-6" />
+                          <div key={enrollment.id} className="p-8 rounded-[2.5rem] border border-slate-100 bg-slate-50/20 shadow-sm">
+                            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                              <div className="flex items-center gap-5">
+                                <div className="p-4 bg-blue-600 rounded-[1.5rem] text-white shadow-xl shadow-blue-100">
+                                  <GraduationCap className="h-7 w-7" />
                                 </div>
                                 <div>
-                                  <h4 className="font-bold text-slate-800 text-lg">{enrollment.cohort?.module?.curriculum?.title}</h4>
-                                  <p className="text-sm text-slate-500">Currently in: <span className="text-blue-600 font-semibold">{enrollment.cohort?.module?.title}</span></p>
+                                  <h4 className="font-black text-slate-800 text-xl tracking-tight">{enrollment.cohort?.module?.curriculum?.title}</h4>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <Badge className="bg-blue-50 text-blue-600 border-blue-100 px-2 py-0 text-[9px] font-bold">CURRENT PHASE</Badge>
+                                    <span className="text-sm text-slate-500 font-medium">{enrollment.cohort?.module?.title}</span>
+                                  </div>
                                 </div>
                               </div>
-                              <Button variant="outline" size="sm" className="rounded-xl border-slate-200 text-xs hover:bg-white" onClick={() => { setActiveTab('courses') }}>
-                                View Details
-                              </Button>
+                              <div className="flex items-center gap-3 w-full md:w-auto">
+                                <Button
+                                  className="flex-1 md:flex-none rounded-2xl bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm"
+                                  variant="outline"
+                                  onClick={() => setActiveTab('courses')}
+                                >
+                                  Program Details
+                                </Button>
+                                <Button
+                                  className="flex-1 md:flex-none rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 px-6"
+                                  onClick={() => {
+                                    if (enrollment.cohort_id) {
+                                      setViewingContent({
+                                        cohortId: enrollment.cohort_id,
+                                        title: enrollment.cohort?.module?.title || "Module Content"
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                  Study Materials
+                                </Button>
+                              </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 relative">
-                              {/* Connector line for large screens */}
-                              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 hidden lg:block z-0" />
+                            <div className="relative">
+                              {/* Timeline line */}
+                              <div className="absolute top-1/2 left-0 right-0 h-1 bg-slate-100 -translate-y-1/2 hidden lg:block" />
 
-                              {/* We'd ideally fetch all modules of this curriculum here, but for now we'll show current state */}
-                              <div className="p-4 rounded-2xl bg-white border border-blue-200 shadow-sm relative z-10">
-                                <Badge className="mb-2 bg-blue-500">ACTIVE</Badge>
-                                <p className="font-bold text-slate-800 text-sm line-clamp-1">{enrollment.cohort?.module?.title}</p>
-                                <p className="text-[10px] text-slate-400 font-medium uppercase mt-1">Module {enrollment.cohort?.module?.order_index}</p>
-                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                                {/* Currently, we only have the current enrollment. 
+                                      In a real app, we'd fetch the whole curriculum roadmap here.
+                                      For now, we'll show the current module as active and placeholders for neighbors. */}
+                                <div className="p-5 rounded-3xl bg-white border-2 border-blue-600 shadow-xl shadow-blue-50 ring-4 ring-blue-50/50">
+                                  <div className="flex justify-between items-start mb-3">
+                                    <Badge className="bg-blue-600 text-white border-0 text-[8px] px-2">ACTIVE</Badge>
+                                    <span className="text-[10px] font-black text-slate-300">PHASE {enrollment.cohort?.module?.order_index}</span>
+                                  </div>
+                                  <p className="font-bold text-slate-800 text-sm line-clamp-1">{enrollment.cohort?.module?.title}</p>
+                                  <Progress value={45} className="h-1.5 mt-3 bg-slate-100" />
+                                </div>
 
-                              <div className="p-4 rounded-2xl bg-slate-100/50 border border-slate-200 border-dashed flex flex-col items-center justify-center text-center relative z-10">
-                                <Zap className="h-4 w-4 text-slate-300 mb-2" />
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Next Up</p>
-                                <p className="text-[10px] text-slate-300 mt-1 italic">Advance to unlock</p>
+                                <div className="p-5 rounded-3xl bg-slate-50 border border-slate-100 border-dashed flex flex-col items-center justify-center text-center group hover:bg-white transition-colors">
+                                  <Zap className="h-5 w-5 text-slate-200 mb-2 group-hover:text-blue-400 transition-colors" />
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Next Up</p>
+                                  <p className="text-[10px] text-slate-300 mt-1 italic">Advance to unlock</p>
+                                </div>
+
+                                <div className="p-5 rounded-3xl bg-slate-50 border border-slate-100 border-dashed flex items-center justify-center lg:col-span-2">
+                                  <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest opacity-50">Future Phases Under Architects' Review</p>
+                                </div>
                               </div>
                             </div>
                           </div>

@@ -8,7 +8,7 @@ use App\Models\Module;
 class Curriculum extends Model
 {
     protected $table = 'curriculums';
-    protected $fillable = ['title', 'description'];
+    protected $fillable = ['title', 'description', 'outcomes', 'prerequisites'];
 
     public function modules()
     {

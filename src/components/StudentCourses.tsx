@@ -51,115 +51,126 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
 
     return (
         <FadeIn>
-            <div className="space-y-6">
+            <div className="space-y-8">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold flex items-center space-x-3 tracking-tight">
-                            <div className="p-2 bg-primary/10 rounded-lg">
-                                <GraduationCap className="h-8 w-8 text-primary" />
+                        <h1 className="text-4xl font-black flex items-center space-x-4 tracking-tighter text-slate-900">
+                            <div className="p-3 bg-blue-600 rounded-2xl shadow-xl shadow-blue-100">
+                                <GraduationCap className="h-8 w-8 text-white" />
                             </div>
-                            <span>Academic Programs</span>
+                            <span>Courses</span>
                         </h1>
-                        <p className="text-muted-foreground mt-2 text-lg">Select a curriculum to begin your journey into humor mastery</p>
+                        <p className="text-slate-500 mt-3 text-lg font-medium">Select a specialized curriculum to begin your journey into humor mastery</p>
                     </div>
-                    <Button variant="outline" onClick={onBack}>Back to Dashboard</Button>
+                    <Button
+                        variant="ghost"
+                        onClick={onBack}
+                        className="rounded-2xl hover:bg-white shadow-sm border border-slate-100 px-6 font-bold"
+                    >
+                        Back to Dashboard
+                    </Button>
                 </div>
 
-                <div className="grid gap-8 lg:grid-cols-2">
-                    {curriculums.map(curriculum => (
-                        <Card key={curriculum.id} className="overflow-hidden border-slate-200 shadow-academic hover:shadow-glow transition-all">
-                            <CardHeader className="bg-slate-50/50 pb-4">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className="text-2xl font-bold">{curriculum.title}</CardTitle>
-                                        <CardDescription className="mt-2 text-md leading-relaxed">
-                                            {curriculum.description}
-                                        </CardDescription>
+                <div className="grid gap-10 lg:grid-cols-2">
+                    {curriculums.map(curriculum => {
+                        const firstTeacher = curriculum.modules?.[0]?.teacher;
+                        const firstModule = curriculum.modules?.[0];
+                        const upcomingCohort = firstModule?.cohorts?.find(c => new Date(c.application_deadline) >= new Date());
+
+                        return (
+                            <Card key={curriculum.id} className="overflow-hidden border-slate-100 shadow-xl shadow-slate-100/50 hover:shadow-2xl hover:shadow-blue-100/30 transition-all rounded-[2.5rem] bg-white group">
+                                <CardHeader className="bg-slate-50/30 p-8 border-b border-slate-50">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <Badge className="bg-blue-600 text-white border-0 px-4 py-1.5 text-xs font-black tracking-widest uppercase">
+                                            {curriculum.modules?.length || 0} PHASE PROGRAM
+                                        </Badge>
+                                        {upcomingCohort && (
+                                            <Badge className="bg-green-100 text-green-600 border-0 text-[10px] font-black uppercase">
+                                                Next Batch: {new Date(upcomingCohort.start_date).toLocaleDateString()}
+                                            </Badge>
+                                        )}
                                     </div>
-                                    <Badge className="bg-primary/10 text-primary border-primary/20">
-                                        {curriculum.modules?.length || 0} Modules
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="p-6">
-                                <div className="space-y-6">
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                                        <BookOpen className="h-4 w-4" />
-                                        Learning Path
-                                    </h3>
+                                    <CardTitle className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-4">
+                                        {curriculum.title}
+                                    </CardTitle>
 
-                                    <div className="space-y-4 relative">
-                                        {/* Vertical Path Line */}
-                                        <div className="absolute left-4 top-4 bottom-4 w-0.5 bg-slate-100 hidden sm:block"></div>
+                                    {firstTeacher && (
+                                        <div className="flex items-center gap-4 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                                            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                                                <UserIcon className="h-6 w-6" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-0.5">Lead Architect</p>
+                                                <p className="font-bold text-slate-800 text-sm">{firstTeacher.name}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold">{firstTeacher.rank}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </CardHeader>
 
-                                        {curriculum.modules?.map((module, mIdx) => {
-                                            const upcomingCohort = module.cohorts?.find(c => new Date(c.application_deadline) >= new Date());
-                                            return (
-                                                <div key={module.id} className="flex gap-4 relative">
-                                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400 z-10 hidden sm:flex">
-                                                        {mIdx + 1}
-                                                    </div>
-                                                    <div className="flex-1 p-3 rounded-lg border border-slate-50 bg-slate-50/50">
-                                                        <div className="flex justify-between items-start">
-                                                            <div>
-                                                                <p className="font-semibold text-slate-800">{module.title}</p>
-                                                                <p className="description-text text-xs text-slate-500 mt-1 line-clamp-1">
-                                                                    {module.description}
-                                                                </p>
-                                                                {upcomingCohort && (
-                                                                    <div className="flex flex-col gap-1 mt-2">
-                                                                        <p className="text-[10px] text-blue-600 font-bold flex items-center gap-1">
-                                                                            <Calendar className="h-3 w-3" />
-                                                                            Registration Closes: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}
-                                                                        </p>
-                                                                        <p className="text-[9px] text-slate-400 font-medium flex items-center gap-1">
-                                                                            <Clock className="w-3 h-3 text-slate-300" />
-                                                                            Batch Duration: {
-                                                                                Math.max(1, Math.min(3, Math.ceil((new Date(upcomingCohort.end_date).getTime() - new Date(upcomingCohort.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30.44))))
-                                                                            } Months
-                                                                        </p>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className="flex flex-col items-end gap-1">
-                                                                <span className="text-[10px] font-medium text-slate-400 italic">
-                                                                    {module.duration_months} Months
-                                                                </span>
-                                                                {upcomingCohort ? (
-                                                                    <Badge variant="outline" className="text-[9px] bg-green-50 text-green-700 border-green-100">
-                                                                        Enrolling Now
-                                                                    </Badge>
-                                                                ) : (
-                                                                    <Badge variant="outline" className="text-[9px] bg-slate-100 text-slate-500 border-slate-200">
-                                                                        Fully Booked
-                                                                    </Badge>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                <CardContent className="p-8 space-y-8">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                                <Clock className="w-3 h-3" /> Duration
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-700">~{curriculum.modules?.reduce((acc, m) => acc + (m.duration_months || 0), 0)} Months</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                                <GraduationCap className="w-3 h-3" /> Seats
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-700">
+                                                {upcomingCohort ? `${upcomingCohort.enrollments_count || 0}/${upcomingCohort.capacity || 25} Filled` : 'TBA'}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <Button
-                                        className="w-full h-12 text-lg font-bold bg-gradient-primary hover:shadow-glow border-0"
-                                        onClick={() => handleEnroll(curriculum.id)}
-                                    >
-                                        Enroll in Program
-                                    </Button>
-                                    <p className="text-center text-[10px] text-slate-400 italic">
-                                        * Enrollment is subject to approval by the Module 1 Faculty Head.
-                                    </p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    <div className="space-y-4">
+                                        <div className="p-5 bg-slate-50/50 rounded-3xl border border-slate-100/50">
+                                            <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-3">What you'll master:</h4>
+                                            <p className="text-sm text-slate-500 leading-relaxed italic">
+                                                {curriculum.outcomes || "Enriching curriculum details coming soon..."}
+                                            </p>
+                                        </div>
+
+                                        <div className="p-5 bg-blue-50/30 rounded-3xl border border-blue-50/50">
+                                            <h4 className="text-xs font-black text-blue-600 uppercase tracking-widest mb-3 text-center">Prerequisites:</h4>
+                                            <p className="text-xs text-slate-400 text-center font-medium italic">
+                                                {curriculum.prerequisites || "Open to all humor enthusiasts."}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4">
+                                        <Button
+                                            className="w-full h-16 text-xl font-black bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-100 border-0 rounded-2xl group-hover:scale-[1.02] transition-transform"
+                                            onClick={() => handleEnroll(curriculum.id)}
+                                        >
+                                            Begin Enrollment
+                                        </Button>
+                                        <div className="flex items-center justify-between mt-4 px-2">
+                                            <p className="text-[10px] text-slate-400 font-bold italic">
+                                                * Final approval pending architect's review
+                                            </p>
+                                            {upcomingCohort && (
+                                                <p className="text-[10px] text-red-500 font-black flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    Deadline: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
+
                     {curriculums.length === 0 && !loading && (
-                        <div className="col-span-full text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                            <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-slate-600">No programs available</h3>
-                            <p className="text-slate-400">Our humor architects are currently drafting new curriculums.</p>
+                        <div className="col-span-full text-center py-32 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-100">
+                            <BookOpen className="h-16 w-16 text-slate-200 mx-auto mb-6" />
+                            <h3 className="text-2xl font-black text-slate-800">No active programs</h3>
+                            <p className="text-slate-400 font-medium mt-2">Our humor architects are currently drafting new masterclasses.</p>
                         </div>
                     )}
                 </div>

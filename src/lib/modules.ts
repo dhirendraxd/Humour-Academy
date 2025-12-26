@@ -4,6 +4,8 @@ export interface Curriculum {
     id: number;
     title: string;
     description: string;
+    outcomes?: string;
+    prerequisites?: string;
     modules?: Module[];
     created_at: string;
 }
@@ -37,6 +39,7 @@ export interface Cohort {
     application_deadline: string;
     end_date: string;
     status: 'planned' | 'active' | 'completed';
+    capacity: number;
     enrollments_count?: number;
     module?: Module;
     created_at: string;
