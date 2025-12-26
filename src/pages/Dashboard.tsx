@@ -61,13 +61,10 @@ const Dashboard = () => {
             showFooter={false}
             customNav={
                 <Navigation
-                    currentRole={profile.role as 'student' | 'faculty'}
-                    currentUser={{
-                        name: profile.full_name,
-                        rank: profile.rank || 'Member',
-                        level: profile.level || 1
+                    onRoleChange={(role) => {
+                        // If we want to support role switching in Dashboard, we can still pass onRoleChange
+                        // but Navigation will now handle the user/profile internally.
                     }}
-                    onRoleChange={() => { }}
                 />
             }
         >

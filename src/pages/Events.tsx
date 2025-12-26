@@ -3,43 +3,27 @@ import { FadeIn } from "@/components/FadeIn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Video } from "lucide-react";
+import { useState, useEffect } from "react";
+import { eventService, Event } from "@/lib/events";
 
 export default function Events() {
-    const events = [
-        {
-            title: "Executive Presence Workshop",
-            date: "Oct 15, 2025",
-            time: "10:00 AM - 4:00 PM",
-            location: "Main Auditorium",
-            category: "Workshop",
-            description: "A one-day intensive on commanding the room using stand-up comedy techniques."
-        },
-        {
-            title: "Fall Open Mic Night",
-            date: "Oct 22, 2025",
-            time: "7:00 PM - 10:00 PM",
-            location: "The Lounge",
-            category: "Performance",
-            description: "Students showcase their material. Open to the public. Come see the future of leadership on stage."
-        },
-        {
-            title: "Guest Lecture: Satire in Business",
-            date: "Nov 05, 2025",
-            time: "2:00 PM - 3:30 PM",
-            location: "Lecture Hall B",
-            category: "Lecture",
-            description: "Industry leaders discuss how structured irony can de-escalate corporate conflict."
-        },
-        {
-            title: "Improv for Agile Teams",
-            date: "Nov 12, 2025",
-            time: "1:00 PM - 5:00 PM",
-            location: "Studio 4",
-            category: "Workshop",
-            description: "Adaptability training for product teams using fast-paced improv games."
-        }
-    ];
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const data = await eventService.list();
+                setEvents(data);
+            } catch (error) {
+                console.error("Failed to fetch events", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
 
     return (
         <PageLayout>
@@ -56,50 +40,71 @@ export default function Events() {
             </FadeIn>
 
             <section className="max-w-5xl mx-auto px-6 pb-32 space-y-6">
-                {events.map((event, i) => (
-                    <FadeIn key={i} delay={i * 100} direction="up">
-                        <Card className="bg-background/60 backdrop-blur-md border border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg group">
-                            <CardContent className="p-8 flex flex-col md:flex-row gap-8 items-center md:items-start">
-                                {/* Date Block */}
-                                <div className="flex-shrink-0 w-24 h-24 bg-secondary rounded-2xl flex flex-col items-center justify-center text-center border border-border group-hover:border-blue-600/30 transition-colors">
-                                    <span className="text-sm font-bold text-muted-foreground uppercase">{event.date.split(' ')[0]}</span>
-                                    <span className="text-3xl font-bold text-foreground">{event.date.split(' ')[1].replace(',', '')}</span>
-                                </div>
-
-                                {/* Details */}
-                                <div className="flex-grow space-y-4 text-center md:text-left">
-                                    <div>
-                                        <div className="flex flex-col md:flex-row items-center gap-3 mb-2">
-                                            <h3 className="text-2xl font-bold">{event.title}</h3>
-                                            <Badge variant="outline" className="text-blue-600 border-blue-600/20 bg-blue-600/5">
-                                                {event.category}
-                                            </Badge>
-                                        </div>
-                                        <p className="text-muted-foreground">{event.description}</p>
+                {loading ? (
+                    <div className="text-center py-20">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                        <p className="mt-4 text-muted-foreground">Looking for events...</p>
+                    </div>
+                ) : events.length === 0 ? (
+                    <div className="text-center py-20 bg-background/40 backdrop-blur-md border border-dashed rounded-3xl">
+                        <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                        <h3 className="text-xl font-semibold">No upcoming events</h3>
+                        <p className="text-muted-foreground mt-2">Check back later for new webinars and seminars!</p>
+                    </div>
+                ) : (
+                    events.map((event, i) => (
+                        <FadeIn key={event.id} delay={i * 100} direction="up">
+                            <Card className="bg-background/60 backdrop-blur-md border border-border/50 hover:border-blue-600/50 transition-all duration-300 hover:shadow-lg group overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-12 -mt-12 transition-all group-hover:scale-150 group-hover:bg-primary/10" />
+                                <CardContent className="p-8 flex flex-col md:flex-row gap-8 items-center md:items-start relative z-10">
+                                    {/* Date Block */}
+                                    <div className="flex-shrink-0 w-24 h-24 bg-secondary/10 rounded-2xl flex flex-col items-center justify-center text-center border border-secondary/20 group-hover:border-primary/30 transition-colors">
+                                        <span className="text-sm font-bold text-secondary uppercase">{new Date(event.date).toLocaleString('default', { month: 'short' })}</span>
+                                        <span className="text-3xl font-bold text-foreground">{new Date(event.date).getDate()}</span>
                                     </div>
 
-                                    <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground font-medium">
-                                        <div className="flex items-center gap-2">
-                                            <Clock className="w-4 h-4 text-blue-600" />
-                                            {event.time}
+                                    {/* Details */}
+                                    <div className="flex-grow space-y-4 text-center md:text-left">
+                                        <div>
+                                            <div className="flex flex-col md:flex-row items-center gap-3 mb-2">
+                                                <h3 className="text-2xl font-bold">{event.title}</h3>
+                                                <Badge variant="outline" className="text-blue-600 border-blue-600/20 bg-blue-600/5">
+                                                    {event.type}
+                                                </Badge>
+                                                {event.teacher && (
+                                                    <span className="text-xs text-muted-foreground">by {event.teacher.name}</span>
+                                                )}
+                                            </div>
+                                            <p className="text-muted-foreground">{event.description}</p>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-blue-600" />
-                                            {event.location}
+
+                                        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="w-4 h-4 text-blue-600" />
+                                                {event.time}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                {event.location_url?.startsWith('http') ? (
+                                                    <Video className="w-4 h-4 text-blue-600" />
+                                                ) : (
+                                                    <MapPin className="w-4 h-4 text-blue-600" />
+                                                )}
+                                                {event.location_url || 'TBA'}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Action */}
-                                <div className="flex-shrink-0">
-                                    <Button className="rounded-full bg-foreground text-background hover:bg-black/80">
-                                        Register <ArrowRight className="ml-2 w-4 h-4" />
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </FadeIn>
-                ))}
+                                    {/* Action */}
+                                    <div className="flex-shrink-0">
+                                        <Button className="rounded-full bg-primary text-primary-foreground hover:shadow-lg transition-all">
+                                            Join Now <ArrowRight className="ml-2 w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </FadeIn>
+                    ))
+                )}
             </section>
         </PageLayout>
     );
