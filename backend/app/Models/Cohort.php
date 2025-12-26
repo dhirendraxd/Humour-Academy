@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Module;
+use App\Models\Enrollment;
+
+class Cohort extends Model
+{
+    protected $fillable = ['module_id', 'title', 'start_date', 'end_date', 'status'];
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+}

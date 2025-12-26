@@ -13,9 +13,10 @@ import { materialService, Material } from "@/lib/materials";
 
 interface MaterialsManagerProps {
   facultyId: string;
+  cohortId?: string;
 }
 
-export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
+export const MaterialsManager = ({ facultyId, cohortId }: MaterialsManagerProps) => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);

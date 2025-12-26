@@ -18,9 +18,10 @@ import {
 
 interface GradingInterfaceProps {
   facultyId: string;
+  cohortId?: string;
 }
 
-export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
+export const GradingInterface = ({ facultyId, cohortId }: GradingInterfaceProps) => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const [criteriaScores, setCriteriaScores] = useState({
@@ -35,7 +36,7 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
   const fetchSubmissions = async () => {
     setIsLoading(true);
     try {
-      const data = await gradingService.listSubmissions();
+      const data = await gradingService.listSubmissions({ cohort_id: cohortId });
       setSubmissions(data);
     } catch (error) {
       console.error('Error fetching submissions:', error);

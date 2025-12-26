@@ -2,74 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cohort;
 use App\Models\Enrollment;
-use App\Models\Notification;
-use App\Models\Course;
 use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-    // Apply for a course (Student)
+    public function index(Request $request)
+    {
+        // If teacher, show applications for their cohorts
+        if ($request->user()->role === 'faculty') {
+            $cohortIds = Cohort::whereHas('module', function ($q) use ($request) {
+                $q->where('teacher_id', $request->user()->id);
+            })->pluck('id');
+
+            return Enrollment::whereIn('cohort_id', $cohortIds)
+                ->with(['student', 'cohort.module'])
+                ->latest()
+                ->get();
+        }
+
+        // If student, show their enrollments
+        return $request->user()->enrollments()->with('cohort.module.teacher')->get();
+    }
+
     public function store(Request $request)
     {
-        $request->validate(['course_id' => 'required|exists:courses,id']);
+        $request->validate([
+            'cohort_id' => 'required|exists:cohorts,id'
+        ]);
 
-        $exists = Enrollment::where('student_id', $request->user()->id)
-            ->where('course_id', $request->course_id)
-            ->exists();
+        // Check if already enrolled
+        $existing = Enrollment::where('student_id', $request->user()->id)
+            ->where('cohort_id', $request->cohort_id)
+            ->first();
 
-        if ($exists) {
-            return response()->json(['message' => 'Already enrolled'], 400);
+        if ($existing) {
+            return response()->json(['message' => 'Already applied for this cohort'], 400);
         }
 
         $enrollment = Enrollment::create([
             'student_id' => $request->user()->id,
-            'course_id' => $request->course_id,
+            'cohort_id' => $request->cohort_id,
             'status' => 'pending'
         ]);
 
-        // Notify the teacher
-        $course = Course::find($request->course_id);
-        Notification::create([
-            'user_id' => $course->teacher_id,
-            'title' => 'New Enrollment Request',
-            'message' => "Student {$request->user()->name} has applied for your course: {$course->title}",
-            'type' => 'enrollment_request',
-            'data' => ['enrollment_id' => $enrollment->id]
-        ]);
-
-        return response()->json(['message' => 'Application sent']);
+        return response()->json($enrollment, 201);
     }
 
-    // List requests for teacher's courses (Teacher)
-    public function index(Request $request)
-    {
-        $teacherId = $request->user()->id;
-
-        $enrollments = Enrollment::whereHas('course', function ($q) use ($teacherId) {
-            $q->where('teacher_id', $teacherId);
-        })
-            ->with(['student:id,name,email,bio', 'course:id,title'])
-            ->where('status', 'pending')
-            ->get();
-
-        return response()->json($enrollments);
-    }
-
-    // Approve/Reject enrollment (Teacher)
     public function update(Request $request, $id)
     {
-        $request->validate(['status' => 'required|in:approved,rejected']);
-
         $enrollment = Enrollment::findOrFail($id);
 
-        // Verify course belongs to teacher
-        if ($enrollment->course->teacher_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        // Authorization: Only the teacher of the cohort's module
+        if ($enrollment->cohort->module->teacher_id !== $request->user()->id) {
+            abort(403, 'Unauthorized.');
         }
+
+        $request->validate([
+            'status' => 'required|in:approved,rejected'
+        ]);
 
         $enrollment->update(['status' => $request->status]);
 
-        return response()->json(['message' => 'Status updated']);
+        return response()->json($enrollment);
     }
 }

@@ -8,7 +8,7 @@ import { eventService, Event } from "@/lib/events";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-export const EventsManager = ({ teacherId }: { teacherId: string }) => {
+export const EventsManager = ({ teacherId, cohortId }: { teacherId: string, cohortId?: string }) => {
     const [events, setEvents] = useState<Event[]>([]);
     const [isCreating, setIsCreating] = useState(false);
     const { toast } = useToast();

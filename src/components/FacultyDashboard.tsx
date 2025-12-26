@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Users,
   BarChart3,
@@ -11,11 +10,9 @@ import {
   ClipboardCheck,
   Search,
   LayoutDashboard,
-  MessageSquare,
   Calendar,
   Settings,
   MoreHorizontal,
-  TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
   Plus,
@@ -23,8 +20,6 @@ import {
   X,
   Calendar as CalendarIcon,
   LogOut,
-  Menu,
-  ChevronLeft
 } from "lucide-react";
 import { UserManagement } from "@/components/UserManagement";
 import { NotificationCenter } from "@/components/NotificationCenter";
@@ -33,9 +28,15 @@ import { MaterialsManager } from "@/components/MaterialsManager";
 import { GradingInterface } from "@/components/GradingInterface";
 import { EventsManager } from "@/components/EventsManager";
 import { useState, useEffect } from "react";
-import { ProfileEditDialog } from "@/components/ProfileEditDialog";
-import { courseService, Enrollment } from "@/lib/courses";
+import { moduleService, Module, Cohort, Enrollment } from "@/lib/modules";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   ResponsiveContainer,
   RadialBarChart,
@@ -49,8 +50,6 @@ import {
   Cell
 } from 'recharts';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -89,7 +88,7 @@ const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color 
   <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 bg-white relative overflow-hidden group rounded-2xl">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-semibold text-slate-500">{title}</CardTitle>
-      <div className={`p-2 rounded-xl bg-${color}/10 text-${color}`}>
+      <div className={`p-2 rounded-xl bg-slate-50 text-${color}`}>
         <Icon className="h-4 w-4" />
       </div>
     </CardHeader>
@@ -115,24 +114,59 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
 
+  const [modules, setModules] = useState<Module[]>([]);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
+  const [selectedCohort, setSelectedCohort] = useState<Cohort | null>(null);
+
   useEffect(() => {
-    if (activeTab === 'requests') {
-      loadRequests();
+    loadInitialData();
+  }, [userId]);
+
+  const loadInitialData = async () => {
+    try {
+      const myModules = await moduleService.listModules();
+      setModules(myModules);
+      if (myModules.length > 0) {
+        setSelectedModule(myModules[0]);
+        loadCohorts(myModules[0].id);
+      }
+    } catch (error) {
+      console.error("Failed to load initial faculty data", error);
     }
-  }, [activeTab]);
+  };
+
+  const loadCohorts = async (moduleId: number) => {
+    try {
+      const data = await moduleService.listCohorts(moduleId);
+      setCohorts(data);
+      if (data.length > 0) {
+        const active = data.find(c => c.status === 'active') || data[0];
+        setSelectedCohort(active);
+      }
+    } catch (error) {
+      console.error("Failed to load cohorts", error);
+    }
+  };
 
   const loadRequests = async () => {
     try {
-      const data = await courseService.listRequests();
+      const data = await moduleService.listRequests();
       setRequests(data);
     } catch (error) {
       console.error("Failed to load requests", error);
     }
   };
 
+  useEffect(() => {
+    if (activeTab === 'students' && studentViewTab === 'applications') {
+      loadRequests();
+    }
+  }, [activeTab, studentViewTab]);
+
   const handleRequest = async (id: number, status: 'approved' | 'rejected') => {
     try {
-      await courseService.updateStatus(id, status);
+      await moduleService.updateStatus(id, status);
       toast({ title: `Request ${status}` });
       setRequests(prev => prev.filter(r => r.id !== id));
     } catch (error) {
@@ -190,7 +224,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                           </Avatar>
                           <div>
                             <h3 className="font-bold text-slate-800">{req.student?.name}</h3>
-                            <p className="text-sm text-slate-500">Applied for <span className="font-semibold text-blue-600">{req.course?.title}</span></p>
+                            <p className="text-sm text-slate-500">Applied for <span className="font-semibold text-blue-600">{req.cohort?.module?.title} ({req.cohort?.title})</span></p>
                           </div>
                         </div>
                         <div className="flex gap-3">
@@ -216,13 +250,13 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </div>
         );
       case 'assessments':
-        return <AssessmentCreation facultyId={userId || ''} />;
+        return <AssessmentCreation facultyId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
       case 'materials':
-        return <MaterialsManager facultyId={userId || ''} />;
+        return <MaterialsManager facultyId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
       case 'grading':
-        return <GradingInterface facultyId={userId || ''} />;
+        return <GradingInterface facultyId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
       case 'events':
-        return <EventsManager teacherId={userId || ''} />;
+        return <EventsManager teacherId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
       default:
         return (
           <div className="space-y-8 animate-in fade-in duration-700">
@@ -249,7 +283,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                     onClick={() => action.onClick ? action.onClick() : setActiveTab(action.tab as any)}
                     className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
                   >
-                    <div className={`p-3 rounded-2xl bg-${action.color}/10 text-${action.color} group-hover:scale-110 transition-transform`}>
+                    <div className={`p-3 rounded-2xl bg-slate-50 text-${action.color} group-hover:scale-110 transition-transform`}>
                       <action.icon className="h-5 w-5" />
                     </div>
                     <span className="text-xs font-bold text-slate-600">{action.label}</span>
@@ -393,11 +427,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
 
   return (
     <div className="flex h-[calc(100vh-5.5rem)] bg-[#F8FAFC] overflow-hidden">
-      {/* Main Container */}
       <div className="flex-1 flex flex-col overflow-hidden px-10 py-8 bg-[#F8FAFC]">
-        {/* Header */}
         <header className="flex items-center justify-between mb-10 shrink-0 gap-8">
-          {/* Dashboard Navigation Tabs (Simplified) */}
           <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
             {sidebarItems.map((item) => (
               <button
@@ -410,16 +441,39 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                   {item.label}
                 </span>
                 {activeTab === item.id && (
-                  <div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
                 )}
               </button>
             ))}
           </div>
 
           <div className="flex items-center gap-4 ml-auto">
-            {/* Expandable Search */}
+            <div className="flex items-center gap-2">
+              <Select
+                value={selectedCohort?.id?.toString()}
+                onValueChange={(val) => setSelectedCohort(cohorts.find(c => c.id.toString() === val) || null)}
+              >
+                <SelectTrigger className="w-[180px] bg-white rounded-2xl border-slate-100 shadow-sm text-xs font-bold h-11">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <SelectValue placeholder="Select Cohort" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+                  {cohorts.map(cohort => (
+                    <SelectItem key={cohort.id} value={cohort.id.toString()} className="text-xs font-medium py-3">
+                      {cohort.title} ({cohort.status})
+                    </SelectItem>
+                  ))}
+                  {cohorts.length === 0 && (
+                    <div className="p-4 text-center text-xs text-slate-400 italic">No batches created</div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="h-8 w-[1px] bg-slate-200 hidden lg:block mx-1" />
+
             <div className={`flex items-center bg-white rounded-2xl transition-all duration-300 shadow-sm border border-slate-100 ${isSearchExpanded ? 'w-64 px-4' : 'w-11 px-0 justify-center'}`}>
               <Button
                 variant="ghost"
@@ -438,49 +492,35 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
               />
             </div>
 
-            <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+            <NotificationCenter userId={userId || ''} />
 
-            <div className="flex items-center gap-3">
-              <NotificationCenter userId={userId || ''} />
+            <Button variant="ghost" size="icon" className="rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-white hover:shadow-sm">
+              <Settings className="h-5 w-5" />
+            </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-white hover:shadow-sm"
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
-
-              <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
-
-              {/* User Profile Quick Access (ReadOnly) */}
-              <div
-                className="flex items-center gap-3 p-1 rounded-2xl bg-white/50 border border-slate-100/50 shadow-sm"
-              >
-                <Avatar className="h-9 w-9 border border-white shadow-sm">
-                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col hidden sm:flex">
-                  <span className="text-[11px] font-bold text-slate-700 truncate max-w-[80px]">{user.name}</span>
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none">{user.rank}</span>
-                </div>
+            <div className="flex items-center gap-3 p-1 rounded-2xl bg-white/50 border border-slate-100/50 shadow-sm">
+              <Avatar className="h-9 w-9 border border-white shadow-sm">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
+                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col hidden sm:flex">
+                <span className="text-[11px] font-bold text-slate-700 truncate max-w-[80px]">{user.name}</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none">{user.rank}</span>
               </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-2xl text-red-400 hover:text-red-600 hover:bg-red-50"
-                onClick={handleLogout}
-                title="Sign Out"
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
             </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-2xl text-red-400 hover:text-red-600 hover:bg-red-50"
+              onClick={handleLogout}
+              title="Sign Out"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto pr-4 -mr-4 no-scrollbar pb-10">
           {renderContent()}
         </div>

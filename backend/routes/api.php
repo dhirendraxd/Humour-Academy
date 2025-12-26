@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\CurriculumController;
+use App\Http\Controllers\CohortController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EventController;
@@ -23,13 +25,21 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::put('/user/profile', [App\Http\Controllers\ProfileController::class, 'update']);
 
-    // Course routes
-    Route::get('/courses', [CourseController::class, 'index']);
-    Route::post('/courses', [CourseController::class, 'store']); // Teacher create course
+    // Curriculum & Module routes
+    Route::get('/curriculums', [CurriculumController::class, 'index']);
+    Route::post('/curriculums', [CurriculumController::class, 'store']);
+    Route::get('/modules', [ModuleController::class, 'index']);
+    Route::post('/modules', [ModuleController::class, 'store']);
+    Route::get('/modules/{id}', [ModuleController::class, 'show']);
+
+    // Cohort routes
+    Route::get('/cohorts', [CohortController::class, 'index']);
+    Route::post('/cohorts', [CohortController::class, 'store']);
+    Route::put('/cohorts/{id}', [CohortController::class, 'update']);
 
     // Enrollment routes
-    Route::post('/enrollments', [EnrollmentController::class, 'store']); // Student apply
-    Route::get('/active-enrollments', [EnrollmentController::class, 'index']); // Teacher view requests
+    Route::get('/enrollments', [EnrollmentController::class, 'index']);
+    Route::post('/enrollments', [EnrollmentController::class, 'store']);
     Route::put('/enrollments/{id}', [EnrollmentController::class, 'update']);
 
     // Notifications
