@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Submission {
@@ -51,19 +51,9 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('assessment_submissions')
-        .select(`
-          *,
-          student_profile:profiles(full_name, email),
-          answers:question_answers(*),
-          assessment:assessments(title)
-        `)
-        .eq('assessment_id', selectedAssessment)
-        .order('submitted_at', { ascending: false });
-
-      if (error) throw error;
-      setSubmissions(data || []);
+      // Mock fetching submissions
+      console.log("Fetching submissions mock");
+      setSubmissions([]);
     } catch (error) {
       console.error('Error fetching submissions:', error);
       toast({
@@ -91,31 +81,8 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
     if (!selectedSubmission) return;
 
     try {
-      // Update each answer
-      for (const answer of selectedSubmission.answers) {
-        const { error } = await supabase
-          .from('question_answers')
-          .update({ score: answer.score })
-          .eq('id', answer.id);
-
-        if (error) throw error;
-      }
-
-      // Calculate total score
-      const totalScore = selectedSubmission.answers.reduce((sum, answer) => sum + (answer.score || 0), 0);
-
-      // Update submission
-      const { error: submissionError } = await supabase
-        .from('assessment_submissions')
-        .update({
-          total_score: totalScore,
-          graded: true,
-          graded_at: new Date().toISOString(),
-          feedback: selectedSubmission.feedback
-        })
-        .eq('id', selectedSubmission.id);
-
-      if (submissionError) throw submissionError;
+      // Mock saving grades
+      console.log("Saving grades mock");
 
       toast({
         title: "Success",
