@@ -109,7 +109,7 @@ export const PublicNavigation = () => {
                                 transform: `translateY(${interpolate(0, 20)}px)`
                             }}
                         >
-                            Student Portal
+                            Student Profile
                         </span>
 
                         {/* Icon fades in/slides up */}

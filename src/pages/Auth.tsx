@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ export default function Auth() {
     email: "",
     password: "",
     fullName: "",
-    role: "student" as 'student' | 'faculty' | 'bod',
+    role: "student" as 'student' | 'faculty',
     reason: "",
     bio: "",
     city: "",
@@ -36,7 +36,13 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { signIn, signUp } = useAuth(); // Destructure methods from context instead of using supabase directly
+  const { signIn, signUp, user } = useAuth(); // Destructure methods from context instead of using supabase directly
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +57,7 @@ export default function Auth() {
         title: "Welcome back!",
         description: "Successfully logged in",
       });
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
 
     } catch (error: any) {
       toast({
@@ -91,7 +97,7 @@ export default function Auth() {
         description: "Account created successfully. Logging you in...",
       });
 
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
 
       // Reset form (though we navigate away)
       setSignupData({
@@ -139,7 +145,7 @@ export default function Auth() {
                 Ramay <span className="text-blue-600">Academy</span>
               </h1>
               <p className="text-lg text-muted-foreground">
-                Student Portal
+                Student Profile
               </p>
             </div>
 
@@ -290,13 +296,7 @@ export default function Auth() {
                             <SelectItem value="faculty">
                               <div className="flex items-center space-x-2">
                                 {getRoleIcon('faculty')}
-                                <span>Faculty Member</span>
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="bod">
-                              <div className="flex items-center space-x-2">
-                                {getRoleIcon('bod')}
-                                <span>Board of Directors</span>
+                                <span>Teacher</span>
                               </div>
                             </SelectItem>
                           </SelectContent>

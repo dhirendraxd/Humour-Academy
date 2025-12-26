@@ -7,6 +7,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 import Faculty from "./pages/Faculty";
 import Students from "./pages/Students";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/faculty" element={<Faculty />} />
               <Route path="/students" element={<Students />} />
               <Route path="/about" element={<About />} />

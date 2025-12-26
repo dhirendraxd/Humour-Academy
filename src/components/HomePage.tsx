@@ -6,9 +6,11 @@ import { SEO } from "@/components/SEO";
 
 interface HomePageProps {
   onLoginClick: () => void;
+  isAuthenticated?: boolean;
+  onDashboardClick?: () => void;
 }
 
-export const HomePage = ({ onLoginClick }: HomePageProps) => {
+export const HomePage = ({ onLoginClick, isAuthenticated, onDashboardClick }: HomePageProps) => {
   const navigate = useNavigate();
 
   return (
@@ -33,13 +35,23 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
 
           <FadeIn delay={500}>
             <div className="flex flex-row gap-4 justify-center pt-4">
-              <Button
-                size="lg"
-                onClick={onLoginClick}
-                className="rounded-full px-8 h-12 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 shadow-none"
-              >
-                Apply for Fall 2025
-              </Button>
+              {isAuthenticated ? (
+                <Button
+                  size="lg"
+                  onClick={onDashboardClick}
+                  className="rounded-full px-8 h-12 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                >
+                  Go to Dashboard
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={onLoginClick}
+                  className="rounded-full px-8 h-12 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                >
+                  Apply for Fall 2025
+                </Button>
+              )}
               <Button
                 size="lg"
                 variant="secondary"
@@ -101,10 +113,10 @@ export const HomePage = ({ onLoginClick }: HomePageProps) => {
               </p>
               <div className="pt-4 relative z-10">
                 <Button
-                  onClick={onLoginClick}
+                  onClick={isAuthenticated ? onDashboardClick : onLoginClick}
                   className="h-14 px-10 rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg shadow-lg"
                 >
-                  Start Application
+                  {isAuthenticated ? "Go to Dashboard" : "Start Application"}
                 </Button>
               </div>
             </div>

@@ -79,7 +79,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <div>
                 <Badge variant="secondary" className="mb-4 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md">
-                  Student Portal
+                  Profile
                 </Badge>
                 <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
                   Welcome back, {user.name.split(' ')[0]}!

@@ -19,17 +19,20 @@ import {
   LogOut,
   Crown,
   Settings,
-  Star
+  Star,
+  BookOpen,
+  Calendar,
+  Sparkles
 } from "lucide-react";
 
 interface NavigationProps {
-  currentRole: 'student' | 'faculty' | 'bod';
+  currentRole: 'student' | 'faculty';
   currentUser: {
     name: string;
     rank: string;
     level: number;
   } | null;
-  onRoleChange: (role: 'student' | 'faculty' | 'bod') => void;
+  onRoleChange: (role: 'student' | 'faculty') => void;
 }
 
 import { useAuth } from "@/components/AuthProvider";
@@ -53,7 +56,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
     <header className="w-full py-6 px-6 md:px-12 lg:px-16 flex items-center bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border/40 mb-8 transition-all duration-300">
       <div
         className="flex items-center gap-2 mr-12 cursor-pointer"
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/dashboard')}
       >
         <div className="text-xl font-bold tracking-tight flex items-center gap-2">
           <span className="text-blue-600 text-2xl">▲</span>
@@ -64,11 +67,11 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
       <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground items-center">
         <Button
           variant="ghost"
-          onClick={() => navigate('/students')}
-          className={`hover:text-blue-600 transition-colors ${location.pathname === '/students' ? 'text-blue-600' : ''}`}
+          onClick={() => navigate('/curriculum')}
+          className={`hover:text-blue-600 transition-colors ${location.pathname === '/curriculum' ? 'text-blue-600' : ''}`}
         >
-          <Users className="w-4 h-4 mr-2" />
-          Students
+          <BookOpen className="w-4 h-4 mr-2" />
+          Curriculum
         </Button>
         <Button
           variant="ghost"
@@ -78,12 +81,22 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           <GraduationCap className="w-4 h-4 mr-2" />
           Faculty
         </Button>
-        {currentRole === 'bod' && (
-          <Button variant="ghost" disabled className="opacity-50 cursor-not-allowed">
-            <Crown className="w-4 h-4 mr-2" />
-            Board
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/events')}
+          className={`hover:text-blue-600 transition-colors ${location.pathname === '/events' ? 'text-blue-600' : ''}`}
+        >
+          <Calendar className="w-4 h-4 mr-2" />
+          Events
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/about')}
+          className={`hover:text-blue-600 transition-colors ${location.pathname === '/about' ? 'text-blue-600' : ''}`}
+        >
+          <Sparkles className="w-4 h-4 mr-2" />
+          About
+        </Button>
       </nav>
 
       <div className="ml-auto flex items-center gap-4">
@@ -130,11 +143,7 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onRoleChange('faculty')}>
                 <GraduationCap className="mr-2 h-4 w-4" />
-                Faculty View
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleChange('bod')}>
-                <Crown className="mr-2 h-4 w-4" />
-                Board View
+                Teacher View
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
