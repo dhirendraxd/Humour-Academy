@@ -6,11 +6,12 @@ import { NotificationCenter } from "@/components/NotificationCenter";
 import { AssessmentCreation } from "@/components/AssessmentCreation";
 import { MaterialsManager } from "@/components/MaterialsManager";
 import { GradingInterface } from "@/components/GradingInterface";
+import { EventsManager } from "@/components/EventsManager";
 import { useState, useEffect } from "react";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { courseService, Enrollment } from "@/lib/courses";
 import { useToast } from "@/hooks/use-toast";
-import { Check, X } from "lucide-react";
+import { Check, X, Plus, Calendar as CalendarIcon } from "lucide-react";
 
 interface FacultyDashboardProps {
   user: {
@@ -22,7 +23,7 @@ interface FacultyDashboardProps {
 }
 
 export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
@@ -217,61 +218,66 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
       <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-secondary border-0 shadow-academic">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-secondary" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-secondary-foreground">Students</CardTitle>
-            <Users className="h-4 w-4 text-secondary-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Students</CardTitle>
+            <Users className="h-4 w-4 text-secondary group-hover:scale-110 transition-transform" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary-foreground">--</div>
-            <p className="text-xs text-secondary-foreground/70">Active learners</p>
+            <div className="text-3xl font-bold">--</div>
+            <p className="text-xs text-muted-foreground mt-1">Active learners</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic">
+        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assessments</CardTitle>
-            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Assessments</CardTitle>
+            <GraduationCap className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Created this term</p>
+            <div className="text-3xl font-bold">--</div>
+            <p className="text-xs text-muted-foreground mt-1">Created this term</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic">
+        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Performance</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Performance</CardTitle>
+            <BarChart3 className="h-4 w-4 text-green-500 group-hover:scale-110 transition-transform" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">--%</div>
-            <p className="text-xs text-muted-foreground">Average score</p>
+            <div className="text-3xl font-bold">--%</div>
+            <p className="text-xs text-muted-foreground mt-1">Average score</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Enhanced Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-primary" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
               <span>Student Management</span>
             </CardTitle>
             <CardDescription>View and manage your students</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
             <Button
-              className="w-full bg-gradient-primary border-0 hover:shadow-glow mb-2"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
               onClick={() => setActiveTab('students')}
             >
               Manage Students
             </Button>
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full hover:bg-primary/5 border-primary/20"
               onClick={() => setActiveTab('requests')}
             >
               Review Applications
@@ -279,17 +285,39 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <GraduationCap className="h-5 w-5 text-primary" />
+              <div className="p-2 bg-secondary/10 rounded-lg">
+                <CalendarIcon className="h-5 w-5 text-secondary" />
+              </div>
+              <span>Events & Live Sessions</span>
+            </CardTitle>
+            <CardDescription>Host webinars and seminars</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white border-0 hover:shadow-md transition-all"
+              onClick={() => setActiveTab('events')}
+            >
+              Host New Event
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <GraduationCap className="h-5 w-5 text-primary" />
+              </div>
               <span>Assessments</span>
             </CardTitle>
             <CardDescription>Create and manage assessments</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
-              className="w-full bg-gradient-primary border-0 hover:shadow-glow"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
               onClick={() => setActiveTab('assessments')}
             >
               Create Assessment
@@ -297,17 +325,19 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-primary" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
               <span>Materials</span>
             </CardTitle>
             <CardDescription>Upload and organize materials</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
-              className="w-full bg-gradient-primary border-0 hover:shadow-glow"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
               onClick={() => setActiveTab('materials')}
             >
               Manage Materials
@@ -315,17 +345,19 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <ClipboardCheck className="h-5 w-5 text-primary" />
+              <div className="p-2 bg-secondary/10 rounded-lg">
+                <ClipboardCheck className="h-5 w-5 text-secondary" />
+              </div>
               <span>Grading</span>
             </CardTitle>
             <CardDescription>Review and grade submissions</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
-              className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic"
+              className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white border-0 hover:shadow-md transition-all"
               onClick={() => setActiveTab('grading')}
             >
               Grade Submissions
@@ -333,32 +365,19 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
+        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <span>Course Analytics</span>
+              <div className="p-2 bg-muted/20 rounded-lg">
+                <BarChart3 className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <span>Analytics</span>
             </CardTitle>
             <CardDescription>View performance insights</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic">
-              View Analytics
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-academic hover:shadow-glow transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Bell className="h-5 w-5 text-primary" />
-              <span>Announcements</span>
-            </CardTitle>
-            <CardDescription>Send notifications to students</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic">
-              Send Announcement
+            <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">
+              Coming Soon
             </Button>
           </CardContent>
         </Card>

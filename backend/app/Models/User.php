@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function hostedEvents()
+    {
+        return $this->hasMany(Event::class, 'teacher_id');
+    }
 }

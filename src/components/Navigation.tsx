@@ -71,14 +71,18 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           <BookOpen className="w-4 h-4 mr-2" />
           Curriculum
         </Button>
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/faculty')}
-          className={`hover:text-blue-600 transition-colors ${location.pathname === '/faculty' ? 'text-blue-600' : ''}`}
-        >
-          <GraduationCap className="w-4 h-4 mr-2" />
-          Faculty
-        </Button>
+        {currentRole === 'student' && (
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/faculty')}
+              className={`hover:text-blue-600 transition-colors ${location.pathname === '/faculty' ? 'text-blue-600' : ''}`}
+            >
+              <GraduationCap className="w-4 h-4 mr-2" />
+              Faculty
+            </Button>
+          </>
+        )}
         <Button
           variant="ghost"
           onClick={() => navigate('/events')}
@@ -87,14 +91,16 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
           <Calendar className="w-4 h-4 mr-2" />
           Events
         </Button>
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/about')}
-          className={`hover:text-blue-600 transition-colors ${location.pathname === '/about' ? 'text-blue-600' : ''}`}
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          About
-        </Button>
+        {currentRole === 'student' && (
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/about')}
+            className={`hover:text-blue-600 transition-colors ${location.pathname === '/about' ? 'text-blue-600' : ''}`}
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            About
+          </Button>
+        )}
       </nav>
 
       <div className="ml-auto flex items-center gap-4">
