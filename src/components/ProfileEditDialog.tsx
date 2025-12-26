@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Loader2 } from "lucide-react";
 
@@ -46,15 +46,8 @@ export const ProfileEditDialog = ({
 
     setIsLoading(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: formData.full_name,
-          rank: formData.rank || null
-        })
-        .eq('user_id', profile.user_id);
-
-      if (error) throw error;
+      // Mock update profile
+      console.log("Updating profile mock", formData);
 
       toast({
         title: "Profile Updated",

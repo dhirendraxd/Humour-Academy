@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Notification {
@@ -57,14 +57,9 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const fetchNotifications = async () => {
     try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
+      // Mock fetch
+      console.log("Fetching notifications mock");
+      const data: Notification[] = []; // Empty for now
 
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
@@ -75,13 +70,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const markAsRead = async (notificationId: string) => {
     try {
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('id', notificationId);
-
-      if (error) throw error;
-
+      // Mock mark as read
       setNotifications(prev =>
         prev.map(n =>
           n.id === notificationId ? { ...n, is_read: true } : n
@@ -95,14 +84,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const markAllAsRead = async () => {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false);
-
-      if (error) throw error;
-
+      // Mock mark all as read
       setNotifications(prev =>
         prev.map(n => ({ ...n, is_read: true }))
       );
@@ -118,13 +100,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const deleteNotification = async (notificationId: string) => {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('id', notificationId);
-
-      if (error) throw error;
-
+      // Mock delete
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
       toast({
         title: "Notification deleted",
@@ -138,30 +114,11 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
   useEffect(() => {
     fetchNotifications();
 
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          setNotifications(prev => [payload.new as Notification, ...prev]);
-          setUnreadCount(prev => prev + 1);
-          toast({
-            title: payload.new.title,
-            description: payload.new.message,
-          });
-        }
-      )
-      .subscribe();
+    // Mock real-time subscription removed
+    // const channel = supabase...
 
     return () => {
-      supabase.removeChannel(channel);
+      // supabase.removeChannel(channel);
     };
   }, [userId, toast]);
 
@@ -215,11 +172,10 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
                   {notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-3 rounded-lg transition-colors hover:bg-accent/50 cursor-pointer ${
-                        !notification.is_read
+                      className={`p-3 rounded-lg transition-colors hover:bg-accent/50 cursor-pointer ${!notification.is_read
                           ? getNotificationColor(notification.type)
                           : 'hover:bg-muted/30'
-                      }`}
+                        }`}
                       onClick={() => !notification.is_read && markAsRead(notification.id)}
                     >
                       <div className="flex items-start justify-between gap-2">

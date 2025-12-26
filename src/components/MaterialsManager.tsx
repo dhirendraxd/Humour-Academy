@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Material {
@@ -35,14 +35,10 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
 
   const fetchMaterials = async () => {
     try {
-      const { data, error } = await supabase
-        .from('materials')
-        .select('*')
-        .eq('faculty_id', facultyId)
-        .order('created_at', { ascending: false });
+      // Mock fetch
+      console.log("Fetching materials mock");
+      setMaterials([]);
 
-      if (error) throw error;
-      setMaterials(data || []);
     } catch (error) {
       console.error('Error fetching materials:', error);
       toast({
@@ -67,34 +63,16 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
 
     try {
       if (editingMaterial) {
-        // Update existing material
-        const { error } = await supabase
-          .from('materials')
-          .update({
-            title,
-            description,
-            file_url: fileUrl,
-          })
-          .eq('id', editingMaterial.id);
-
-        if (error) throw error;
+        // Mock Update existing material
+        console.log("Updating material mock", { title, description, fileUrl });
 
         toast({
           title: "Success",
           description: "Material updated successfully",
         });
       } else {
-        // Create new material
-        const { error } = await supabase
-          .from('materials')
-          .insert({
-            title,
-            description,
-            file_url: fileUrl,
-            faculty_id: facultyId,
-          });
-
-        if (error) throw error;
+        // Mock Create new material
+        console.log("Creating material mock", { title, description, fileUrl });
 
         toast({
           title: "Success",
@@ -128,12 +106,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     if (!confirm('Are you sure you want to delete this material?')) return;
 
     try {
-      const { error } = await supabase
-        .from('materials')
-        .delete()
-        .eq('id', materialId);
-
-      if (error) throw error;
+      // Mock delete
+      console.log("Deleting material mock", materialId);
 
       toast({
         title: "Success",
@@ -171,7 +145,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               className="bg-gradient-primary border-0 hover:shadow-glow"
               onClick={() => setEditingMaterial(null)}
             >
@@ -195,7 +169,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                   placeholder="Enter material title"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -206,7 +180,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                   rows={3}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="fileUrl">File URL (Optional)</Label>
                 <Input
@@ -216,12 +190,12 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                   placeholder="Enter file URL or upload link"
                 />
               </div>
-              
+
               <div className="flex justify-end space-x-2">
                 <Button variant="outline" onClick={resetForm}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   onClick={handleSubmit}
                   disabled={isLoading}
                   className="bg-gradient-primary border-0"
@@ -260,7 +234,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                 <p className="text-sm text-muted-foreground line-clamp-3">
                   {material.description || 'No description provided'}
                 </p>
-                
+
                 {material.file_url && (
                   <div className="flex items-center gap-2">
                     <Upload className="h-4 w-4 text-primary" />
@@ -274,11 +248,11 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                     </a>
                   </div>
                 )}
-                
+
                 <div className="text-xs text-muted-foreground">
                   Added {new Date(material.created_at).toLocaleDateString()}
                 </div>
-                
+
                 <div className="flex justify-end space-x-2">
                   <Button
                     variant="ghost"

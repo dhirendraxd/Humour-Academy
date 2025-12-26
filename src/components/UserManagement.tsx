@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import {
   Dialog,
@@ -20,17 +20,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
-  Users, 
-  Edit3, 
-  Search, 
-  Crown, 
-  Star, 
+import {
+  Users,
+  Edit3,
+  Search,
+  Crown,
+  Star,
   GraduationCap,
   Plus,
   Loader2
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface Profile {
@@ -52,10 +52,10 @@ interface UserManagementProps {
   canEdit?: boolean;
 }
 
-export const UserManagement = ({ 
-  currentUserRole, 
-  allowedRoles, 
-  title, 
+export const UserManagement = ({
+  currentUserRole,
+  allowedRoles,
+  title,
   description = "Manage users and their roles",
   canEdit = false
 }: UserManagementProps) => {
@@ -71,14 +71,10 @@ export const UserManagement = ({
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('role', allowedRoles)
-        .order('created_at', { ascending: false });
+      // Mock fetching users
+      console.log("Fetching users mock");
+      setUsers([]);
 
-      if (error) throw error;
-      setUsers(data || []);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -107,10 +103,10 @@ export const UserManagement = ({
   const getRoleBadge = (role: string) => {
     const variants = {
       student: 'bg-gradient-secondary text-secondary-foreground',
-      faculty: 'bg-gradient-primary text-primary-foreground', 
+      faculty: 'bg-gradient-primary text-primary-foreground',
       bod: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
     };
-    
+
     return (
       <Badge className={`${variants[role as keyof typeof variants]} border-0`}>
         {getRoleIcon(role)}
@@ -125,17 +121,8 @@ export const UserManagement = ({
 
     setIsUpdating(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: editingUser.full_name,
-          rank: editingUser.rank,
-          role: editingUser.role,
-          level: editingUser.level
-        })
-        .eq('id', editingUser.id);
-
-      if (error) throw error;
+      // Mock update user
+      console.log("Updating user mock", editingUser);
 
       toast({
         title: "User Updated",
@@ -159,7 +146,7 @@ export const UserManagement = ({
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = selectedRole === "all" || user.role === selectedRole;
     return matchesSearch && matchesRole;
   });
@@ -292,7 +279,7 @@ export const UserManagement = ({
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="edit_rank">Rank/Title</Label>
                   <Input
@@ -359,9 +346,9 @@ export const UserManagement = ({
                 )}
 
                 <div className="flex justify-end space-x-2 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsEditDialogOpen(false)}
                   >
                     Cancel

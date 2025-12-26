@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Question {
@@ -87,40 +87,10 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
     setIsCreating(true);
 
     try {
-      // Create assessment
-      const { data: assessmentData, error: assessmentError } = await supabase
-        .from('assessments')
-        .insert([
-          {
-            title: formData.title,
-            description: formData.description,
-            assessment_type: formData.type,
-            faculty_id: facultyId,
-            total_marks: formData.totalMarks,
-            due_date: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
-          }
-        ])
-        .select()
-        .single();
+      // Mock create assessment
+      console.log("Creating assessment mock", formData, questions);
 
-      if (assessmentError) throw assessmentError;
-
-      // Create questions
-      const questionsToInsert = questions.map((q, idx) => ({
-        assessment_id: assessmentData.id,
-        question_type: q.type,
-        question_text: q.question,
-        marks: q.points,
-        options: q.type === 'mcq' ? q.options : null,
-        correct_answer: q.type === 'mcq' ? q.correctAnswer : null,
-        order_number: idx,
-      }));
-
-      const { error: questionsError } = await supabase
-        .from('questions')
-        .insert(questionsToInsert);
-
-      if (questionsError) throw questionsError;
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       toast({
         title: "Success",
