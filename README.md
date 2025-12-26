@@ -54,11 +54,57 @@ npm run dev
 
 This project is built with:
 
+**Frontend:**
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+
+**Backend:**
+- Laravel 12
+- PHP 8.3
+- MySQL 8.0
+- Laravel Sanctum (API Authentication)
+
+## Backend Setup
+
+The project includes a Laravel backend for authentication and API services.
+
+### Prerequisites
+- PHP 8.3+
+- Composer
+- MySQL 8.0+
+
+### Quick Start
+
+1. **Navigate to backend directory:**
+   ```sh
+   cd backend
+   ```
+
+2. **Configure database:**
+   - Create MySQL database: `ramay_humour_academy`
+   - Update `.env` file with your database credentials
+
+3. **Run migrations:**
+   ```sh
+   php artisan migrate
+   ```
+
+4. **Start Laravel server:**
+   ```sh
+   php artisan serve
+   ```
+
+5. **In a new terminal, start the frontend:**
+   ```sh
+   npm run dev
+   ```
+
+For detailed setup instructions, see [backend/SETUP_GUIDE.md](./backend/SETUP_GUIDE.md)
+
+For API documentation, see [backend/API_DOCUMENTATION.md](./backend/API_DOCUMENTATION.md)
 
 ## How can I deploy this project?
 
