@@ -6,6 +6,10 @@ export interface Profile {
     role: 'student' | 'faculty' | 'bod';
     level: number;
     rank: string;
+    bio?: string;
+    city?: string;
+    phone?: string;
+    interests?: string[];
 }
 
 export const MOCK_PROFILES: Profile[] = [

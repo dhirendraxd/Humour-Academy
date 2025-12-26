@@ -28,7 +28,10 @@ export default function Auth() {
     password: "",
     fullName: "",
     role: "student" as 'student' | 'faculty' | 'bod',
-    reason: ""
+    reason: "",
+    bio: "",
+    city: "",
+    phone: ""
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -67,7 +70,21 @@ export default function Auth() {
 
     try {
       // Use real signUp
-      await signUp(signupData.email, signupData.fullName, signupData.password, signupData.role);
+      // Use real signUp with object
+      // We need to cast or update the signUp signature in context, but for now passing extra args might need adjustment
+      // Actually AuthProvider's signUp only takes 4 args. I should update AuthProvider signature or pass object.
+      // Let's check AuthProvider.tsx again. It takes (email, fullName, password, role).
+      // I need to update AuthProvider.tsx first or overload it.
+      // But wait, I can just call auth.register directly here if I want, or update AuthProvider.
+      // Better to update AuthProvider to accept object or optional args.
+      // For now, I will modify AuthProvider.tsx signature in next step. 
+      // I'll skip this edit for now and do AuthProvider first? No, I'm already in Auth.tsx
+      // I'll update it to call a new signature I WILL create.
+      await signUp(signupData.email, signupData.fullName, signupData.password, signupData.role, {
+        bio: signupData.bio,
+        city: signupData.city,
+        phone: signupData.phone
+      });
 
       toast({
         title: "Registration Successful!",
@@ -82,7 +99,10 @@ export default function Auth() {
         password: "",
         fullName: "",
         role: "student",
-        reason: ""
+        reason: "",
+        bio: "",
+        city: "",
+        phone: ""
       });
 
     } catch (error: any) {
@@ -281,6 +301,40 @@ export default function Auth() {
                             </SelectItem>
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="signupCity" className="text-sm font-medium">City</Label>
+                          <Input
+                            id="signupCity"
+                            value={signupData.city || ""}
+                            onChange={(e) => setSignupData({ ...signupData, city: e.target.value })}
+                            placeholder="City"
+                            className="h-12 bg-background/50"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="signupPhone" className="text-sm font-medium">Phone</Label>
+                          <Input
+                            id="signupPhone"
+                            value={signupData.phone || ""}
+                            onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
+                            placeholder="+91..."
+                            className="h-12 bg-background/50"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="signupBio" className="text-sm font-medium">Bio (Optional)</Label>
+                        <Input
+                          id="signupBio"
+                          value={signupData.bio || ""}
+                          onChange={(e) => setSignupData({ ...signupData, bio: e.target.value })}
+                          placeholder="Short bio..."
+                          className="h-12 bg-background/50"
+                        />
                       </div>
 
                       <Button

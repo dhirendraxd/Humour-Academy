@@ -7,6 +7,12 @@ export interface User {
     email: string;
     role: string;
     email_verified_at: string | null;
+    bio?: string | null;
+    city?: string | null;
+    phone?: string | null;
+    interests?: string[] | null;
+    level?: number;
+    rank?: string;
     created_at: string;
     updated_at: string;
 }
@@ -27,6 +33,20 @@ export interface RegisterCredentials {
     role?: string;
     password: string;
     password_confirmation: string;
+    bio?: string;
+    city?: string;
+    phone?: string;
+    interests?: string[];
+}
+
+export interface UpdateProfileData {
+    name?: string;
+    email?: string;
+    bio?: string;
+    city?: string;
+    phone?: string;
+    interests?: string[];
+    rank?: string; // Optional for now as it might be read-only in backend
 }
 
 // Authentication functions
@@ -57,6 +77,11 @@ export const auth = {
     // Get current user
     getUser: async (): Promise<User> => {
         return api.get<User>('/user');
+    },
+
+    // Update user profile
+    updateProfile: async (data: UpdateProfileData): Promise<{ message: string; user: User }> => {
+        return api.put<{ message: string; user: User }>('/user/profile', data);
     },
 
     // Check if user is authenticated

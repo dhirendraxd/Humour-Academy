@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, fullName: string, password: string, role: string) => Promise<void>;
+  signUp: (email: string, fullName: string, password: string, role: string, additionalData?: any) => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Sign up function
-  const signUp = async (email: string, fullName: string, password: string, role: string) => {
+  const signUp = async (email: string, fullName: string, password: string, role: string, additionalData?: any) => {
     setLoading(true);
     try {
       const response = await auth.register({
@@ -81,7 +81,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         email,
         password,
         password_confirmation: password, // Assuming password confirmation matches for now
-        role
+        role,
+        ...additionalData
       });
       setUser(response.user);
     } finally {
@@ -107,8 +108,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     full_name: user.name,
     email: user.email,
     role: (user.role as 'student' | 'faculty' | 'bod') || 'student',
-    level: 1, // Default
-    rank: 'Novice', // Default
+    bio: user.bio || undefined,
+    city: user.city || undefined,
+    phone: user.phone || undefined,
+    interests: user.interests || [],
+    level: user.level || 1,
+    rank: user.rank || 'Novice',
   } : null;
 
   return (

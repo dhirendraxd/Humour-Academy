@@ -23,6 +23,11 @@ class RegisterController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'role' => 'nullable|string|in:student,faculty,bod',
             'password' => ['required', 'confirmed', Password::defaults()],
+            'bio' => 'nullable|string|max:1000',
+            'city' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'interests' => 'nullable|array',
+            'interests.*' => 'string',
         ]);
 
         $user = User::create([
@@ -30,6 +35,10 @@ class RegisterController extends Controller
             'email' => $request->email,
             'role' => $request->role ?? 'student',
             'password' => Hash::make($request->password),
+            'bio' => $request->bio,
+            'city' => $request->city,
+            'phone' => $request->phone,
+            'interests' => $request->interests,
         ]);
 
         // Create token for the new user
