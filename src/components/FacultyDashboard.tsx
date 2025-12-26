@@ -1,6 +1,29 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, BookOpen, BarChart3, Star, Bell, FileText, GraduationCap, ClipboardCheck } from "lucide-react";
+import {
+  Users,
+  BarChart3,
+  Star,
+  Bell,
+  FileText,
+  GraduationCap,
+  ClipboardCheck,
+  Search,
+  LayoutDashboard,
+  MessageSquare,
+  Calendar,
+  Settings,
+  MoreHorizontal,
+  ArrowUpRight,
+  ArrowDownRight,
+  Plus,
+  Check,
+  X,
+  Calendar as CalendarIcon,
+  LogOut,
+  Menu,
+  ChevronLeft
+} from "lucide-react";
 import { UserManagement } from "@/components/UserManagement";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { AssessmentCreation } from "@/components/AssessmentCreation";
@@ -11,7 +34,23 @@ import { useState, useEffect } from "react";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { courseService, Enrollment } from "@/lib/courses";
 import { useToast } from "@/hooks/use-toast";
-import { Check, X, Plus, Calendar as CalendarIcon } from "lucide-react";
+import {
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell
+} from 'recharts';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/AuthProvider";
 
 interface FacultyDashboardProps {
   user: {
@@ -22,9 +61,56 @@ interface FacultyDashboardProps {
   userId?: string;
 }
 
+const sidebarItems = [
+  { icon: LayoutDashboard, id: 'overview', label: 'Dashboard' },
+  { icon: MessageSquare, id: 'messages', label: 'Messages' },
+  { icon: FileText, id: 'materials', label: 'Materials' },
+  { icon: Calendar, id: 'events', label: 'Events' },
+  { icon: GraduationCap, id: 'students', label: 'Students' },
+  { icon: ClipboardCheck, id: 'grading', label: 'Grading' },
+  { icon: Star, id: 'assessments', label: 'Assessments' },
+];
+
+const studentGrowthData = [
+  { name: '2k', students: 4000 },
+  { name: '4k', students: 3000 },
+  { name: '6k', students: 6500 },
+  { name: '8k', students: 4500 },
+  { name: '10k', students: 9003 },
+  { name: '12k', students: 5000 },
+];
+
+const performanceData = [
+  { name: 'Engagement', value: 77, fill: '#ef4444' },
+];
+
+const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color }: any) => (
+  <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 bg-white relative overflow-hidden group rounded-2xl">
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium text-muted-foreground/60">{title}</CardTitle>
+      <div className={`p-2 rounded-xl bg-${color}/10 text-${color}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-3xl font-bold tracking-tight mb-1">{value}</div>
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground/60 font-medium">{label}</span>
+        <div className={`flex items-center text-[10px] font-bold ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+          {trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+          {trendValue}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
 export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
   const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
 
@@ -53,335 +139,344 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
     }
   };
 
-  if (activeTab === 'requests') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <Users className="h-6 w-6 text-primary" />
-              <span>Course Requests</span>
-            </h1>
-            <p className="text-muted-foreground">Manage incoming student enrollment applications</p>
-          </div>
-          <Button variant="outline" onClick={() => setActiveTab('overview')}>Back</Button>
-        </div>
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
-        <div className="grid gap-4">
-          {requests.map(req => (
-            <Card key={req.id}>
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <h3 className="font-bold text-lg">{req.student?.name}</h3>
-                  <p className="text-muted-foreground">{req.course?.title}</p>
-                  {req.student?.bio && <p className="text-sm mt-1 italic">"{req.student.bio}"</p>}
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
-                    <Check className="w-4 h-4 mr-1" /> Approve
-                  </Button>
-                  <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
-                    <X className="w-4 h-4 mr-1" /> Reject
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          {requests.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground card border-dashed">
-              No pending requests.
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'requests':
+        return (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Course Requests</h2>
+                <p className="text-muted-foreground">Manage incoming student applications</p>
+              </div>
+              <Button variant="outline" onClick={() => setActiveTab('overview')} className="rounded-xl">Back to Overview</Button>
             </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (activeTab === 'students') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <Star className="h-6 w-6 text-primary" />
-              <span>Student Management</span>
-            </h1>
-            <p className="text-muted-foreground">Manage your students and track their progress</p>
+            <div className="grid gap-4">
+              {requests.map(req => (
+                <Card key={req.id} className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow rounded-2xl">
+                  <CardContent className="flex items-center justify-between p-6">
+                    <div>
+                      <h3 className="font-bold text-lg">{req.student?.name}</h3>
+                      <p className="text-muted-foreground">{req.course?.title}</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button size="sm" variant="outline" className="rounded-xl text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
+                        <Check className="w-4 h-4 mr-1" /> Approve
+                      </Button>
+                      <Button size="sm" variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
+                        <X className="w-4 h-4 mr-1" /> Reject
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {requests.length === 0 && (
+                <div className="text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2rem] text-muted-foreground">
+                  No pending requests at the moment.
+                </div>
+              )}
+            </div>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab('overview')}
-          >
-            Back to Overview
-          </Button>
-        </div>
-        <UserManagement
-          currentUserRole="faculty"
-          allowedRoles={['student']}
-          title="My Students"
-          description="Manage student accounts, grades, and academic progress"
-          canEdit={true}
-        />
-      </div>
-    );
-  }
+        );
+      case 'students':
+        return <UserManagement currentUserRole="faculty" allowedRoles={['student']} title="Student Directory" description="Manage and track learner progress" canEdit={true} />;
+      case 'assessments':
+        return <AssessmentCreation facultyId={userId || ''} />;
+      case 'materials':
+        return <MaterialsManager facultyId={userId || ''} />;
+      case 'grading':
+        return <GradingInterface facultyId={userId || ''} />;
+      case 'events':
+        return <EventsManager teacherId={userId || ''} />;
+      default:
+        return (
+          <div className="space-y-8 animate-in fade-in duration-700">
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold tracking-tight text-slate-800">Analytics Overview</h2>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="rounded-xl border-slate-200 text-xs bg-white text-slate-600 hover:bg-slate-50">
+                    Last 30 days
+                    <Calendar className="ml-2 h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard title="Total Students" value="21.2k" label="Active learners" trend="up" trendValue="112.71%" icon={Users} color="blue-600" />
+                <MetricCard title="Course Views" value="1.6k" label="Monthly impressions" trend="up" trendValue="112.71%" icon={BarChart3} color="purple-600" />
+                <MetricCard title="Total Reach" value="826" label="Unique reach" trend="down" trendValue="24.2%" icon={Star} color="orange-600" />
+                <MetricCard title="Engagement" value="18.2%" label="Avg. engagement" trend="up" trendValue="112.71%" icon={BarChart3} color="green-600" />
+              </div>
+            </section>
 
-  if (activeTab === 'assessments') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <GraduationCap className="h-6 w-6 text-primary" />
-              <span>Assessment Management</span>
-            </h1>
-            <p className="text-muted-foreground">Create and manage assessments for your students</p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab('overview')}
-          >
-            Back to Overview
-          </Button>
-        </div>
-        <AssessmentCreation facultyId={userId || ''} />
-      </div>
-    );
-  }
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <Card className="lg:col-span-5 border-0 shadow-sm bg-white overflow-hidden flex flex-col rounded-[2rem]">
+                <CardHeader className="pb-0 border-b-0 space-y-0">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-bold text-slate-800">Performance Insights</CardTitle>
+                      <CardDescription className="text-xs">Most Recent Activity</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-50">
+                      <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-grow flex flex-col items-center justify-center pt-6 min-h-[300px] relative">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <RadialBarChart
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="80%"
+                      outerRadius="100%"
+                      barSize={12}
+                      data={performanceData}
+                      startAngle={210}
+                      endAngle={-30}
+                    >
+                      <RadialBar
+                        background={{ fill: '#F1F5F9' }}
+                        dataKey="value"
+                        cornerRadius={10}
+                        fill="#ef4444"
+                      />
+                    </RadialBarChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <Star className="text-red-400 w-5 h-5 mb-1" />
+                    <span className="text-4xl font-extrabold tracking-tight text-slate-800">29.2k</span>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold mt-1">Goal: 36,000 (77%)</span>
+                  </div>
+                </CardContent>
+              </Card>
 
-  if (activeTab === 'materials') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <FileText className="h-6 w-6 text-primary" />
-              <span>Course Materials</span>
-            </h1>
-            <p className="text-muted-foreground">Manage study materials and resources</p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab('overview')}
-          >
-            Back to Overview
-          </Button>
-        </div>
-        <MaterialsManager facultyId={userId || ''} />
-      </div>
-    );
-  }
+              <Card className="lg:col-span-7 border-0 shadow-sm bg-white overflow-hidden rounded-[2rem]">
+                <CardHeader className="pb-2 space-y-0">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-bold text-slate-800">Student Growth</CardTitle>
+                      <CardDescription className="text-xs">Enrollment trends over time</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                        <span className="text-[10px] font-bold text-slate-600">12.8k learners</span>
+                      </div>
+                      <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-50">
+                        <Calendar className="h-4 w-4 text-slate-400" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4 px-2">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={studentGrowthData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fontWeight: 600, fill: '#A3A3A3' }}
+                        dy={10}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fontWeight: 600, fill: '#A3A3A3' }}
+                        dx={-5}
+                      />
+                      <Tooltip
+                        cursor={{ fill: 'transparent' }}
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-[#1a1c1e] text-white p-3 rounded-2xl shadow-xl border-0 animate-in fade-in zoom-in-95">
+                                <p className="text-[10px] leading-relaxed">
+                                  With <span className="font-bold underline text-blue-400">22.8% growth rate</span><br />
+                                  we are steadily growing<br />
+                                  our community.
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar
+                        dataKey="students"
+                        radius={[6, 6, 0, 0]}
+                        barSize={32}
+                      >
+                        {studentGrowthData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={index === 4 ? '#2563eb' : '#F1F5F9'}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
 
-  if (activeTab === 'grading') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center space-x-2">
-              <ClipboardCheck className="h-6 w-6 text-primary" />
-              <span>Grade Submissions</span>
-            </h1>
-            <p className="text-muted-foreground">Review and grade student submissions</p>
+            <section>
+              <h3 className="text-lg font-bold mb-4 text-slate-800">Quick Actions</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { label: 'Host Event', icon: CalendarIcon, tab: 'events', color: 'blue-600' },
+                  { label: 'Review Requests', icon: Users, tab: 'requests', color: 'purple-600' },
+                  { label: 'Grade Tasks', icon: ClipboardCheck, tab: 'grading', color: 'orange-600' },
+                  { label: 'New Syllabus', icon: Plus, tab: 'materials', color: 'green-600' },
+                ].map((action) => (
+                  <Button
+                    key={action.label}
+                    variant="outline"
+                    onClick={() => setActiveTab(action.tab as any)}
+                    className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
+                  >
+                    <div className={`p-3 rounded-2xl bg-${action.color}/10 text-${action.color} group-hover:scale-110 transition-transform`}>
+                      <action.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600">{action.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </section>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab('overview')}
-          >
-            Back to Overview
-          </Button>
-        </div>
-        <GradingInterface facultyId={userId || ''} />
-      </div>
-    );
-  }
+        );
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="bg-gradient-primary rounded-lg p-6 text-primary-foreground shadow-glow">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Faculty Dashboard</h1>
-            <p className="text-primary-foreground/80">{user.name} • {user.rank} • Level {user.level}</p>
+    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F8FAFC] -mt-10 overflow-hidden rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+      {/* Sidebar Overlay */}
+      <div
+        className={`bg-white border-r border-slate-50 flex flex-col items-center py-10 transition-all duration-500 ease-in-out relative group/sidebar ${isSidebarExpanded ? 'w-64 px-6 items-start' : 'w-20 px-0 items-center'}`}
+      >
+
+        <div
+          className={`p-3 bg-blue-600/5 rounded-2xl text-blue-600 mb-10 shrink-0 cursor-pointer hover:bg-blue-600 hover:text-white transition-all ${isSidebarExpanded ? 'ml-0' : ''}`}
+          onClick={() => navigate('/')}
+        >
+          <GraduationCap className="h-7 w-7" />
+        </div>
+
+        <div className="flex flex-col gap-4 w-full px-2">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as any)}
+              className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 w-full group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-slate-300 hover:text-blue-600 hover:bg-blue-600/5'}`}
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              {isSidebarExpanded && (
+                <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
+                  {item.label}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-auto flex flex-col gap-4 w-full px-2">
+          <button
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-slate-300 hover:text-slate-600 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            onClick={() => setShowProfileDialog(true)}
+          >
+            <Settings className="h-5 w-5 shrink-0" />
+            {isSidebarExpanded && <span className="text-sm font-bold">Settings</span>}
+          </button>
+
+          <button
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-red-300 hover:text-red-500 hover:bg-red-50 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            onClick={handleLogout}
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {isSidebarExpanded && <span className="text-sm font-bold">Sign Out</span>}
+          </button>
+
+          <div className="h-[1px] bg-slate-100 my-2" />
+
+          <div className={`flex items-center gap-3 p-1.5 rounded-2xl bg-slate-50 border border-slate-100/50 ${isSidebarExpanded ? 'w-full pr-4' : 'w-fit mx-auto'}`}>
+            <Avatar className="h-10 w-10 border-2 border-white shadow-sm shrink-0">
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            {isSidebarExpanded && (
+              <div className="flex flex-col min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
+                <span className="text-xs font-bold text-slate-800 truncate">{user.name}</span>
+                <span className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user.rank}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div className="flex-1 flex flex-col overflow-hidden px-10 py-8 bg-[#F8FAFC]">
+        {/* Header */}
+        <header className="flex items-center justify-between mb-10 shrink-0">
+          <div className="flex items-center gap-6 flex-1">
             <Button
-              variant="secondary"
-              size="sm"
-              className="mt-4 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md"
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-12 w-12 shrink-0 transition-all"
+            >
+              {isSidebarExpanded ? <ChevronLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+
+            <div className="relative w-full max-w-lg group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+              <Input
+                placeholder="Search students, analytics, reports..."
+                className="pl-12 h-12 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-300 text-sm font-medium"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex -space-x-3 overflow-hidden mr-2">
+              {[1, 2, 3, 4].map(i => (
+                <Avatar key={i} className="inline-block h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=student${i}`} />
+                </Avatar>
+              ))}
+              <button className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 shadow-lg shadow-blue-600/20 text-white hover:bg-blue-700 transition-all hover:scale-105 active:scale-95">
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+
+            <NotificationCenter userId={userId || ''} />
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-2xl text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm"
               onClick={() => setShowProfileDialog(true)}
             >
-              Edit Profile
+              <Settings className="h-5 w-5" />
             </Button>
           </div>
-          {userId && <NotificationCenter userId={userId} />}
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto pr-4 -mr-4 scrollbar-hide pb-10">
+          {renderContent()}
         </div>
       </div>
       <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
-
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-secondary" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Students</CardTitle>
-            <Users className="h-4 w-4 text-secondary group-hover:scale-110 transition-transform" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground mt-1">Active learners</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Assessments</CardTitle>
-            <GraduationCap className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground mt-1">Created this term</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white hover:shadow-lg transition-all duration-300 border-primary/10 overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Performance</CardTitle>
-            <BarChart3 className="h-4 w-4 text-green-500 group-hover:scale-110 transition-transform" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">--%</div>
-            <p className="text-xs text-muted-foreground mt-1">Average score</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Enhanced Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <span>Student Management</span>
-            </CardTitle>
-            <CardDescription>View and manage your students</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button
-              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
-              onClick={() => setActiveTab('students')}
-            >
-              Manage Students
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full hover:bg-primary/5 border-primary/20"
-              onClick={() => setActiveTab('requests')}
-            >
-              Review Applications
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-secondary/10 rounded-lg">
-                <CalendarIcon className="h-5 w-5 text-secondary" />
-              </div>
-              <span>Events & Live Sessions</span>
-            </CardTitle>
-            <CardDescription>Host webinars and seminars</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white border-0 hover:shadow-md transition-all"
-              onClick={() => setActiveTab('events')}
-            >
-              Host New Event
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <GraduationCap className="h-5 w-5 text-primary" />
-              </div>
-              <span>Assessments</span>
-            </CardTitle>
-            <CardDescription>Create and manage assessments</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
-              onClick={() => setActiveTab('assessments')}
-            >
-              Create Assessment
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <FileText className="h-5 w-5 text-primary" />
-              </div>
-              <span>Materials</span>
-            </CardTitle>
-            <CardDescription>Upload and organize materials</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              className="w-full bg-gradient-to-r from-primary to-primary/80 border-0 hover:shadow-md transition-all"
-              onClick={() => setActiveTab('materials')}
-            >
-              Manage Materials
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-secondary/10 rounded-lg">
-                <ClipboardCheck className="h-5 w-5 text-secondary" />
-              </div>
-              <span>Grading</span>
-            </CardTitle>
-            <CardDescription>Review and grade submissions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white border-0 hover:shadow-md transition-all"
-              onClick={() => setActiveTab('grading')}
-            >
-              Grade Submissions
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-xl transition-all duration-300 border-primary/10">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <div className="p-2 bg-muted/20 rounded-lg">
-                <BarChart3 className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <span>Analytics</span>
-            </CardTitle>
-            <CardDescription>View performance insights</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">
-              Coming Soon
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 };

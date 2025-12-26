@@ -59,17 +59,10 @@ const Dashboard = () => {
     return (
         <PageLayout
             showFooter={false}
-            customNav={
-                <Navigation
-                    onRoleChange={(role) => {
-                        // If we want to support role switching in Dashboard, we can still pass onRoleChange
-                        // but Navigation will now handle the user/profile internally.
-                    }}
-                />
-            }
+            showNav={profile.role !== 'faculty'}
         >
             <FadeIn>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className={`${profile.role === 'faculty' ? 'w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'}`}>
                     {renderDashboard()}
                 </div>
             </FadeIn>
