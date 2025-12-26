@@ -114,8 +114,6 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements'>('overview');
-  const [showProfileDialog, setShowProfileDialog] = useState(false);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -307,12 +305,12 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                   { label: 'Course Catalog', icon: BookOpen, tab: 'courses', color: 'blue-600' },
                   { label: 'Find Classmates', icon: GraduationCap, tab: 'classmates', color: 'purple-600' },
                   { label: 'View Events', icon: Calendar, tab: 'events', color: 'orange-600' },
-                  { label: 'Profile Settings', icon: Settings, action: () => setShowProfileDialog(true), color: 'green-600' },
+                  { label: 'Platform Stats', icon: Zap, color: 'green-600' },
                 ].map((item) => (
                   <Button
                     key={item.label}
                     variant="outline"
-                    onClick={item.action ? item.action : () => setActiveTab(item.tab as any)}
+                    onClick={() => setActiveTab(item.tab as any)}
                     className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
                   >
                     <div className={`p-3 rounded-2xl bg-${item.color}/10 text-${item.color} group-hover:scale-110 transition-transform`}>
@@ -350,15 +348,16 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-6">
-            {/* Relocated Search */}
-            <div className="relative w-64 group hidden lg:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-              <Input
-                placeholder="Search resources..."
-                className="pl-11 h-11 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-xs font-medium w-full"
-              />
-            </div>
+          <div className="flex items-center gap-4">
+            {/* Simple Search Icon */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-11 w-11 transition-all"
+              title="Quick Search"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
 
             <div className="flex items-center gap-3">
               <NotificationCenter userId={user.name} />
@@ -367,17 +366,15 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                 variant="ghost"
                 size="icon"
                 className="rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-white hover:shadow-sm"
-                onClick={() => setShowProfileDialog(true)}
               >
                 <Settings className="h-5 w-5" />
               </Button>
 
               <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
 
-              {/* User Profile Quick Access */}
+              {/* User Profile Quick Access (ReadOnly) */}
               <div
-                className="flex items-center gap-3 p-1 rounded-2xl hover:bg-white hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-100 group"
-                onClick={() => setShowProfileDialog(true)}
+                className="flex items-center gap-3 p-1 rounded-2xl bg-white/50 border border-slate-100/50 shadow-sm"
               >
                 <Avatar className="h-9 w-9 border border-white shadow-sm">
                   <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
@@ -409,7 +406,6 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
           </FadeIn>
         </div>
       </div>
-      <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
     </div>
   );
 };

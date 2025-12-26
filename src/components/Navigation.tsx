@@ -165,7 +165,7 @@ export const Navigation = ({
       </nav>
 
       <div className="ml-auto flex items-center gap-4">
-        {userData ? (
+        {userData && location.pathname !== '/dashboard' ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-blue-600/10 transition-colors">

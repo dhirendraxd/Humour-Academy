@@ -109,7 +109,6 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
-  const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
@@ -379,26 +378,16 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-6">
-            {/* Relocated Search */}
-            <div className="relative w-64 group hidden lg:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-              <Input
-                placeholder="Quick Search..."
-                className="pl-11 h-11 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-xs font-medium w-full"
-              />
-            </div>
-
-            <div className="hidden sm:flex -space-x-3 overflow-hidden">
-              {[1, 2, 3, 4].map(i => (
-                <Avatar key={i} className="inline-block h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100 cursor-pointer hover:scale-110 transition-transform">
-                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=student${i}`} />
-                </Avatar>
-              ))}
-              <button className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 shadow-lg shadow-blue-600/20 text-white hover:bg-blue-700 transition-all hover:scale-105 active:scale-95">
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+          <div className="flex items-center gap-4">
+            {/* Simple Search Icon */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-11 w-11 transition-all"
+              title="Quick Search"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
 
             <div className="h-8 w-[1px] bg-slate-200 hidden sm:block" />
 
@@ -409,17 +398,16 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 variant="ghost"
                 size="icon"
                 className="rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-white hover:shadow-sm"
-                onClick={() => setShowProfileDialog(true)}
+                onClick={() => { }}
               >
                 <Settings className="h-5 w-5" />
               </Button>
 
               <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
 
-              {/* User Profile Quick Access */}
+              {/* User Profile Quick Access (ReadOnly) */}
               <div
-                className="flex items-center gap-3 p-1 rounded-2xl hover:bg-white hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-100 group"
-                onClick={() => setShowProfileDialog(true)}
+                className="flex items-center gap-3 p-1 rounded-2xl bg-white/50 border border-slate-100/50 shadow-sm"
               >
                 <Avatar className="h-9 w-9 border border-white shadow-sm">
                   <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
@@ -449,7 +437,6 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           {renderContent()}
         </div>
       </div>
-      <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
     </div>
   );
 };
