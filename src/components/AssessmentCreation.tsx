@@ -10,18 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-
-interface Question {
-  id: string;
-  type: 'mcq' | 'written';
-  question: string;
-  points: number;
-  options?: string[];
-  correctAnswer?: string;
-  explanation?: string; // New field
-  difficulty: 'beginner' | 'intermediate' | 'advanced'; // New field
-  category_tag?: string; // New field
-}
+import { assessmentService, Assessment, Question } from "@/lib/assessments";
 
 interface AssessmentCreationProps {
   facultyId: string;
@@ -47,7 +36,7 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
       question: '',
       points: 1,
       options: type === 'mcq' ? ['', '', '', ''] : undefined,
-      correctAnswer: '',
+      correct_answer: '',
       explanation: '',
       difficulty: 'beginner',
       category_tag: ''
@@ -93,10 +82,25 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
     setIsCreating(true);
 
     try {
-      // Mock create assessment
-      console.log("Creating assessment mock", formData, questions);
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        total_marks: formData.totalMarks,
+        due_date: formData.dueDate || null,
+        questions: questions.map(q => ({
+          type: q.type,
+          question: q.question,
+          points: q.points,
+          options: q.options,
+          correct_answer: q.correct_answer,
+          explanation: q.explanation,
+          difficulty: q.difficulty,
+          category_tag: q.category_tag
+        }))
+      };
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await assessmentService.create(payload as any);
 
       toast({
         title: "Success",
@@ -305,8 +309,8 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                     <div className="space-y-2">
                       <Label>Correct Answer</Label>
                       <Select
-                        value={question.correctAnswer}
-                        onValueChange={(value) => updateQuestion(index, { correctAnswer: value })}
+                        value={question.correct_answer}
+                        onValueChange={(value) => updateQuestion(index, { correct_answer: value })}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select correct answer" />

@@ -22,12 +22,37 @@ class EventController extends Controller
             'date' => 'required|date',
             'time' => 'required',
             'location_url' => 'nullable|string',
-            'details' => 'nullable|string'
+            'details' => 'nullable|string',
+            'agenda' => 'nullable|string',
+            'learning_outcomes' => 'nullable|string',
+            'itinerary' => 'nullable|string'
         ]);
 
         $event = $request->user()->hostedEvents()->create($validated);
 
         return response()->json($event, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $event = $request->user()->hostedEvents()->findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'type' => 'sometimes|required|string',
+            'date' => 'sometimes|required|date',
+            'time' => 'sometimes|required',
+            'location_url' => 'nullable|string',
+            'details' => 'nullable|string',
+            'agenda' => 'nullable|string',
+            'learning_outcomes' => 'nullable|string',
+            'itinerary' => 'nullable|string'
+        ]);
+
+        $event->update($validated);
+
+        return response()->json($event);
     }
 
     public function destroy(Request $request, $id)

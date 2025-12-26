@@ -14,7 +14,10 @@ class Event extends Model
         'date',
         'time',
         'location_url',
-        'details'
+        'details',
+        'agenda',
+        'learning_outcomes',
+        'itinerary'
     ];
 
     public function teacher()

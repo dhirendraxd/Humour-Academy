@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, FileText, User, Award } from "lucide-react";
+import { CheckCircle, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,40 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { gradingService, Submission } from "@/lib/grading";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-
-interface Submission {
-  id: string;
-  assessment_id: string;
-  student_id: string;
-  submitted_at: string;
-  total_score: number | null;
-  graded: boolean;
-  graded_at: string | null;
-  feedback: string | null;
-  student_profile: {
-    full_name: string;
-    email: string;
-  };
-  answers: {
-    id: string;
-    question_id: string;
-    answer_text: string;
-    score: number | null;
-  }[];
-  assessment: {
-    title: string;
-  };
-}
 
 interface GradingInterfaceProps {
   facultyId: string;
@@ -49,7 +23,6 @@ interface GradingInterfaceProps {
 export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
-  const [selectedAssessment, setSelectedAssessment] = useState<string>("");
   const [criteriaScores, setCriteriaScores] = useState({
     timing: 5,
     delivery: 5,
@@ -60,13 +33,10 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
   const { toast } = useToast();
 
   const fetchSubmissions = async () => {
-    if (!selectedAssessment) return;
-
     setIsLoading(true);
     try {
-      // Mock fetching submissions
-      console.log("Fetching submissions mock");
-      setSubmissions([]);
+      const data = await gradingService.listSubmissions();
+      setSubmissions(data);
     } catch (error) {
       console.error('Error fetching submissions:', error);
       toast({
@@ -79,23 +49,15 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
     }
   };
 
-  const updateAnswerGrade = (answerId: string, score: number) => {
-    if (!selectedSubmission) return;
-
-    setSelectedSubmission({
-      ...selectedSubmission,
-      answers: selectedSubmission.answers.map(answer =>
-        answer.id === answerId ? { ...answer, score } : answer
-      )
-    });
-  };
-
   const saveGrades = async () => {
     if (!selectedSubmission) return;
 
     try {
-      // Mock saving grades
-      console.log("Saving grades mock");
+      await gradingService.gradeSubmission(selectedSubmission.id, {
+        total_score: Math.round(Object.values(criteriaScores).reduce((a, b) => a + b, 0) * 3.33),
+        feedback: overallFeedback,
+        graded: true
+      });
 
       toast({
         title: "Success",
@@ -116,7 +78,7 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
 
   useEffect(() => {
     fetchSubmissions();
-  }, [selectedAssessment]);
+  }, [facultyId]);
 
   const ungradedSubmissions = submissions.filter(s => !s.graded);
   const gradedSubmissions = submissions.filter(s => s.graded);
@@ -152,15 +114,16 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {ungradedSubmissions.map((sub) => (
-                <Card key={sub.id} className="shadow-academic">
+                <Card key={sub.id} className="shadow-academic hover:shadow-glow transition-shadow cursor-pointer" onClick={() => setSelectedSubmission(sub)}>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg">{sub.assessment.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-1">{sub.assessment?.title}</CardTitle>
                       <Badge variant="secondary">Pending</Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">{sub.student_profile.full_name}</p>
+                    <p className="text-sm text-muted-foreground">{sub.student?.name}</p>
+                    <p className="text-[10px] text-slate-400 mt-2">Submitted {new Date(sub.submitted_at).toLocaleDateString()}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -168,7 +131,7 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
           )}
         </TabsContent>
 
-        <TabsContent value="graded">
+        <TabsContent value="graded" className="space-y-4">
           {gradedSubmissions.length === 0 ? (
             <Card className="shadow-academic">
               <CardContent className="p-8 text-center">
@@ -182,14 +145,14 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
                 <Card key={sub.id} className="shadow-academic hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg">{sub.assessment.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-1">{sub.assessment?.title}</CardTitle>
                       <Badge className="bg-green-100 text-green-700 border-none">Graded</Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-2 mb-3">
                       <User className="h-4 w-4 text-slate-400" />
-                      <span className="text-sm font-medium text-slate-700">{sub.student_profile.full_name}</span>
+                      <span className="text-sm font-medium text-slate-700">{sub.student?.name}</span>
                     </div>
                     <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                       <span className="text-xs font-bold uppercase text-slate-400">Final Score</span>
@@ -203,16 +166,14 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
         </TabsContent>
       </Tabs>
 
-      {/* Grading Modal / Section (Simulated) */}
-      <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
+      <Dialog open={!!selectedSubmission} onOpenChange={(open) => !open && setSelectedSubmission(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Grading: {selectedSubmission?.assessment.title}</DialogTitle>
-            <p className="text-sm text-muted-foreground">Student: {selectedSubmission?.student_profile.full_name}</p>
+            <DialogTitle>Grading: {selectedSubmission?.assessment?.title}</DialogTitle>
+            <p className="text-sm text-muted-foreground">Student: {selectedSubmission?.student?.name}</p>
           </DialogHeader>
 
           <div className="space-y-6 pt-4">
-            {/* Criteria Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {Object.entries(criteriaScores).map(([key, value]) => (
                 <div key={key} className="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -223,7 +184,7 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
                       min="1"
                       max="10"
                       value={value}
-                      onChange={(e) => setCriteriaScores({ ...criteriaScores, [key]: parseInt(e.target.value) })}
+                      onChange={(e) => setCriteriaScores({ ...criteriaScores, [key]: parseInt(e.target.value) || 0 })}
                       className="h-8 text-sm"
                     />
                     <span className="text-xs text-slate-400">/ 10</span>
@@ -235,15 +196,12 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Detailed Feedback (Student POV)</Label>
               <Textarea
-                placeholder="Provide actionable steps for the student to improve their delivery and timing..."
+                placeholder="Provide actionable steps for the student to improve..."
                 value={overallFeedback}
                 onChange={(e) => setOverallFeedback(e.target.value)}
                 rows={4}
                 className="resize-none"
               />
-              <p className="text-[11px] text-muted-foreground italic">
-                Tip: Mention specific strengths and one clear area for focus in the next performance.
-              </p>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">

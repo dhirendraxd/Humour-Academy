@@ -111,6 +111,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [studentViewTab, setStudentViewTab] = useState<'directory' | 'applications'>('directory');
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
 
@@ -150,45 +151,70 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'requests':
+      case 'students':
         return (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Course Requests</h2>
-                <p className="text-muted-foreground">Manage incoming student applications</p>
-              </div>
-              <Button variant="outline" onClick={() => setActiveTab('overview')} className="rounded-xl">Back to Overview</Button>
+            <div className="flex items-center gap-4 border-b border-slate-200 pb-1">
+              <button
+                onClick={() => setStudentViewTab('directory')}
+                className={`pb-3 px-1 text-sm font-bold transition-all relative ${studentViewTab === 'directory' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                Student Directory
+                {studentViewTab === 'directory' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+              </button>
+              <button
+                onClick={() => setStudentViewTab('applications')}
+                className={`pb-3 px-1 text-sm font-bold transition-all relative ${studentViewTab === 'applications' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                Course Applications
+                {requests.length > 0 && (
+                  <span className="ml-1.5 px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[10px] rounded-full">
+                    {requests.length}
+                  </span>
+                )}
+                {studentViewTab === 'applications' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+              </button>
             </div>
-            <div className="grid gap-4">
-              {requests.map(req => (
-                <Card key={req.id} className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow rounded-2xl">
-                  <CardContent className="flex items-center justify-between p-6">
-                    <div>
-                      <h3 className="font-bold text-lg">{req.student?.name}</h3>
-                      <p className="text-muted-foreground">{req.course?.title}</p>
+
+            {studentViewTab === 'directory' ? (
+              <UserManagement currentUserRole="faculty" allowedRoles={['student']} title="Student Directory" description="Manage and track learner progress" canEdit={true} />
+            ) : (
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  {requests.map(req => (
+                    <Card key={req.id} className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow rounded-2xl">
+                      <CardContent className="flex items-center justify-between p-6">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback>{req.student?.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="font-bold text-slate-800">{req.student?.name}</h3>
+                            <p className="text-sm text-slate-500">Applied for <span className="font-semibold text-blue-600">{req.course?.title}</span></p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <Button size="sm" variant="outline" className="rounded-xl text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
+                            <Check className="w-4 h-4 mr-1" /> Approve
+                          </Button>
+                          <Button size="sm" variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
+                            <X className="w-4 h-4 mr-1" /> Reject
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {requests.length === 0 && (
+                    <div className="text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2rem] text-muted-foreground">
+                      <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                      <p className="font-medium">No pending applications at the moment.</p>
                     </div>
-                    <div className="flex gap-3">
-                      <Button size="sm" variant="outline" className="rounded-xl text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
-                        <Check className="w-4 h-4 mr-1" /> Approve
-                      </Button>
-                      <Button size="sm" variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
-                        <X className="w-4 h-4 mr-1" /> Reject
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              {requests.length === 0 && (
-                <div className="text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2rem] text-muted-foreground">
-                  No pending requests at the moment.
+                  )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         );
-      case 'students':
-        return <UserManagement currentUserRole="faculty" allowedRoles={['student']} title="Student Directory" description="Manage and track learner progress" canEdit={true} />;
       case 'assessments':
         return <AssessmentCreation facultyId={userId || ''} />;
       case 'materials':
@@ -200,6 +226,38 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
       default:
         return (
           <div className="space-y-8 animate-in fade-in duration-700">
+            <section>
+              <h3 className="text-lg font-bold mb-4 text-slate-800">Quick Actions</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { label: 'Host Event', icon: CalendarIcon, tab: 'events', color: 'blue-600' },
+                  {
+                    label: 'Review Requests',
+                    icon: Users,
+                    onClick: () => {
+                      setActiveTab('students');
+                      setStudentViewTab('applications');
+                    },
+                    color: 'purple-600'
+                  },
+                  { label: 'Grade Tasks', icon: ClipboardCheck, tab: 'grading', color: 'orange-600' },
+                  { label: 'New Syllabus', icon: Plus, tab: 'materials', color: 'green-600' },
+                ].map((action) => (
+                  <Button
+                    key={action.label}
+                    variant="outline"
+                    onClick={() => action.onClick ? action.onClick() : setActiveTab(action.tab as any)}
+                    className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
+                  >
+                    <div className={`p-3 rounded-2xl bg-${action.color}/10 text-${action.color} group-hover:scale-110 transition-transform`}>
+                      <action.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600">{action.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </section>
+
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold tracking-tight text-slate-800">Analytics Overview</h2>
@@ -328,30 +386,6 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 </CardContent>
               </Card>
             </div>
-
-            <section>
-              <h3 className="text-lg font-bold mb-4 text-slate-800">Quick Actions</h3>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { label: 'Host Event', icon: CalendarIcon, tab: 'events', color: 'blue-600' },
-                  { label: 'Review Requests', icon: Users, tab: 'requests', color: 'purple-600' },
-                  { label: 'Grade Tasks', icon: ClipboardCheck, tab: 'grading', color: 'orange-600' },
-                  { label: 'New Syllabus', icon: Plus, tab: 'materials', color: 'green-600' },
-                ].map((action) => (
-                  <Button
-                    key={action.label}
-                    variant="outline"
-                    onClick={() => setActiveTab(action.tab as any)}
-                    className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
-                  >
-                    <div className={`p-3 rounded-2xl bg-${action.color}/10 text-${action.color} group-hover:scale-110 transition-transform`}>
-                      <action.icon className="h-5 w-5" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-600">{action.label}</span>
-                  </Button>
-                ))}
-              </div>
-            </section>
           </div>
         );
     }

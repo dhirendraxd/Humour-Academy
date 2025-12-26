@@ -41,5 +41,23 @@ Route::middleware('auth:sanctum')->group(function () {
     // Events
     Route::get('/events', [EventController::class, 'index']);
     Route::post('/events', [EventController::class, 'store']);
+    Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
+
+    // Materials
+    Route::get('/materials', [App\Http\Controllers\MaterialController::class, 'index']);
+    Route::post('/materials', [App\Http\Controllers\MaterialController::class, 'store']);
+    Route::put('/materials/{id}', [App\Http\Controllers\MaterialController::class, 'update']);
+    Route::delete('/materials/{id}', [App\Http\Controllers\MaterialController::class, 'destroy']);
+
+    // Assessments
+    Route::get('/assessments', [App\Http\Controllers\AssessmentController::class, 'index']);
+    Route::post('/assessments', [App\Http\Controllers\AssessmentController::class, 'store']);
+    Route::get('/assessments/{id}', [App\Http\Controllers\AssessmentController::class, 'show']);
+    Route::put('/assessments/{id}', [App\Http\Controllers\AssessmentController::class, 'update']);
+    Route::delete('/assessments/{id}', [App\Http\Controllers\AssessmentController::class, 'destroy']);
+
+    // Grading
+    Route::get('/grading/submissions', [App\Http\Controllers\GradingController::class, 'index']);
+    Route::put('/grading/submissions/{id}', [App\Http\Controllers\GradingController::class, 'update']);
 });

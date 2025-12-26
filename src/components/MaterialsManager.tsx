@@ -9,20 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-
-interface Material {
-  id: string;
-  title: string;
-  description: string | null;
-  file_url: string | null;
-  learning_objectives: string[] | null;
-  prerequisites: string | null;
-  estimated_study_time: string | null;
-  resource_type: string | null;
-  module_breakdown: string | null;
-  faculty_id: string;
-  created_at: string;
-}
+import { materialService, Material } from "@/lib/materials";
 
 interface MaterialsManagerProps {
   facultyId: string;
@@ -45,10 +32,9 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
 
   const fetchMaterials = async () => {
     try {
-      // Mock fetch
-      console.log("Fetching materials mock");
-      setMaterials([]);
-
+      setIsLoading(true);
+      const data = await materialService.list();
+      setMaterials(data);
     } catch (error) {
       console.error('Error fetching materials:', error);
       toast({
@@ -56,6 +42,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
         description: "Failed to fetch materials",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,7 +63,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
       const payload = {
         title,
         description,
-        fileUrl,
+        file_url: fileUrl,
         learning_objectives: learningObjectives.split(',').map(s => s.trim()).filter(Boolean),
         prerequisites,
         estimated_study_time: estimatedStudyTime,
@@ -84,17 +72,13 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
       };
 
       if (editingMaterial) {
-        // Mock Update existing material
-        console.log("Updating material mock", payload);
-
+        await materialService.update(editingMaterial.id, payload);
         toast({
           title: "Success",
           description: "Material updated successfully",
         });
       } else {
-        // Mock Create new material
-        console.log("Creating material mock", payload);
-
+        await materialService.create(payload);
         toast({
           title: "Success",
           description: "Material added successfully",
@@ -132,8 +116,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     if (!confirm('Are you sure you want to delete this material?')) return;
 
     try {
-      // Mock delete
-      console.log("Deleting material mock", materialId);
+      await materialService.delete(materialId);
 
       toast({
         title: "Success",
