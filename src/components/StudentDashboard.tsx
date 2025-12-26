@@ -1,13 +1,57 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Trophy, BookOpen, Target, GraduationCap, Calendar, Star, Zap, Clock, ArrowRight, Activity, MapPin, Phone } from "lucide-react";
+import {
+  Trophy,
+  BookOpen,
+  Target,
+  GraduationCap,
+  Calendar,
+  Star,
+  Zap,
+  Clock,
+  ArrowRight,
+  Activity,
+  MapPin,
+  Phone,
+  LayoutDashboard,
+  MessageSquare,
+  FileText,
+  ClipboardCheck,
+  Search,
+  Settings,
+  MoreHorizontal,
+  ArrowUpRight,
+  ArrowDownRight,
+  Plus,
+  X,
+  Menu,
+  ChevronLeft,
+  LogOut
+} from "lucide-react";
 import { UserManagement } from "@/components/UserManagement";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Badge } from "@/components/ui/badge";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { StudentCourses } from "@/components/StudentCourses";
+import { NotificationCenter } from "@/components/NotificationCenter";
+import {
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell
+} from 'recharts';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/AuthProvider";
 
 interface StudentDashboardProps {
   user: {
@@ -20,242 +64,389 @@ interface StudentDashboardProps {
   };
 }
 
-export const StudentDashboard = ({ user }: StudentDashboardProps) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses'>('overview');
-  const [showProfileDialog, setShowProfileDialog] = useState(false);
+const sidebarItems = [
+  { icon: LayoutDashboard, id: 'overview', label: 'Dashboard' },
+  { icon: BookOpen, id: 'courses', label: 'My Courses' },
+  { icon: Target, id: 'assignments', label: 'Assignments' },
+  { icon: GraduationCap, id: 'classmates', label: 'Classmates' },
+  { icon: Calendar, id: 'events', label: 'Events' },
+  { icon: Trophy, id: 'achievements', label: 'Achievements' },
+];
 
-  const upcomingEvents: any[] = [];
-  const recentCourses: any[] = [];
+const learningActivityData = [
+  { name: 'Mon', hours: 2.5 },
+  { name: 'Tue', hours: 3.8 },
+  { name: 'Wed', hours: 1.2 },
+  { name: 'Thu', hours: 4.5 },
+  { name: 'Fri', hours: 5.0 },
+  { name: 'Sat', hours: 2.0 },
+  { name: 'Sun', hours: 1.5 },
+];
 
-  if (activeTab === 'classmates') {
-    return (
-      <FadeIn>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold flex items-center space-x-3 tracking-tight">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <GraduationCap className="h-8 w-8 text-primary" />
-                </div>
-                <span>Classmates</span>
-              </h1>
-              <p className="text-muted-foreground mt-2 text-lg">Connect with fellow students in your institute</p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setActiveTab('overview')}
-              className="hover:bg-primary/5"
-            >
-              Back to Dashboard
-            </Button>
+const progressGoalData = [
+  { name: 'Progress', value: 68, fill: '#3b82f6' },
+];
+
+const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color }: any) => (
+  <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 bg-white relative overflow-hidden group rounded-2xl">
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium text-muted-foreground/60">{title}</CardTitle>
+      <div className={`p-2 rounded-xl bg-${color}/10 text-${color}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-3xl font-bold tracking-tight mb-1">{value}</div>
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground/60 font-medium">{label}</span>
+        {trend && (
+          <div className={`flex items-center text-[10px] font-bold ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+            {trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+            {trendValue}
           </div>
-          <UserManagement
-            currentUserRole="student"
-            allowedRoles={['student']}
-            title="Fellow Students"
-            description="View and connect with other students in the institute"
-            canEdit={false}
-          />
-        </div>
-      </FadeIn>
-    );
-  }
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
 
-  if (activeTab === 'courses') {
-    return <StudentCourses onBack={() => setActiveTab('overview')} />;
-  }
+export const StudentDashboard = ({ user }: StudentDashboardProps) => {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+  const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements'>('overview');
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
-  return (
-    <FadeIn>
-      <div className="space-y-8 pb-12">
-        {/* Modern Welcome Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/90 to-primary p-8 md:p-12 text-primary-foreground shadow-2xl">
-          <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-black/10 blur-3xl"></div>
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
-          <div className="relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div>
-                <Badge variant="secondary" className="mb-4 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md">
-                  Profile
-                </Badge>
-                <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
-                  Welcome back, {user.name.split(' ')[0]}!
-                </h1>
-                <p className="text-primary-foreground/90 text-lg max-w-xl leading-relaxed">
-                  {user.bio ? `"${user.bio}"` : '"Humour is mankind\'s greatest blessing." — Mark Twain'}
-                  <br />
-                  <span className="text-sm opacity-75 mt-2 block">You're on a 5-day streak! Keep it up.</span>
-                </p>
-                {user.city && (
-                  <div className="flex items-center gap-2 mt-4 text-primary-foreground/80 text-sm">
-                    <MapPin className="h-4 w-4" />
-                    {user.city}
-                  </div>
-                )}
-                <div className="mt-6">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md"
-                    onClick={() => setShowProfileDialog(true)}
-                  >
-                    Edit Profile
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'classmates':
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <UserManagement
+              currentUserRole="student"
+              allowedRoles={['student']}
+              title="Fellow Students"
+              description="View and connect with other students in the institute"
+              canEdit={false}
+            />
+          </div>
+        );
+      case 'courses':
+        return <StudentCourses onBack={() => setActiveTab('overview')} />;
+      case 'assignments':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-500 text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2.5rem] text-muted-foreground">
+            <Target className="h-12 w-12 mx-auto mb-4 opacity-20" />
+            <h3 className="text-xl font-bold">Assignments Coming Soon</h3>
+            <p>Your upcoming tasks and evaluations will appear here.</p>
+          </div>
+        );
+      case 'events':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-500 text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2.5rem] text-muted-foreground">
+            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-20" />
+            <h3 className="text-xl font-bold">Schedule & Events</h3>
+            <p>Sync your calendar with institute events and workshops.</p>
+          </div>
+        );
+      case 'achievements':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-500 text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2.5rem] text-muted-foreground">
+            <Trophy className="h-12 w-12 mx-auto mb-4 opacity-20" />
+            <h3 className="text-xl font-bold">Your Achievements</h3>
+            <p>Badges, certificates, and milestones won will be displayed here.</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-8 animate-in fade-in duration-700">
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-800">Welcome back, {user.name.split(' ')[0]}!</h2>
+                  <p className="text-slate-500 text-sm">You've completed 68% of your weekly learning goal.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="rounded-xl border-slate-200 text-xs bg-white text-slate-600 hover:bg-slate-50">
+                    This Week
+                    <Calendar className="ml-2 h-3 w-3" />
                   </Button>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2 bg-white/10 p-4 rounded-2xl backdrop-blur-md">
-                <div className="text-sm font-medium opacity-80">Current Rank</div>
-                <div className="text-2xl font-bold flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-yellow-300" />
-                  {user.rank}
-                </div>
-                <div className="text-xs opacity-60">Level {user.level} Scholar</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard title="Active Courses" value="3" label="Courses in progress" trend="up" trendValue="+1" icon={BookOpen} color="blue-600" />
+                <MetricCard title="Community Points" value="1,250" label="Top 10% performance" trend="up" trendValue="15%" icon={Star} color="purple-600" />
+                <MetricCard title="Assignments" value="12" label="2 pending review" icon={Target} color="orange-600" />
+                <MetricCard title="Time Spent" value="24h" label="Learning this week" trend="up" trendValue="12.5%" icon={Clock} color="green-600" />
               </div>
-            </div>
-          </div>
-        </div>
+            </section>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-primary/10">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Courses in Progress</CardTitle>
-              <BookOpen className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground mt-1">+1 from last month</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-all duration-300 border-primary/10">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Community Points</CardTitle>
-              <Star className="h-4 w-4 text-yellow-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1,250</div>
-              <p className="text-xs text-muted-foreground mt-1">Top 10% of students</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-all duration-300 border-primary/10">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Assignments</CardTitle>
-              <Target className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground mt-1">2 pending review</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-all duration-300 border-primary/10">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Time Spent</CardTitle>
-              <Clock className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24h</div>
-              <p className="text-xs text-muted-foreground mt-1">This week</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content Area */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Continue Learning */}
-            <Card className="border-none shadow-xl bg-gradient-to-br from-card to-secondary/10">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-xl">
-                  <Activity className="h-5 w-5 text-primary" />
-                  <span>Continue Learning</span>
-                </CardTitle>
-                <CardDescription>Pick up where you left off</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {recentCourses.map((course, i) => (
-                  <div key={i} className="group p-4 rounded-xl bg-background/50 hover:bg-background border border-border/50 hover:border-primary/20 transition-all duration-300">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{course.title}</h3>
-                        <p className="text-sm text-muted-foreground">{course.completed} / {course.total} modules</p>
-                      </div>
-                      <Button size="sm" className="hidden group-hover:flex transition-all">Resume</Button>
-                    </div>
-                    <Progress value={course.progress} className="h-2" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Button
-                variant="outline"
-                className="h-auto py-6 flex flex-col items-center gap-2 hover:border-primary/50 hover:bg-primary/5 group"
-                onClick={() => setActiveTab('courses')}
-              >
-                <BookOpen className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span className="font-medium">Course Catalog</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="h-auto py-6 flex flex-col items-center gap-2 hover:border-primary/50 hover:bg-primary/5 group"
-                onClick={() => setActiveTab('classmates')}
-              >
-                <GraduationCap className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span className="font-medium">Classmate Directory</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Upcoming Events */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Upcoming Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {upcomingEvents.map((event, i) => (
-                  <div key={i} className="flex items-start gap-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors">
-                    <div className="bg-primary/10 p-2 rounded-md text-center min-w-[3.5rem]">
-                      <span className="block text-xs font-bold uppercase text-primary">{event.date.split(',')[0]}</span>
-                      <span className="block text-sm font-bold">{event.date.split(',')[1].trim().split(' ')[0]}</span>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <Card className="lg:col-span-5 border-0 shadow-sm bg-white overflow-hidden flex flex-col rounded-[2rem]">
+                <CardHeader className="pb-0 border-b-0 space-y-0">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-sm">{event.title}</h4>
-                      <Badge variant="secondary" className="mt-1 text-[10px]">{event.type}</Badge>
+                      <CardTitle className="text-lg font-bold text-slate-800">Course Goals</CardTitle>
+                      <CardDescription className="text-xs">Overall completion progress</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-50">
+                      <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-grow flex flex-col items-center justify-center pt-6 min-h-[300px] relative">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <RadialBarChart
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="80%"
+                      outerRadius="100%"
+                      barSize={12}
+                      data={progressGoalData}
+                      startAngle={210}
+                      endAngle={-30}
+                    >
+                      <RadialBar
+                        background={{ fill: '#F1F5F9' }}
+                        dataKey="value"
+                        cornerRadius={10}
+                        fill="#3b82f6"
+                      />
+                    </RadialBarChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <Activity className="text-blue-400 w-5 h-5 mb-1" />
+                    <span className="text-4xl font-extrabold tracking-tight text-slate-800">68%</span>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold mt-1">Goal: 100% Mastered</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-7 border-0 shadow-sm bg-white overflow-hidden rounded-[2rem]">
+                <CardHeader className="pb-2 space-y-0">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-bold text-slate-800">Learning Activity</CardTitle>
+                      <CardDescription className="text-xs">Hours spent learning daily</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                        <span className="text-[10px] font-bold text-slate-600">Daily average: 3.2h</span>
+                      </div>
+                      <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-50">
+                        <Calendar className="h-4 w-4 text-slate-400" />
+                      </Button>
                     </div>
                   </div>
-                ))}
-                <Button variant="ghost" className="w-full text-sm hover:text-primary">
-                  View Calendar <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent className="pt-4 px-2">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={learningActivityData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fontWeight: 600, fill: '#A3A3A3' }}
+                        dy={10}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fontWeight: 600, fill: '#A3A3A3' }}
+                        dx={-5}
+                      />
+                      <Tooltip
+                        cursor={{ fill: 'transparent' }}
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-[#1a1c1e] text-white p-3 rounded-2xl shadow-xl border-0 animate-in fade-in zoom-in-95">
+                                <p className="text-[10px] leading-relaxed">
+                                  You spent <span className="font-bold underline text-blue-400">{payload[0].value} hours</span><br />
+                                  honing your craft on {payload[0].payload.name}.
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar
+                        dataKey="hours"
+                        radius={[6, 6, 0, 0]}
+                        barSize={32}
+                      >
+                        {learningActivityData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={index === 4 ? '#2563eb' : '#F1F5F9'}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
 
-            {/* Daily Tip */}
-            <Card className="bg-primary text-primary-foreground">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3">
-                  <Zap className="h-5 w-5 shrink-0 text-yellow-300" />
-                  <div>
-                    <h4 className="font-bold text-sm mb-1">Daily Tip</h4>
-                    <p className="text-xs opacity-90 leading-relaxed">
-                      "Pause for 2 seconds before delivering a punchline. Silence increases anticipation."
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <section>
+              <h3 className="text-lg font-bold mb-4 text-slate-800">Explore & Learn</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { label: 'Course Catalog', icon: BookOpen, tab: 'courses', color: 'blue-600' },
+                  { label: 'Find Classmates', icon: GraduationCap, tab: 'classmates', color: 'purple-600' },
+                  { label: 'View Events', icon: Calendar, tab: 'events', color: 'orange-600' },
+                  { label: 'Profile Settings', icon: Settings, action: () => setShowProfileDialog(true), color: 'green-600' },
+                ].map((item) => (
+                  <Button
+                    key={item.label}
+                    variant="outline"
+                    onClick={item.action ? item.action : () => setActiveTab(item.tab as any)}
+                    className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
+                  >
+                    <div className={`p-3 rounded-2xl bg-${item.color}/10 text-${item.color} group-hover:scale-110 transition-transform`}>
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600">{item.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </section>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F8FAFC] -mt-10 overflow-hidden rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+      {/* Sidebar Overlay */}
+      <div
+        className={`bg-white border-r border-slate-50 flex flex-col items-center py-10 transition-all duration-500 ease-in-out relative group/sidebar ${isSidebarExpanded ? 'w-64 px-6 items-start' : 'w-20 px-0 items-center'}`}
+      >
+        <div
+          className={`p-3 bg-blue-600/5 rounded-2xl text-blue-600 mb-10 shrink-0 cursor-pointer hover:bg-blue-600 hover:text-white transition-all ${isSidebarExpanded ? 'ml-0' : ''}`}
+          onClick={() => navigate('/')}
+        >
+          <GraduationCap className="h-7 w-7" />
+        </div>
+
+        <div className="flex flex-col gap-4 w-full px-2">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as any)}
+              className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 w-full group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-slate-300 hover:text-blue-600 hover:bg-blue-600/5'}`}
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              {isSidebarExpanded && (
+                <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
+                  {item.label}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-auto flex flex-col gap-4 w-full px-2">
+          <button
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-slate-300 hover:text-slate-600 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            onClick={() => setShowProfileDialog(true)}
+          >
+            <Settings className="h-5 w-5 shrink-0" />
+            {isSidebarExpanded && <span className="text-sm font-bold">Settings</span>}
+          </button>
+
+          <button
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-red-300 hover:text-red-500 hover:bg-red-50 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            onClick={handleLogout}
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {isSidebarExpanded && <span className="text-sm font-bold">Sign Out</span>}
+          </button>
+
+          <div className="h-[1px] bg-slate-100 my-2" />
+
+          <div className={`flex items-center gap-3 p-1.5 rounded-2xl bg-slate-50 border border-slate-100/50 ${isSidebarExpanded ? 'w-full pr-4' : 'w-fit mx-auto'}`}>
+            <Avatar className="h-10 w-10 border-2 border-white shadow-sm shrink-0">
+              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            {isSidebarExpanded && (
+              <div className="flex flex-col min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
+                <span className="text-xs font-bold text-slate-800 truncate">{user.name}</span>
+                <span className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user.rank}</span>
+              </div>
+            )}
           </div>
         </div>
-        <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
       </div>
-    </FadeIn>
+
+      {/* Main Container */}
+      <div className="flex-1 flex flex-col overflow-hidden px-10 py-8 bg-[#F8FAFC]">
+        {/* Header */}
+        <header className="flex items-center justify-between mb-10 shrink-0">
+          <div className="flex items-center gap-6 flex-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-12 w-12 shrink-0 transition-all"
+            >
+              {isSidebarExpanded ? <ChevronLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+
+            <div className="relative w-full max-w-lg group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+              <Input
+                placeholder="Search resources, courses, peers..."
+                className="pl-12 h-12 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-300 text-sm font-medium"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex -space-x-3 overflow-hidden mr-2">
+              {[1, 2, 3, 4].map(i => (
+                <Avatar key={i} className="inline-block h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=peer${i}`} />
+                </Avatar>
+              ))}
+              <button className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 shadow-lg shadow-blue-600/20 text-white hover:bg-blue-700 transition-all hover:scale-105 active:scale-95">
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+
+            <NotificationCenter userId={user.name} />
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-2xl text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm"
+              onClick={() => setShowProfileDialog(true)}
+            >
+              <Settings className="h-5 w-5" />
+            </Button>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto pr-4 -mr-4 scrollbar-hide pb-10">
+          {renderContent()}
+        </div>
+      </div>
+      <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
+    </div>
   );
 };
