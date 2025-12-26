@@ -59,10 +59,10 @@ const Dashboard = () => {
     return (
         <PageLayout
             showFooter={false}
-            showNav={profile.role === 'bod'} // Only show nav for BOD/Admin if applicable, hide for student/faculty
+            showNav={profile.role === 'bod'} // Only show nav for BOD/Admin
         >
             <FadeIn>
-                <div className={`${(profile.role === 'faculty' || profile.role === 'student') ? 'w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'}`}>
+                <div className="w-full h-full">
                     {renderDashboard()}
                 </div>
             </FadeIn>

@@ -87,15 +87,15 @@ const performanceData = [
 const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color }: any) => (
   <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 bg-white relative overflow-hidden group rounded-2xl">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-muted-foreground/60">{title}</CardTitle>
+      <CardTitle className="text-sm font-semibold text-slate-500">{title}</CardTitle>
       <div className={`p-2 rounded-xl bg-${color}/10 text-${color}`}>
         <Icon className="h-4 w-4" />
       </div>
     </CardHeader>
     <CardContent>
-      <div className="text-3xl font-bold tracking-tight mb-1">{value}</div>
+      <div className="text-3xl font-bold tracking-tight mb-1 text-slate-800">{value}</div>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground/60 font-medium">{label}</span>
+        <span className="text-xs text-slate-400 font-medium">{label}</span>
         <div className={`flex items-center text-[10px] font-bold ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
           {trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
           {trendValue}
@@ -358,7 +358,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F8FAFC] -mt-10 overflow-hidden rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden">
       {/* Sidebar Overlay */}
       <div
         className={`bg-white border-r border-slate-50 flex flex-col items-center py-10 transition-all duration-500 ease-in-out relative group/sidebar ${isSidebarExpanded ? 'w-64 px-6 items-start' : 'w-20 px-0 items-center'}`}
@@ -376,7 +376,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
-              className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 w-full group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-slate-300 hover:text-blue-600 hover:bg-blue-600/5'}`}
+              className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 w-full group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-600/5'}`}
             >
               <item.icon className="h-5 w-5 shrink-0" />
               {isSidebarExpanded && (
@@ -390,7 +390,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
 
         <div className="mt-auto flex flex-col gap-4 w-full px-2">
           <button
-            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-slate-300 hover:text-slate-600 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-slate-500 hover:text-slate-800 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
             onClick={() => setShowProfileDialog(true)}
           >
             <Settings className="h-5 w-5 shrink-0" />
@@ -398,7 +398,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           </button>
 
           <button
-            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-red-300 hover:text-red-500 hover:bg-red-50 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
+            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-red-500 hover:text-red-700 hover:bg-red-50 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
             onClick={handleLogout}
           >
             <LogOut className="h-5 w-5 shrink-0" />
@@ -437,10 +437,10 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             </Button>
 
             <div className="relative w-full max-w-lg group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
               <Input
                 placeholder="Search students, analytics, reports..."
-                className="pl-12 h-12 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-300 text-sm font-medium"
+                className="pl-12 h-12 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-sm font-medium"
               />
             </div>
           </div>
