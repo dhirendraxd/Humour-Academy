@@ -1,38 +1,62 @@
-import { moduleService, Module, Cohort, Curriculum } from "@/lib/modules";
+import { moduleService, Module, Cohort, Curriculum, Enrollment } from "@/lib/modules";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, User as UserIcon, GraduationCap, Clock } from "lucide-react";
+import { BookOpen, Calendar, User as UserIcon, GraduationCap, Clock, CheckCircle, HelpCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
+export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () => void, onNavigateToDashboard?: () => void }) => {
     const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
+    const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
     useEffect(() => {
-        loadCurriculums();
+        loadData();
     }, []);
 
-    const loadCurriculums = async () => {
+    const loadData = async () => {
         try {
-            const data = await moduleService.listCurriculums();
+            setLoading(true);
+            const [curriculumData, enrollmentData] = await Promise.all([
+                moduleService.listCurriculums(),
+                moduleService.listRequests()
+            ]);
+
             // Fetch modules for each curriculum
-            const curriculumsWithModules = await Promise.all(data.map(async (c) => {
+            const curriculumsWithModules = await Promise.all(curriculumData.map(async (c) => {
                 const modules = await moduleService.listModules(c.id);
                 return { ...c, modules };
             }));
+
             setCurriculums(curriculumsWithModules);
+            setEnrollments(enrollmentData);
         } catch (error) {
-            console.error('Failed to load curriculums', error);
+            console.error('Failed to load data', error);
         } finally {
             setLoading(false);
         }
     };
 
+    const getEnrollmentForCurriculum = (curriculumId: number) => {
+        // Find if user has any enrollment linked to any module of this curriculum
+        return enrollments.find(e => e.cohort?.module?.curriculum_id === curriculumId);
+    };
+
     const handleEnroll = async (curriculumId: number) => {
+        const existingEnrollment = getEnrollmentForCurriculum(curriculumId);
+
+        if (existingEnrollment) {
+            if (onNavigateToDashboard) {
+                onNavigateToDashboard();
+            } else {
+                onBack();
+            }
+            return;
+        }
+
         try {
             await moduleService.applyToCurriculum(curriculumId);
             toast({
@@ -77,14 +101,24 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
                         const firstModule = curriculum.modules?.[0];
                         const upcomingCohort = firstModule?.cohorts?.find(c => new Date(c.application_deadline) >= new Date());
 
+                        const enrollment = getEnrollmentForCurriculum(curriculum.id);
+
                         return (
                             <Card key={curriculum.id} className="overflow-hidden border-slate-100 shadow-xl shadow-slate-100/50 hover:shadow-2xl hover:shadow-blue-100/30 transition-all rounded-[2.5rem] bg-white group">
                                 <CardHeader className="bg-slate-50/30 p-8 border-b border-slate-50">
                                     <div className="flex justify-between items-start mb-6">
-                                        <Badge className="bg-blue-600 text-white border-0 px-4 py-1.5 text-xs font-black tracking-widest uppercase">
-                                            {curriculum.modules?.length || 0} PHASE PROGRAM
-                                        </Badge>
-                                        {upcomingCohort && (
+                                        <div className="flex gap-2">
+                                            <Badge className="bg-blue-600 text-white border-0 px-4 py-1.5 text-xs font-black tracking-widest uppercase">
+                                                {curriculum.modules?.length || 0} PHASE PROGRAM
+                                            </Badge>
+                                            {enrollment && (
+                                                <Badge className={`border-0 px-4 py-1.5 text-xs font-black tracking-widest uppercase ${enrollment.status === 'approved' ? 'bg-green-600 text-white' : 'bg-orange-500 text-white'
+                                                    }`}>
+                                                    {enrollment.status === 'approved' ? 'ENROLLED' : 'UNDER REVIEW'}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        {upcomingCohort && !enrollment && (
                                             <Badge className="bg-green-100 text-green-600 border-0 text-[10px] font-black uppercase">
                                                 Next Batch: {new Date(upcomingCohort.start_date).toLocaleDateString()}
                                             </Badge>
@@ -118,10 +152,13 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
                                         </div>
                                         <div className="space-y-2">
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                                <GraduationCap className="w-3 h-3" /> Seats
+                                                <GraduationCap className="w-3 h-3" /> {enrollment ? 'Current Phase' : 'Seats'}
                                             </p>
                                             <p className="text-sm font-bold text-slate-700">
-                                                {upcomingCohort ? `${upcomingCohort.enrollments_count || 0}/${upcomingCohort.capacity || 25} Filled` : 'TBA'}
+                                                {enrollment ?
+                                                    `Phase ${enrollment.cohort?.module?.order_index || 1}` :
+                                                    (upcomingCohort ? `${upcomingCohort.enrollments_count || 0}/${upcomingCohort.capacity || 25} Filled` : 'TBA')
+                                                }
                                             </p>
                                         </div>
                                     </div>
@@ -144,16 +181,31 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
 
                                     <div className="pt-4">
                                         <Button
-                                            className="w-full h-16 text-xl font-black bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-100 border-0 rounded-2xl group-hover:scale-[1.02] transition-transform"
+                                            className={`w-full h-16 text-xl font-black shadow-xl border-0 rounded-2xl group-hover:scale-[1.02] transition-transform flex items-center justify-center gap-3 ${enrollment?.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-100' :
+                                                    enrollment?.status === 'pending' ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-100' :
+                                                        'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-100'
+                                                }`}
                                             onClick={() => handleEnroll(curriculum.id)}
                                         >
-                                            Begin Enrollment
+                                            {enrollment?.status === 'approved' ? (
+                                                <>
+                                                    <CheckCircle className="w-6 h-6" />
+                                                    Continue Learning
+                                                </>
+                                            ) : enrollment?.status === 'pending' ? (
+                                                <>
+                                                    <HelpCircle className="w-6 h-6" />
+                                                    Under Review
+                                                </>
+                                            ) : (
+                                                'Begin Enrollment'
+                                            )}
                                         </Button>
                                         <div className="flex items-center justify-between mt-4 px-2">
                                             <p className="text-[10px] text-slate-400 font-bold italic">
-                                                * Final approval pending architect's review
+                                                {enrollment ? '* Access your dashboard to view content' : '* Final approval pending architect\'s review'}
                                             </p>
-                                            {upcomingCohort && (
+                                            {upcomingCohort && !enrollment && (
                                                 <p className="text-[10px] text-red-500 font-black flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
                                                     Deadline: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}

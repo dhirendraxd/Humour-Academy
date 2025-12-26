@@ -186,7 +186,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
           </div>
         );
       case 'courses':
-        return <StudentCourses onBack={() => setActiveTab('overview')} />;
+        return <StudentCourses onBack={() => setActiveTab('overview')} onNavigateToDashboard={() => setActiveTab('overview')} />;
       case 'assignments':
         return (
           <div className="space-y-6 animate-in fade-in duration-500 text-center py-20 bg-white/50 border-2 border-dashed border-muted rounded-[2.5rem] text-muted-foreground">
