@@ -230,24 +230,43 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 <div className="grid gap-4">
                   {requests.map(req => (
                     <Card key={req.id} className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow rounded-2xl">
-                      <CardContent className="flex items-center justify-between p-6">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>{req.student?.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="font-bold text-slate-800">{req.student?.name}</h3>
-                            <p className="text-sm text-slate-500">Applied for <span className="font-semibold text-blue-600">{req.cohort?.module?.title} ({req.cohort?.title})</span></p>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-10 w-10">
+                              <AvatarFallback>{req.student?.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-bold text-slate-800">{req.student?.name}</h3>
+                              <p className="text-sm text-slate-500">Applied for <span className="font-semibold text-blue-600">{req.cohort?.module?.title} ({req.cohort?.title})</span></p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <Button size="sm" variant="outline" className="rounded-xl text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
+                              <Check className="w-4 h-4 mr-1" /> Approve
+                            </Button>
+                            <Button size="sm" variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
+                              <X className="w-4 h-4 mr-1" /> Reject
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex gap-3">
-                          <Button size="sm" variant="outline" className="rounded-xl text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
-                            <Check className="w-4 h-4 mr-1" /> Approve
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
-                            <X className="w-4 h-4 mr-1" /> Reject
-                          </Button>
-                        </div>
+
+                        {req.application_details && (
+                          <div className="mt-4 pt-4 border-t border-slate-50 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-blue-600 uppercase tracking-widest">Interests</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed italic">"{req.application_details.interests}"</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-purple-600 uppercase tracking-widest">Experience</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed italic">"{req.application_details.experience || 'No previous experience mentioned.'}"</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-green-600 uppercase tracking-widest">Motivation</p>
+                              <p className="text-xs text-slate-600 font-medium leading-relaxed italic">"{req.application_details.motivation}"</p>
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}

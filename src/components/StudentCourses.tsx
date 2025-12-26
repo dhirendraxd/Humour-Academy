@@ -6,11 +6,15 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Calendar, User as UserIcon, GraduationCap, Clock, CheckCircle, HelpCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EnrollmentForm } from "@/components/EnrollmentForm";
 
 export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () => void, onNavigateToDashboard?: () => void }) => {
     const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
     const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
     const [loading, setLoading] = useState(true);
+    const [enrollmentModal, setEnrollmentModal] = useState<{ open: boolean, curriculum: Curriculum | null }>({ open: false, curriculum: null });
+    const [submitting, setSubmitting] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -45,8 +49,8 @@ export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () =
         return enrollments.find(e => e.cohort?.module?.curriculum_id === curriculumId);
     };
 
-    const handleEnroll = async (curriculumId: number) => {
-        const existingEnrollment = getEnrollmentForCurriculum(curriculumId);
+    const handleEnrollClick = (curriculum: Curriculum) => {
+        const existingEnrollment = getEnrollmentForCurriculum(curriculum.id);
 
         if (existingEnrollment) {
             if (onNavigateToDashboard) {
@@ -57,19 +61,29 @@ export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () =
             return;
         }
 
+        setEnrollmentModal({ open: true, curriculum });
+    };
+
+    const handleEnrollSubmit = async (details: any) => {
+        if (!enrollmentModal.curriculum) return;
+
         try {
-            await moduleService.applyToCurriculum(curriculumId);
+            setSubmitting(true);
+            await moduleService.applyToCurriculum(enrollmentModal.curriculum.id, details);
             toast({
-                title: "Enrollment Requested",
-                description: "Your application for the program has been sent. The Module 1 teacher will review it shortly.",
+                title: "Application Submitted",
+                description: "The faculty architect will review your application soon.",
             });
-        } catch (error) {
-            const err = error as Error;
+            setEnrollmentModal({ open: false, curriculum: null });
+            loadData(); // Refresh enrollments
+        } catch (error: any) {
             toast({
                 title: "Enrollment Failed",
-                description: err.message || "Could not enroll in program.",
-                variant: "destructive"
+                description: error.response?.data?.message || "Something went wrong.",
+                variant: "destructive",
             });
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -182,10 +196,10 @@ export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () =
                                     <div className="pt-4">
                                         <Button
                                             className={`w-full h-16 text-xl font-black shadow-xl border-0 rounded-2xl group-hover:scale-[1.02] transition-transform flex items-center justify-center gap-3 ${enrollment?.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-100' :
-                                                    enrollment?.status === 'pending' ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-100' :
-                                                        'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-100'
+                                                enrollment?.status === 'pending' ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-100' :
+                                                    'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-100'
                                                 }`}
-                                            onClick={() => handleEnroll(curriculum.id)}
+                                            onClick={() => handleEnrollClick(curriculum)}
                                         >
                                             {enrollment?.status === 'approved' ? (
                                                 <>
