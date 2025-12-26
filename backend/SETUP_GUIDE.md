@@ -7,79 +7,29 @@ This guide will help you set up and run the Laravel backend for the Ramay Humour
 ✅ **Already Installed:**
 - PHP 8.3.6
 - Composer 2.9.2
-- MySQL 8.0.44
+- SQLite
 - Laravel 12.44.0
 - Laravel Sanctum 4.2.1
 
 ## Database Configuration
 
-### Step 1: Set MySQL Root Password (if needed)
+The application is configured to use SQLite by default.
 
-If you haven't set a MySQL root password, you can set one or create a dedicated database user.
+### Step 1: Setup Database
 
-**Option A: Use MySQL without password (development only)**
-The `.env` file is already configured for this.
+Run the setup script which will create the SQLite database file and run migrations:
 
-**Option B: Set a MySQL root password**
 ```bash
-sudo mysql
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_password';
-FLUSH PRIVILEGES;
-EXIT;
+./setup_database.sh
 ```
 
-Then update the `.env` file:
-```bash
-cd backend
-nano .env  # or use your preferred editor
-# Update: DB_PASSWORD=your_password
-```
-
-**Option C: Create a dedicated database user**
-```bash
-sudo mysql
-CREATE USER 'ramay_user'@'localhost' IDENTIFIED BY 'secure_password';
-GRANT ALL PRIVILEGES ON ramay_humour_academy.* TO 'ramay_user'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-Then update the `.env` file:
-```bash
-cd backend
-nano .env
-# Update:
-# DB_USERNAME=ramay_user
-# DB_PASSWORD=secure_password
-```
-
-### Step 2: Create the Database
+Alternatively, you can manually set it up:
 
 ```bash
-# If using root without password:
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS ramay_humour_academy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# If using root with password:
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS ramay_humour_academy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# If using dedicated user:
-mysql -u ramay_user -p -e "CREATE DATABASE IF NOT EXISTS ramay_humour_academy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-```
-
-### Step 3: Run Migrations
-
-```bash
+touch backend/database/database.sqlite
 cd backend
 php artisan migrate
 ```
-
-This will create the following tables:
-- `users` - User accounts
-- `password_reset_tokens` - Password reset functionality
-- `sessions` - User sessions
-- `cache` - Application cache
-- `jobs` - Queue jobs
-- `personal_access_tokens` - Sanctum authentication tokens
 
 ## Running the Backend Server
 
@@ -197,23 +147,19 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=ramay_humour_academy
-DB_USERNAME=root
-DB_PASSWORD=
+DB_CONNECTION=sqlite
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=ramay_humour_academy
+# DB_USERNAME=root
+# DB_PASSWORD=
 ```
 
 ## Troubleshooting
 
-### "Access denied for user 'root'@'localhost'"
-- Set a MySQL password or update `.env` with correct credentials
-- See "Database Configuration" section above
-
-### "SQLSTATE[HY000] [2002] Connection refused"
-- Make sure MySQL is running: `sudo systemctl status mysql`
-- Start MySQL if needed: `sudo systemctl start mysql`
+### "SQLSTATE[HY000] Could not open database"
+- Ensure `database/database.sqlite` exists and has write permissions.
+- Run `touch backend/database/database.sqlite` if missing.
 
 ### CORS errors in browser
 - Make sure the backend is running on `http://localhost:8000`
@@ -227,7 +173,6 @@ DB_PASSWORD=
 
 ### Development
 - `APP_DEBUG=true` is fine for development
-- Using root MySQL user is acceptable for local development
 
 ### Production
 - Set `APP_DEBUG=false`
