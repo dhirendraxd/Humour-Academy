@@ -15,6 +15,9 @@ interface Material {
   title: string;
   description: string | null;
   file_url: string | null;
+  learning_objectives: string[] | null;
+  prerequisites: string | null;
+  estimated_study_time: string | null;
   faculty_id: string;
   created_at: string;
 }
@@ -30,6 +33,9 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [fileUrl, setFileUrl] = useState("");
+  const [learningObjectives, setLearningObjectives] = useState(""); // Comma separated for input
+  const [prerequisites, setPrerequisites] = useState("");
+  const [estimatedStudyTime, setEstimatedStudyTime] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -62,9 +68,18 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     setIsLoading(true);
 
     try {
+      const payload = {
+        title,
+        description,
+        fileUrl,
+        learning_objectives: learningObjectives.split(',').map(s => s.trim()).filter(Boolean),
+        prerequisites,
+        estimated_study_time: estimatedStudyTime
+      };
+
       if (editingMaterial) {
         // Mock Update existing material
-        console.log("Updating material mock", { title, description, fileUrl });
+        console.log("Updating material mock", payload);
 
         toast({
           title: "Success",
@@ -72,7 +87,7 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
         });
       } else {
         // Mock Create new material
-        console.log("Creating material mock", { title, description, fileUrl });
+        console.log("Creating material mock", payload);
 
         toast({
           title: "Success",
@@ -99,6 +114,9 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     setTitle(material.title);
     setDescription(material.description || "");
     setFileUrl(material.file_url || "");
+    setLearningObjectives(material.learning_objectives?.join(', ') || "");
+    setPrerequisites(material.prerequisites || "");
+    setEstimatedStudyTime(material.estimated_study_time || "");
     setIsDialogOpen(true);
   };
 
@@ -128,6 +146,9 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     setTitle("");
     setDescription("");
     setFileUrl("");
+    setLearningObjectives("");
+    setPrerequisites("");
+    setEstimatedStudyTime("");
     setEditingMaterial(null);
     setIsDialogOpen(false);
   };
@@ -191,6 +212,38 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="studyTime">Study Time</Label>
+                  <Input
+                    id="studyTime"
+                    value={estimatedStudyTime}
+                    onChange={(e) => setEstimatedStudyTime(e.target.value)}
+                    placeholder="e.g. 45 mins"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="prerequisites">Prerequisites</Label>
+                  <Input
+                    id="prerequisites"
+                    value={prerequisites}
+                    onChange={(e) => setPrerequisites(e.target.value)}
+                    placeholder="e.g. Basic Math"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="objectives">Learning Objectives (comma separated)</Label>
+                <Textarea
+                  id="objectives"
+                  value={learningObjectives}
+                  onChange={(e) => setLearningObjectives(e.target.value)}
+                  placeholder="Analyze data, Build models, Optimize..."
+                  rows={2}
+                />
+              </div>
+
               <div className="flex justify-end space-x-2">
                 <Button variant="outline" onClick={resetForm}>
                   Cancel
@@ -231,26 +284,54 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground line-clamp-3">
+                <p className="text-sm text-muted-foreground line-clamp-2">
                   {material.description || 'No description provided'}
                 </p>
 
+                {material.learning_objectives && material.learning_objectives.length > 0 && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Objectives</span>
+                    <div className="flex flex-wrap gap-1">
+                      {material.learning_objectives.map((obj, i) => (
+                        <Badge key={i} variant="outline" className="text-[10px] py-0 border-slate-200 text-slate-600 bg-slate-50/50">
+                          {obj}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  {material.estimated_study_time && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold uppercase text-slate-400">Time</span>
+                      <span className="text-xs font-medium text-slate-600">{material.estimated_study_time}</span>
+                    </div>
+                  )}
+                  {material.prerequisites && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold uppercase text-slate-400">Prereq</span>
+                      <span className="text-xs font-medium text-slate-600 truncate">{material.prerequisites}</span>
+                    </div>
+                  )}
+                </div>
+
                 {material.file_url && (
-                  <div className="flex items-center gap-2">
-                    <Upload className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-2 pt-1">
+                    <Upload className="h-4 w-4 text-blue-600" />
                     <a
                       href={material.file_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline truncate"
+                      className="text-sm font-medium text-blue-600 hover:underline truncate"
                     >
-                      View File
+                      View Resource
                     </a>
                   </div>
                 )}
 
-                <div className="text-xs text-muted-foreground">
-                  Added {new Date(material.created_at).toLocaleDateString()}
+                <div className="text-[10px] text-slate-400 font-medium pt-1">
+                  Published {new Date(material.created_at).toLocaleDateString()}
                 </div>
 
                 <div className="flex justify-end space-x-2">

@@ -20,7 +20,9 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
         date: "",
         time: "",
         location_url: "",
-        details: ""
+        details: "",
+        agenda: "", // New field
+        learning_outcomes: "" // New field
     });
 
     const loadEvents = async () => {
@@ -52,7 +54,9 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                 date: "",
                 time: "",
                 location_url: "",
-                details: ""
+                details: "",
+                agenda: "",
+                learning_outcomes: ""
             });
             loadEvents();
         } catch (error) {
@@ -140,20 +144,40 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                                     />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
-                                    <label className="text-sm font-medium">Short Description</label>
+                                    <label className="text-sm font-medium">Short Description (for Students)</label>
                                     <Textarea
                                         required
                                         placeholder="What will students learn?"
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                        rows={2}
+                                    />
+                                </div>
+                                <div className="space-y-2 md:col-span-1">
+                                    <label className="text-sm font-medium">Initial Agenda</label>
+                                    <Textarea
+                                        placeholder="1. Introduction, 2. Live Demo..."
+                                        value={formData.agenda}
+                                        onChange={e => setFormData({ ...formData, agenda: e.target.value })}
+                                        rows={3}
+                                    />
+                                </div>
+                                <div className="space-y-2 md:col-span-1">
+                                    <label className="text-sm font-medium">Learning Outcomes</label>
+                                    <Textarea
+                                        placeholder="Understand irony, Identify satire..."
+                                        value={formData.learning_outcomes}
+                                        onChange={e => setFormData({ ...formData, learning_outcomes: e.target.value })}
+                                        rows={3}
                                     />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
-                                    <label className="text-sm font-medium">Additional Details (Optional)</label>
+                                    <label className="text-sm font-medium">Additional Teacher Notes (Internal)</label>
                                     <Textarea
                                         placeholder="Preparation, reading material, etc."
                                         value={formData.details}
                                         onChange={e => setFormData({ ...formData, details: e.target.value })}
+                                        rows={2}
                                     />
                                 </div>
                             </div>
@@ -174,7 +198,25 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                                         <h3 className="text-lg font-bold">{event.title}</h3>
                                     </div>
                                     <p className="text-muted-foreground text-sm line-clamp-2">{event.description}</p>
-                                    <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mt-2">
+
+                                    <div className="grid grid-cols-2 gap-4 mt-3">
+                                        {/* @ts-ignore - agenda might not be in the initial Event type until model update */}
+                                        {event.agenda && (
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Agenda</span>
+                                                <p className="text-[11px] text-slate-600 line-clamp-2 whitespace-pre-line">{event.agenda}</p>
+                                            </div>
+                                        )}
+                                        {/* @ts-ignore */}
+                                        {event.learning_outcomes && (
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Outcomes</span>
+                                                <p className="text-[11px] text-slate-600 line-clamp-2 whitespace-pre-line">{event.learning_outcomes}</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mt-3">
                                         <div className="flex items-center gap-1">
                                             <Calendar className="w-3 h-3" />
                                             {event.date}

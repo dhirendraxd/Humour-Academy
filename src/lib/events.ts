@@ -10,6 +10,8 @@ export interface Event {
     time: string;
     location_url?: string;
     details?: string;
+    agenda?: string;
+    learning_outcomes?: string;
     teacher?: {
         name: string;
         rank: string;

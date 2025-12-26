@@ -18,6 +18,8 @@ interface Question {
   points: number;
   options?: string[];
   correctAnswer?: string;
+  explanation?: string; // New field
+  difficulty: 'beginner' | 'intermediate' | 'advanced'; // New field
 }
 
 interface AssessmentCreationProps {
@@ -45,6 +47,8 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
       points: 1,
       options: type === 'mcq' ? ['', '', '', ''] : undefined,
       correctAnswer: '',
+      explanation: '',
+      difficulty: 'beginner'
     };
     setQuestions([...questions, newQuestion]);
   };
@@ -183,9 +187,17 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
             <Card key={question.id} className="border-l-4 border-l-primary/50">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Badge variant={question.type === 'mcq' ? 'default' : 'secondary'}>
-                    {question.type === 'mcq' ? 'Multiple Choice' : 'Written Answer'}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={question.type === 'mcq' ? 'default' : 'secondary'}>
+                      {question.type === 'mcq' ? 'Multiple Choice' : 'Written Answer'}
+                    </Badge>
+                    <Badge variant="outline" className={`text-[10px] uppercase font-bold ${question.difficulty === 'advanced' ? 'text-red-600 border-red-200 bg-red-50' :
+                        question.difficulty === 'intermediate' ? 'text-orange-600 border-orange-200 bg-orange-50' :
+                          'text-green-600 border-green-200 bg-green-50'
+                      }`}>
+                      {question.difficulty}
+                    </Badge>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm">Points:</Label>
                     <Input
@@ -207,14 +219,54 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Difficulty</Label>
+                    <Select
+                      value={question.difficulty}
+                      onValueChange={(value: any) => updateQuestion(index, { difficulty: value })}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Points</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={question.points}
+                        onChange={(e) => updateQuestion(index, { points: parseInt(e.target.value) || 1 })}
+                        className="h-9"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeQuestion(index)}
+                        className="h-9 w-9 text-destructive hover:text-destructive/80 hover:bg-destructive/10 shrink-0"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  <Label>Question Text</Label>
+                  <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Question Text</Label>
                   <Textarea
                     value={question.question}
                     onChange={(e) => updateQuestion(index, { question: e.target.value })}
                     placeholder="Enter your question here..."
                     rows={2}
+                    className="resize-none"
                   />
                 </div>
 
@@ -254,6 +306,17 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                     </div>
                   </div>
                 )}
+
+                <div className="space-y-2 pt-2 border-t border-slate-100 mt-4">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Pedagogical Explanation</Label>
+                  <Textarea
+                    value={question.explanation || ''}
+                    onChange={(e) => updateQuestion(index, { explanation: e.target.value })}
+                    placeholder="Provide reasoning to help students learn after answering..."
+                    rows={2}
+                    className="bg-slate-50 border-slate-200 text-xs italic"
+                  />
+                </div>
               </CardContent>
             </Card>
           ))}

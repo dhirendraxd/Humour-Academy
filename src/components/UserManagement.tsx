@@ -28,8 +28,10 @@ import {
   Star,
   GraduationCap,
   Plus,
-  Loader2
+  Loader2,
+  TrendingUp
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -65,6 +67,8 @@ export const UserManagement = ({
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
+  const [performancePlan, setPerformancePlan] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
@@ -137,6 +141,28 @@ export const UserManagement = ({
       toast({
         title: "Update Failed",
         description: "Failed to update user. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSavePlan = async () => {
+    if (!editingUser) return;
+    setIsUpdating(true);
+    try {
+      console.log("Saving performance plan mock", { userId: editingUser.id, plan: performancePlan });
+      toast({
+        title: "Plan Saved",
+        description: `Development plan for ${editingUser.full_name} has been updated.`,
+      });
+      setIsPlanDialogOpen(false);
+      setPerformancePlan("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save plan.",
         variant: "destructive",
       });
     } finally {
@@ -234,7 +260,21 @@ export const UserManagement = ({
                   </div>
                   <div className="flex items-center space-x-3">
                     {getRoleBadge(user.role)}
-                    {canEdit && (
+                    <div className="flex items-center space-x-2">
+                      {user.role === 'student' && currentUserRole === 'faculty' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingUser(user);
+                            setPerformancePlan(""); // Reset or fetch existing
+                            setIsPlanDialogOpen(true);
+                          }}
+                          className="text-[10px] h-8 font-bold uppercase tracking-tight border-slate-200 hover:bg-slate-50 text-slate-600"
+                        >
+                          Plan
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -246,7 +286,7 @@ export const UserManagement = ({
                       >
                         <Edit3 className="h-4 w-4" />
                       </Button>
-                    )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -362,7 +402,46 @@ export const UserManagement = ({
             )}
           </DialogContent>
         </Dialog>
-      )}
-    </div>
-  );
+      {/* Performance Plan Dialog */}
+      <Dialog open={isPlanDialogOpen} onOpenChange={setIsPlanDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5 text-blue-600" />
+              Student Performance Plan
+            </DialogTitle>
+            <DialogDescription>
+              Create a personalized development plan for <span className="font-bold text-slate-800">{editingUser?.full_name}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase text-slate-400">Personalized Guidance & Goals</Label>
+              <Textarea
+                placeholder="e.g. Focus on timing control in jokes, Practice deadpan delivery..."
+                value={performancePlan}
+                onChange={(e) => setPerformancePlan(e.target.value)}
+                rows={5}
+                className="resize-none"
+              />
+            </div>
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
+              <p className="text-[11px] text-blue-700 leading-relaxed font-medium">
+                Tip: Be concrete with learning outcome pointers to help the student understand their specific path to improvement.
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setIsPlanDialogOpen(false)}>Cancel</Button>
+            <Button
+              onClick={handleSavePlan}
+              className="bg-blue-600 hover:bg-blue-700 text-white border-0 shadow-sm"
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Saving...' : 'Save Plan'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      );
 };

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Users,
   BarChart3,
@@ -14,6 +15,7 @@ import {
   Calendar,
   Settings,
   MoreHorizontal,
+  TrendingUp,
   ArrowUpRight,
   ArrowDownRight,
   Plus,
@@ -109,6 +111,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [courseInsight, setCourseInsight] = useState("Our students are showing a 15% increase in irony comprehension this month. Focus on deadpan delivery sessions upcoming.");
+  const [isEditingInsight, setIsEditingInsight] = useState(false);
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
 
@@ -209,11 +213,46 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricCard title="Total Students" value="21.2k" label="Active learners" trend="up" trendValue="112.71%" icon={Users} color="blue-600" />
-                <MetricCard title="Course Views" value="1.6k" label="Monthly impressions" trend="up" trendValue="112.71%" icon={BarChart3} color="purple-600" />
-                <MetricCard title="Total Reach" value="826" label="Unique reach" trend="down" trendValue="24.2%" icon={Star} color="orange-600" />
                 <MetricCard title="Engagement" value="18.2%" label="Avg. engagement" trend="up" trendValue="112.71%" icon={BarChart3} color="green-600" />
               </div>
+            </section>
+
+            <section className="animate-in fade-in slide-in-from-top-4 duration-700 delay-200">
+              <Card className="border-0 shadow-sm bg-white overflow-hidden rounded-[2rem] border-l-4 border-l-blue-600">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-blue-600" />
+                      <CardTitle className="text-lg font-bold text-slate-800">Faculty Insights & Guidance</CardTitle>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditingInsight(!isEditingInsight)}
+                      className="text-xs font-bold uppercase text-slate-400 hover:text-blue-600"
+                    >
+                      {isEditingInsight ? "Save" : "Edit Insight"}
+                    </Button>
+                  </div>
+                  <CardDescription className="text-xs">Periodic updates and learning goals for your students</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  {isEditingInsight ? (
+                    <Textarea
+                      value={courseInsight}
+                      onChange={(e) => setCourseInsight(e.target.value)}
+                      className="text-sm text-slate-600 bg-slate-50 border-slate-100 min-h-[100px] resize-none"
+                      placeholder="Share high-level observations or specific goals for the course cohort..."
+                    />
+                  ) : (
+                    <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                      <p className="text-sm text-slate-600 leading-relaxed italic">
+                        "{courseInsight}"
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

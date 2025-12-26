@@ -10,6 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Submission {
   id: string;
@@ -43,6 +50,12 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const [selectedAssessment, setSelectedAssessment] = useState<string>("");
+  const [criteriaScores, setCriteriaScores] = useState({
+    timing: 5,
+    delivery: 5,
+    originality: 5
+  });
+  const [overallFeedback, setOverallFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -166,17 +179,83 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {gradedSubmissions.map((sub) => (
-                <Card key={sub.id} className="shadow-academic">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{sub.assessment.title}</CardTitle>
-                    <Badge variant="default">Graded</Badge>
+                <Card key={sub.id} className="shadow-academic hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-lg">{sub.assessment.title}</CardTitle>
+                      <Badge className="bg-green-100 text-green-700 border-none">Graded</Badge>
+                    </div>
                   </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 mb-3">
+                      <User className="h-4 w-4 text-slate-400" />
+                      <span className="text-sm font-medium text-slate-700">{sub.student_profile.full_name}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                      <span className="text-xs font-bold uppercase text-slate-400">Final Score</span>
+                      <span className="text-lg font-bold text-blue-600">{sub.total_score || 0}%</span>
+                    </div>
+                  </CardContent>
                 </Card>
               ))}
             </div>
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Grading Modal / Section (Simulated) */}
+      <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Grading: {selectedSubmission?.assessment.title}</DialogTitle>
+            <p className="text-sm text-muted-foreground">Student: {selectedSubmission?.student_profile.full_name}</p>
+          </DialogHeader>
+
+          <div className="space-y-6 pt-4">
+            {/* Criteria Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {Object.entries(criteriaScores).map(([key, value]) => (
+                <div key={key} className="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <Label className="text-[10px] font-bold uppercase text-slate-500 tracking-wider capitalize">{key}</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={value}
+                      onChange={(e) => setCriteriaScores({ ...criteriaScores, [key]: parseInt(e.target.value) })}
+                      className="h-8 text-sm"
+                    />
+                    <span className="text-xs text-slate-400">/ 10</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Detailed Feedback (Student POV)</Label>
+              <Textarea
+                placeholder="Provide actionable steps for the student to improve their delivery and timing..."
+                value={overallFeedback}
+                onChange={(e) => setOverallFeedback(e.target.value)}
+                rows={4}
+                className="resize-none"
+              />
+              <p className="text-[11px] text-muted-foreground italic">
+                Tip: Mention specific strengths and one clear area for focus in the next performance.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <Button variant="outline" onClick={() => setSelectedSubmission(null)}>Close</Button>
+              <Button onClick={saveGrades} className="bg-blue-600 hover:bg-blue-700 text-white border-0 px-8 shadow-md">
+                Complete Review
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
   );
 };
