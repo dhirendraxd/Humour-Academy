@@ -22,7 +22,8 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
         location_url: "",
         details: "",
         agenda: "", // New field
-        learning_outcomes: "" // New field
+        learning_outcomes: "", // New field
+        itinerary: "" // New field (for long events)
     });
 
     const loadEvents = async () => {
@@ -56,7 +57,8 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                 location_url: "",
                 details: "",
                 agenda: "",
-                learning_outcomes: ""
+                learning_outcomes: "",
+                itinerary: ""
             });
             loadEvents();
         } catch (error) {
@@ -172,6 +174,16 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                                     />
                                 </div>
                                 <div className="space-y-2 md:col-span-2">
+                                    <label className="text-sm font-medium">Detailed Itinerary (Recommended for 4h+ sessions)</label>
+                                    <Textarea
+                                        placeholder="09:00 - Intro, 10:30 - Workshop Part 1, 13:00 - Lunch..."
+                                        value={formData.itinerary}
+                                        onChange={e => setFormData({ ...formData, itinerary: e.target.value })}
+                                        rows={4}
+                                    />
+                                    <p className="text-[10px] text-muted-foreground italic">Break down the session by timestamps for lengthy events.</p>
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
                                     <label className="text-sm font-medium">Additional Teacher Notes (Internal)</label>
                                     <Textarea
                                         placeholder="Preparation, reading material, etc."
@@ -199,8 +211,8 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                                     </div>
                                     <p className="text-muted-foreground text-sm line-clamp-2">{event.description}</p>
 
-                                    <div className="grid grid-cols-2 gap-4 mt-3">
-                                        {/* @ts-ignore - agenda might not be in the initial Event type until model update */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+                                        {/* @ts-ignore */}
                                         {event.agenda && (
                                             <div className="space-y-1">
                                                 <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Agenda</span>
@@ -212,6 +224,13 @@ export const EventsManager = ({ teacherId }: { teacherId: string }) => {
                                             <div className="space-y-1">
                                                 <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Outcomes</span>
                                                 <p className="text-[11px] text-slate-600 line-clamp-2 whitespace-pre-line">{event.learning_outcomes}</p>
+                                            </div>
+                                        )}
+                                        {/* @ts-ignore */}
+                                        {event.itinerary && (
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Itinerary (Long Session)</span>
+                                                <p className="text-[11px] text-slate-600 line-clamp-2 whitespace-pre-line italic">{event.itinerary}</p>
                                             </div>
                                         )}
                                     </div>

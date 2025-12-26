@@ -69,6 +69,8 @@ export const UserManagement = ({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
   const [performancePlan, setPerformancePlan] = useState("");
+  const [planGoals, setPlanGoals] = useState("");
+  const [planMentor, setPlanMentor] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
@@ -152,13 +154,20 @@ export const UserManagement = ({
     if (!editingUser) return;
     setIsUpdating(true);
     try {
-      console.log("Saving performance plan mock", { userId: editingUser.id, plan: performancePlan });
+      console.log("Saving performance plan mock", {
+        userId: editingUser.id,
+        plan: performancePlan,
+        goals: planGoals,
+        mentor: planMentor
+      });
       toast({
         title: "Plan Saved",
         description: `Development plan for ${editingUser.full_name} has been updated.`,
       });
       setIsPlanDialogOpen(false);
       setPerformancePlan("");
+      setPlanGoals("");
+      setPlanMentor("");
     } catch (error) {
       toast({
         title: "Error",
@@ -416,12 +425,30 @@ export const UserManagement = ({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase text-slate-400">Personalized Guidance & Goals</Label>
+              <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Long-term Career Goals</Label>
+              <Textarea
+                placeholder="What is the student's ultimate aim? (e.g., Stand-up Special, Writing for TV)"
+                value={planGoals}
+                onChange={(e) => setPlanGoals(e.target.value)}
+                rows={2}
+                className="resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Assigned Mentor / Guidance</Label>
+              <Input
+                placeholder="Name of the senior faculty member overseeing this plan"
+                value={planMentor}
+                onChange={(e) => setPlanMentor(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Personalized Guidance & Actionable Steps</Label>
               <Textarea
                 placeholder="e.g. Focus on timing control in jokes, Practice deadpan delivery..."
                 value={performancePlan}
                 onChange={(e) => setPerformancePlan(e.target.value)}
-                rows={5}
+                rows={4}
                 className="resize-none"
               />
             </div>

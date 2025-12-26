@@ -12,6 +12,7 @@ export interface Event {
     details?: string;
     agenda?: string;
     learning_outcomes?: string;
+    itinerary?: string;
     teacher?: {
         name: string;
         rank: string;

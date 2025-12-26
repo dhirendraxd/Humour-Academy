@@ -18,6 +18,8 @@ interface Material {
   learning_objectives: string[] | null;
   prerequisites: string | null;
   estimated_study_time: string | null;
+  resource_type: string | null;
+  module_breakdown: string | null;
   faculty_id: string;
   created_at: string;
 }
@@ -36,6 +38,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
   const [learningObjectives, setLearningObjectives] = useState(""); // Comma separated for input
   const [prerequisites, setPrerequisites] = useState("");
   const [estimatedStudyTime, setEstimatedStudyTime] = useState("");
+  const [resourceType, setResourceType] = useState("PDF");
+  const [moduleBreakdown, setModuleBreakdown] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -74,7 +78,9 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
         fileUrl,
         learning_objectives: learningObjectives.split(',').map(s => s.trim()).filter(Boolean),
         prerequisites,
-        estimated_study_time: estimatedStudyTime
+        estimated_study_time: estimatedStudyTime,
+        resource_type: resourceType,
+        module_breakdown: moduleBreakdown
       };
 
       if (editingMaterial) {
@@ -117,6 +123,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     setLearningObjectives(material.learning_objectives?.join(', ') || "");
     setPrerequisites(material.prerequisites || "");
     setEstimatedStudyTime(material.estimated_study_time || "");
+    setResourceType(material.resource_type || "PDF");
+    setModuleBreakdown(material.module_breakdown || "");
     setIsDialogOpen(true);
   };
 
@@ -149,6 +157,8 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
     setLearningObjectives("");
     setPrerequisites("");
     setEstimatedStudyTime("");
+    setResourceType("PDF");
+    setModuleBreakdown("");
     setEditingMaterial(null);
     setIsDialogOpen(false);
   };
@@ -223,14 +233,42 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="prerequisites">Prerequisites</Label>
-                  <Input
-                    id="prerequisites"
-                    value={prerequisites}
-                    onChange={(e) => setPrerequisites(e.target.value)}
-                    placeholder="e.g. Basic Math"
-                  />
+                  <Label htmlFor="resourceType">Resource Type</Label>
+                  <select
+                    id="resourceType"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={resourceType}
+                    onChange={(e) => setResourceType(e.target.value)}
+                  >
+                    <option>PDF</option>
+                    <option>Video</option>
+                    <option>Audio</option>
+                    <option>E-Book</option>
+                    <option>Quiz</option>
+                    <option>External Link</option>
+                  </select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="prerequisites">Prerequisites</Label>
+                <Input
+                  id="prerequisites"
+                  value={prerequisites}
+                  onChange={(e) => setPrerequisites(e.target.value)}
+                  placeholder="e.g. Basic Math"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="moduleBreakdown">Module Breakdown (Chapter list, etc.)</Label>
+                <Textarea
+                  id="moduleBreakdown"
+                  value={moduleBreakdown}
+                  onChange={(e) => setModuleBreakdown(e.target.value)}
+                  placeholder="Chapter 1: Intro, Chapter 2: The Logic of Satire..."
+                  rows={2}
+                />
               </div>
 
               <div className="space-y-2">
@@ -278,15 +316,29 @@ export const MaterialsManager = ({ facultyId }: MaterialsManagerProps) => {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg line-clamp-2">{material.title}</CardTitle>
-                  <Badge variant="secondary" className="ml-2">
-                    <FileText className="h-3 w-3" />
-                  </Badge>
+                  <div className="flex gap-1">
+                    {material.resource_type && (
+                      <Badge variant="secondary" className="bg-blue-50 text-blue-600 border-blue-100">
+                        {material.resource_type}
+                      </Badge>
+                    )}
+                    <Badge variant="outline" className="ml-2">
+                      <FileText className="h-3 w-3" />
+                    </Badge>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {material.description || 'No description provided'}
                 </p>
+
+                {material.module_breakdown && (
+                  <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                    <span className="text-[10px] font-bold uppercase text-slate-400 block mb-1">Breakdown</span>
+                    <p className="text-[10px] text-slate-600 line-clamp-2 italic">{material.module_breakdown}</p>
+                  </div>
+                )}
 
                 {material.learning_objectives && material.learning_objectives.length > 0 && (
                   <div className="space-y-1">

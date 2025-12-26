@@ -20,6 +20,7 @@ interface Question {
   correctAnswer?: string;
   explanation?: string; // New field
   difficulty: 'beginner' | 'intermediate' | 'advanced'; // New field
+  category_tag?: string; // New field
 }
 
 interface AssessmentCreationProps {
@@ -48,7 +49,8 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
       options: type === 'mcq' ? ['', '', '', ''] : undefined,
       correctAnswer: '',
       explanation: '',
-      difficulty: 'beginner'
+      difficulty: 'beginner',
+      category_tag: ''
     };
     setQuestions([...questions, newQuestion]);
   };
@@ -192,11 +194,16 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                       {question.type === 'mcq' ? 'Multiple Choice' : 'Written Answer'}
                     </Badge>
                     <Badge variant="outline" className={`text-[10px] uppercase font-bold ${question.difficulty === 'advanced' ? 'text-red-600 border-red-200 bg-red-50' :
-                        question.difficulty === 'intermediate' ? 'text-orange-600 border-orange-200 bg-orange-50' :
-                          'text-green-600 border-green-200 bg-green-50'
+                      question.difficulty === 'intermediate' ? 'text-orange-600 border-orange-200 bg-orange-50' :
+                        'text-green-600 border-green-200 bg-green-50'
                       }`}>
                       {question.difficulty}
                     </Badge>
+                    {question.category_tag && (
+                      <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-500 border-slate-200">
+                        {question.category_tag}
+                      </Badge>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm">Points:</Label>
@@ -236,6 +243,15 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
                         <SelectItem value="advanced">Advanced</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Category Tag</Label>
+                    <Input
+                      placeholder="e.g. Irony, Delivery, Pacing"
+                      value={question.category_tag}
+                      onChange={(e) => updateQuestion(index, { category_tag: e.target.value })}
+                      className="h-9"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Points</Label>
