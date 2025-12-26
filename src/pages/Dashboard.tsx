@@ -59,22 +59,23 @@ const Dashboard = () => {
     return (
         <PageLayout
             showFooter={false}
+            customNav={
                 <Navigation
-                    currentRole={profile.role as 'student' | 'faculty'} // Cast safely since we filter BOD logic
+                    currentRole={profile.role as 'student' | 'faculty'}
                     currentUser={{
                         name: profile.full_name,
                         rank: profile.rank || 'Member',
-                        level: profile.level
+                        level: profile.level || 1
                     }}
                     onRoleChange={() => { }}
                 />
             }
         >
-    <FadeIn>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {renderDashboard()}
-        </div>
-    </FadeIn>
+            <FadeIn>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {renderDashboard()}
+                </div>
+            </FadeIn>
         </PageLayout >
     );
 };
