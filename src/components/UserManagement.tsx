@@ -411,6 +411,7 @@ export const UserManagement = ({
             )}
           </DialogContent>
         </Dialog>
+      )}
       {/* Performance Plan Dialog */}
       <Dialog open={isPlanDialogOpen} onOpenChange={setIsPlanDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
@@ -470,5 +471,6 @@ export const UserManagement = ({
           </div>
         </DialogContent>
       </Dialog>
-      );
+    </div>
+  );
 };

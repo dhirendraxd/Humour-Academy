@@ -257,5 +257,4 @@ export const GradingInterface = ({ facultyId }: GradingInterfaceProps) => {
       </Dialog>
     </div>
   );
-  );
 };
