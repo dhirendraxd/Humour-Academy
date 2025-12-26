@@ -1,27 +1,30 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { MOCK_PROFILES, MOCK_USER, Profile } from '@/data/mockData';
+import { User, auth } from '@/lib/auth';
+import { Profile } from '@/data/mockData';
 
+// Define context type
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   profile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
-  signIn: (email: string, role?: 'student' | 'faculty' | 'bod') => Promise<void>;
-  signUp: (email: string, fullName: string, role: 'student' | 'faculty' | 'bod') => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, fullName: string, password: string, role: string) => Promise<void>;
+  isAuthenticated: boolean;
 }
 
+// Create context with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  session: null,
   profile: null,
   loading: true,
   signOut: async () => { },
   signIn: async () => { },
   signUp: async () => { },
+  isAuthenticated: false,
 });
 
+// Hook to use auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -34,84 +37,90 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Provider component
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Initialize auth state
   useEffect(() => {
-    // Check local storage for mock session
-    const storedUser = localStorage.getItem('mock_user_role');
-    if (storedUser) {
-      const role = storedUser as 'student' | 'faculty' | 'bod';
-      // Find a mock profile that matches the role, or default to first student
-      const mockProfile = MOCK_PROFILES.find(p => p.role === role) || MOCK_PROFILES[0];
-
-      setUser({ ...MOCK_USER, id: mockProfile.user_id } as User);
-      setProfile(mockProfile);
-      setSession({ user: { ...MOCK_USER, id: mockProfile.user_id } } as Session);
-    }
-    setLoading(false);
-  }, []);
-
-  const signIn = async (email: string, role: 'student' | 'faculty' | 'bod' = 'student') => {
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-
-    // For demo purposes, we'll assign a profile based on the requested role
-    // In a real mock, we might lookup by email, but here we just want to switch roles easily
-    const mockProfile = MOCK_PROFILES.find(p => p.role === role) || MOCK_PROFILES[0];
-
-    setUser({ ...MOCK_USER, id: mockProfile.user_id } as User);
-    setProfile(mockProfile);
-    setSession({ user: { ...MOCK_USER, id: mockProfile.user_id } } as Session);
-
-    localStorage.setItem('mock_user_role', role);
-    setLoading(false);
-  };
-
-  const signUp = async (email: string, fullName: string, role: 'student' | 'faculty' | 'bod') => {
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const newProfile: Profile = {
-      id: `new-${Date.now()}`,
-      user_id: `new-user-${Date.now()}`,
-      full_name: fullName,
-      email: email,
-      role: role,
-      level: 1,
-      rank: 'Newcomer'
+    const initAuth = async () => {
+      if (auth.isAuthenticated()) {
+        try {
+          const currentUser = await auth.getUser();
+          setUser(currentUser);
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+          auth.logout(); // Clear invalid token
+          setUser(null);
+        }
+      }
+      setLoading(false);
     };
 
-    // Note: This won't persist across reloads since MOCK_PROFILES is constant
-    // But it works for the current session
-    setUser({ ...MOCK_USER, id: newProfile.user_id } as User);
-    setProfile(newProfile);
-    setSession({ user: { ...MOCK_USER, id: newProfile.user_id } } as Session);
+    initAuth();
+  }, []);
 
-    localStorage.setItem('mock_user_role', role);
-    setLoading(false);
+  // Sign in function
+  const signIn = async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      const response = await auth.login({ email, password });
+      setUser(response.user);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Sign up function
+  const signUp = async (email: string, fullName: string, password: string, role: string) => {
+    setLoading(true);
+    try {
+      const response = await auth.register({
+        name: fullName,
+        email,
+        password,
+        password_confirmation: password, // Assuming password confirmation matches for now
+        role
+      });
+      setUser(response.user);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sign out function
   const signOut = async () => {
-    setUser(null);
-    setProfile(null);
-    setSession(null);
-    localStorage.removeItem('mock_user_role');
+    setLoading(true);
+    try {
+      await auth.logout();
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Derive profile from user
+  const profile: Profile | null = user ? {
+    id: user.id.toString(),
+    user_id: user.id.toString(),
+    full_name: user.name,
+    email: user.email,
+    role: (user.role as 'student' | 'faculty' | 'bod') || 'student',
+    level: 1, // Default
+    rank: 'Novice', // Default
+  } : null;
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        session,
         profile,
         loading,
         signOut,
         signIn,
         signUp,
+        isAuthenticated: !!user,
       }}
     >
       {children}

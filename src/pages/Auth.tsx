@@ -42,8 +42,8 @@ export default function Auth() {
 
     try {
 
-      // Use mock signIn
-      await signIn(loginData.email);
+      // Use real signIn
+      await signIn(loginData.email, loginData.password);
 
       toast({
         title: "Welcome back!",
@@ -67,8 +67,8 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // Use mock signUp
-      await signUp(signupData.email, signupData.fullName, signupData.role);
+      // Use real signUp
+      await signUp(signupData.email, signupData.fullName, signupData.password, signupData.role);
 
       toast({
         title: "Registration Successful!",
