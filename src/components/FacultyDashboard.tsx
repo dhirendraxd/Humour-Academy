@@ -358,7 +358,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   };
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden">
+    <div className="flex h-[calc(100vh-5.5rem)] bg-[#F8FAFC] overflow-hidden">
       {/* Sidebar Overlay */}
       <div
         className={`bg-white border-r border-slate-50 flex flex-col items-center py-10 transition-all duration-500 ease-in-out relative group/sidebar ${isSidebarExpanded ? 'w-64 px-6 items-start' : 'w-20 px-0 items-center'}`}

@@ -59,7 +59,7 @@ const Dashboard = () => {
     return (
         <PageLayout
             showFooter={false}
-            showNav={profile.role === 'bod'} // Only show nav for BOD/Admin
+            showNav={true}
         >
             <FadeIn>
                 <div className="w-full h-full">
