@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
+use App\Models\Notification;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
@@ -20,10 +22,20 @@ class EnrollmentController extends Controller
             return response()->json(['message' => 'Already enrolled'], 400);
         }
 
-        Enrollment::create([
+        $enrollment = Enrollment::create([
             'student_id' => $request->user()->id,
             'course_id' => $request->course_id,
             'status' => 'pending'
+        ]);
+
+        // Notify the teacher
+        $course = Course::find($request->course_id);
+        Notification::create([
+            'user_id' => $course->teacher_id,
+            'title' => 'New Enrollment Request',
+            'message' => "Student {$request->user()->name} has applied for your course: {$course->title}",
+            'type' => 'enrollment_request',
+            'data' => ['enrollment_id' => $enrollment->id]
         ]);
 
         return response()->json(['message' => 'Application sent']);

@@ -24,15 +24,8 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses'>('overview');
   const [showProfileDialog, setShowProfileDialog] = useState(false);
 
-  const upcomingEvents = [
-    { title: "Storytelling Workshop", date: "Tomorrow, 5:00 PM", type: "Workshop" },
-    { title: "Open Mic Night", date: "Fri, 7:00 PM", type: "Event" },
-  ];
-
-  const recentCourses = [
-    { title: "Humour in Leadership", progress: 65, total: 12, completed: 8 },
-    { title: "Voice Modulation", progress: 30, total: 10, completed: 3 },
-  ];
+  const upcomingEvents: any[] = [];
+  const recentCourses: any[] = [];
 
   if (activeTab === 'classmates') {
     return (
@@ -263,5 +256,6 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         </div>
         <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
       </div>
-      );
+    </FadeIn>
+  );
 };

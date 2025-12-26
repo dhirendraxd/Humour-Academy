@@ -7,16 +7,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 // import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { api } from "@/lib/api";
 
 interface Notification {
-  id: string;
+  id: number;
   title: string;
   message: string;
   type: string;
   is_read: boolean;
   data?: any;
   created_at: string;
-  user_id: string;
+  user_id: number;
 }
 
 interface NotificationCenterProps {
@@ -57,10 +58,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const fetchNotifications = async () => {
     try {
-      // Mock fetch
-      console.log("Fetching notifications mock");
-      const data: Notification[] = []; // Empty for now
-
+      const data = await api.get<Notification[]>('/notifications');
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
     } catch (error) {
@@ -68,9 +66,9 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
     }
   };
 
-  const markAsRead = async (notificationId: string) => {
+  const markAsRead = async (notificationId: number) => {
     try {
-      // Mock mark as read
+      await api.put(`/notifications/${notificationId}`, {});
       setNotifications(prev =>
         prev.map(n =>
           n.id === notificationId ? { ...n, is_read: true } : n
@@ -84,7 +82,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
 
   const markAllAsRead = async () => {
     try {
-      // Mock mark all as read
+      await api.post('/notifications/read-all', {});
       setNotifications(prev =>
         prev.map(n => ({ ...n, is_read: true }))
       );
@@ -98,9 +96,9 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
     }
   };
 
-  const deleteNotification = async (notificationId: string) => {
+  const deleteNotification = async (notificationId: number) => {
     try {
-      // Mock delete
+      await api.delete(`/notifications/${notificationId}`);
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
       toast({
         title: "Notification deleted",
@@ -114,11 +112,10 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
   useEffect(() => {
     fetchNotifications();
 
-    // Mock real-time subscription removed
-    // const channel = supabase...
+    const interval = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
 
     return () => {
-      // supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [userId, toast]);
 
@@ -173,10 +170,10 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
                     <div
                       key={notification.id}
                       className={`p-3 rounded-lg transition-colors hover:bg-accent/50 cursor-pointer ${!notification.is_read
-                          ? getNotificationColor(notification.type)
-                          : 'hover:bg-muted/30'
+                        ? getNotificationColor(notification.type)
+                        : 'hover:bg-muted/30'
                         }`}
-                      onClick={() => !notification.is_read && markAsRead(notification.id)}
+                      onClick={() => !notification.is_read && markAsRead(Number(notification.id))}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-start gap-2 flex-1">
@@ -203,7 +200,7 @@ export const NotificationCenter = ({ userId }: NotificationCenterProps) => {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteNotification(notification.id);
+                            deleteNotification(Number(notification.id));
                           }}
                           className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-destructive/20"
                         >

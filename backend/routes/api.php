@@ -3,6 +3,10 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +23,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [App\Http\Controllers\ProfileController::class, 'update']);
 
     // Course routes
-    Route::get('/courses', [App\Http\Controllers\CourseController::class, 'index']);
-    Route::post('/courses', [App\Http\Controllers\CourseController::class, 'store']); // Teacher create course
+    Route::get('/courses', [CourseController::class, 'index']);
+    Route::post('/courses', [CourseController::class, 'store']); // Teacher create course
 
     // Enrollment routes
-    Route::post('/enrollments', [App\Http\Controllers\EnrollmentController::class, 'store']); // Student apply
-    Route::get('/active-enrollments', [App\Http\Controllers\EnrollmentController::class, 'index']); // Teacher view requests
-    Route::put('/enrollments/{id}', [App\Http\Controllers\EnrollmentController::class, 'update']); // Teacher approve/reject
+    Route::post('/enrollments', [EnrollmentController::class, 'store']); // Student apply
+    Route::get('/active-enrollments', [EnrollmentController::class, 'index']); // Teacher view requests
+    Route::put('/enrollments/{id}', [EnrollmentController::class, 'update']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{id}', [NotificationController::class, 'update']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 });

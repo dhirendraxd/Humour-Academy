@@ -224,7 +224,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <Users className="h-4 w-4 text-secondary-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary-foreground">24</div>
+            <div className="text-2xl font-bold text-secondary-foreground">--</div>
             <p className="text-xs text-secondary-foreground/70">Active learners</p>
           </CardContent>
         </Card>
@@ -235,7 +235,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">--</div>
             <p className="text-xs text-muted-foreground">Created this term</p>
           </CardContent>
         </Card>
@@ -246,7 +246,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">87%</div>
+            <div className="text-2xl font-bold">--%</div>
             <p className="text-xs text-muted-foreground">Average score</p>
           </CardContent>
         </Card>
