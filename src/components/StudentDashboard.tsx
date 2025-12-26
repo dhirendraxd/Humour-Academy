@@ -348,16 +348,15 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Simple Search Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-11 w-11 transition-all"
-              title="Quick Search"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
+          <div className="flex items-center gap-4 flex-1">
+            {/* Restored Full Search Bar */}
+            <div className="relative w-full max-w-md group hidden lg:block">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+              <Input
+                placeholder="Search resources, courses, peers..."
+                className="pl-11 h-11 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-xs font-medium w-full"
+              />
+            </div>
 
             <div className="flex items-center gap-3">
               <NotificationCenter userId={user.name} />
@@ -400,7 +399,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-4 -mr-4 scrollbar-hide pb-10">
+        <div className="flex-1 overflow-y-auto pr-4 -mr-4 no-scrollbar pb-10">
           <FadeIn direction="none" delay={100}>
             {renderContent()}
           </FadeIn>

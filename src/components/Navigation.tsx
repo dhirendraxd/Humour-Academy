@@ -165,89 +165,91 @@ export const Navigation = ({
       </nav>
 
       <div className="ml-auto flex items-center gap-4">
-        {userData && location.pathname !== '/dashboard' ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-blue-600/10 transition-colors">
-                <Avatar className="h-10 w-10 border-2 border-transparent hover:border-blue-600 transition-all bg-background">
-                  <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name}`}
-                    alt={userData.name}
-                    className="h-full w-full object-cover"
-                  />
-                  <AvatarFallback className="bg-blue-600/10 text-blue-600 font-bold">
-                    {userData.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{userData.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {userData.rank} • Lvl {userData.level}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+        {location.pathname !== '/dashboard' && (
+          userData ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-blue-600/10 transition-colors">
+                  <Avatar className="h-10 w-10 border-2 border-transparent hover:border-blue-600 transition-all bg-background">
+                    <img
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name}`}
+                      alt={userData.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <AvatarFallback className="bg-blue-600/10 text-blue-600 font-bold">
+                      {userData.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{userData.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {userData.rank} • Lvl {userData.level}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
 
-              {onRoleChange && (
-                <>
-                  <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => onRoleChange('student')}>
-                    <Users className="mr-2 h-4 w-4" />
-                    Student View
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onRoleChange('faculty')}>
-                    <GraduationCap className="mr-2 h-4 w-4" />
-                    Teacher View
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              )}
+                {onRoleChange && (
+                  <>
+                    <DropdownMenuLabel>Switch Role</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => onRoleChange('student')}>
+                      <Users className="mr-2 h-4 w-4" />
+                      Student View
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onRoleChange('faculty')}>
+                      <GraduationCap className="mr-2 h-4 w-4" />
+                      Teacher View
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
 
-              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button
-            onClick={() => navigate('/auth')}
-            className="rounded-full font-medium bg-foreground text-background hover:bg-foreground/90 transition-all shadow-none h-10 flex items-center overflow-hidden"
-            style={{
-              width: `${interpolate(160, 48)}px`,
-              paddingLeft: 0,
-              paddingRight: 0,
-              justifyContent: 'center'
-            }}
-          >
-            <div className="flex items-center justify-center w-full relative">
-              <span
-                className="absolute whitespace-nowrap"
-                style={{
-                  opacity: interpolate(1, 0),
-                  transform: `translateY(${interpolate(0, 20)}px)`
-                }}
-              >
-                Sign In
-              </span>
-              <LogIn
-                className="w-5 h-5 absolute"
-                style={{
-                  opacity: interpolate(0, 1),
-                  transform: `translateY(${interpolate(20, 0)}px)`
-                }}
-              />
-            </div>
-          </Button>
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              onClick={() => navigate('/auth')}
+              className="rounded-full font-medium bg-foreground text-background hover:bg-foreground/90 transition-all shadow-none h-10 flex items-center overflow-hidden"
+              style={{
+                width: `${interpolate(160, 48)}px`,
+                paddingLeft: 0,
+                paddingRight: 0,
+                justifyContent: 'center'
+              }}
+            >
+              <div className="flex items-center justify-center w-full relative">
+                <span
+                  className="absolute whitespace-nowrap"
+                  style={{
+                    opacity: interpolate(1, 0),
+                    transform: `translateY(${interpolate(0, 20)}px)`
+                  }}
+                >
+                  Sign In
+                </span>
+                <LogIn
+                  className="w-5 h-5 absolute"
+                  style={{
+                    opacity: interpolate(0, 1),
+                    transform: `translateY(${interpolate(20, 0)}px)`
+                  }}
+                />
+              </div>
+            </Button>
+          )
         )}
       </div>
     </header>
