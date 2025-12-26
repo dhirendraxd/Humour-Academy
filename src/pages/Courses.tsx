@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Mic, Users, Brain, Sparkles, Download } from "lucide-react";
 
-export default function Curriculum() {
+export default function Courses() {
     const courses = [
         {
             title: "Emotional Intelligence & Wit",
@@ -45,7 +45,7 @@ export default function Curriculum() {
                         The <span className="text-blue-600">Science</span> of Soft Skills
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-                        Our curriculum transforms intangible qualities like charisma and wit into
+                        Our courses transform intangible qualities like charisma and wit into
                         trainable mechanics. We don't just teach you to be funny;
                         we teach you to be formidable.
                     </p>

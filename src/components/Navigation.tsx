@@ -76,7 +76,7 @@ export const Navigation = ({
   };
 
   const navItems = [
-    { label: "Curriculum", path: "/curriculum", icon: BookOpen, roles: ['student', 'faculty'] },
+    { label: "Courses", path: "/courses", icon: BookOpen, roles: ['student', 'faculty'] },
     { label: "Faculty", path: "/faculty", icon: GraduationCap, roles: ['student'] },
     { label: "Events", path: "/events", icon: Calendar, roles: ['student', 'faculty'] },
     { label: "About", path: "/about", icon: Sparkles, roles: ['student'] },

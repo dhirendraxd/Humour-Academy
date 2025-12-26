@@ -55,10 +55,10 @@ export const HomePage = ({ onLoginClick, isAuthenticated, onDashboardClick }: Ho
               <Button
                 size="lg"
                 variant="secondary"
-                onClick={() => navigate('/curriculum')}
+                onClick={() => navigate('/courses')}
                 className="rounded-full px-8 h-12 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border"
               >
-                View Curriculum
+                View Courses
               </Button>
             </div>
           </FadeIn>

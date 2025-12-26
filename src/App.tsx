@@ -12,7 +12,7 @@ import Faculty from "./pages/Faculty";
 import Students from "./pages/Students";
 
 import About from "./pages/About";
-import Curriculum from "./pages/Curriculum";
+import Courses from "./pages/Courses";
 import Events from "./pages/Events";
 import ExecutivePresence from "./pages/ExecutivePresence";
 import TeamDynamics from "./pages/TeamDynamics";
@@ -40,7 +40,7 @@ const App = () => (
               <Route path="/faculty" element={<Faculty />} />
               <Route path="/students" element={<Students />} />
               <Route path="/about" element={<About />} />
-              <Route path="/curriculum" element={<Curriculum />} />
+              <Route path="/courses" element={<Courses />} />
               <Route path="/events" element={<Events />} />
 
               {/* New Pages */}

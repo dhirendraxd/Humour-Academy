@@ -98,7 +98,7 @@ export const StudentCourses = ({ onBack, onNavigateToDashboard }: { onBack: () =
                             </div>
                             <span>Courses</span>
                         </h1>
-                        <p className="text-slate-500 mt-3 text-lg font-medium">Select a specialized curriculum to begin your journey into humor mastery</p>
+                        <p className="text-slate-500 mt-3 text-lg font-medium">Select a specialized course program to begin your journey into humor mastery</p>
                     </div>
                     <Button
                         variant="ghost"
