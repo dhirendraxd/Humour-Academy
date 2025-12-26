@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +40,6 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
   const navigate = useNavigate();
   const { signOut: onSignOut } = useAuth();
   const location = useLocation();
-  const [showProfileDialog, setShowProfileDialog] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -126,10 +124,6 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setShowProfileDialog(true)}>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
@@ -158,10 +152,6 @@ export const Navigation = ({ currentRole, currentUser, onRoleChange }: Navigatio
         )}
       </div>
 
-      <ProfileEditDialog
-        open={showProfileDialog}
-        onOpenChange={setShowProfileDialog}
-      />
     </header>
   );
 };

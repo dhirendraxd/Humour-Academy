@@ -7,6 +7,7 @@ import { useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Badge } from "@/components/ui/badge";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
+import { StudentCourses } from "@/components/StudentCourses";
 
 interface StudentDashboardProps {
   user: {
@@ -20,7 +21,7 @@ interface StudentDashboardProps {
 }
 
 export const StudentDashboard = ({ user }: StudentDashboardProps) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'classmates'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses'>('overview');
   const [showProfileDialog, setShowProfileDialog] = useState(false);
 
   const upcomingEvents = [
@@ -65,6 +66,10 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         </div>
       </FadeIn>
     );
+  }
+
+  if (activeTab === 'courses') {
+    return <StudentCourses onBack={() => setActiveTab('overview')} />;
   }
 
   return (
@@ -195,6 +200,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
               <Button
                 variant="outline"
                 className="h-auto py-6 flex flex-col items-center gap-2 hover:border-primary/50 hover:bg-primary/5 group"
+                onClick={() => setActiveTab('courses')}
               >
                 <BookOpen className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                 <span className="font-medium">Course Catalog</span>
@@ -257,6 +263,5 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
         </div>
         <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
       </div>
-    </FadeIn>
-  );
+      );
 };

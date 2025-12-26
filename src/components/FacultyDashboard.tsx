@@ -6,7 +6,11 @@ import { NotificationCenter } from "@/components/NotificationCenter";
 import { AssessmentCreation } from "@/components/AssessmentCreation";
 import { MaterialsManager } from "@/components/MaterialsManager";
 import { GradingInterface } from "@/components/GradingInterface";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ProfileEditDialog } from "@/components/ProfileEditDialog";
+import { courseService, Enrollment } from "@/lib/courses";
+import { useToast } from "@/hooks/use-toast";
+import { Check, X } from "lucide-react";
 
 interface FacultyDashboardProps {
   user: {
@@ -18,7 +22,79 @@ interface FacultyDashboardProps {
 }
 
 export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests'>('overview');
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [requests, setRequests] = useState<Enrollment[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (activeTab === 'requests') {
+      loadRequests();
+    }
+  }, [activeTab]);
+
+  const loadRequests = async () => {
+    try {
+      const data = await courseService.listRequests();
+      setRequests(data);
+    } catch (error) {
+      console.error("Failed to load requests", error);
+    }
+  };
+
+  const handleRequest = async (id: number, status: 'approved' | 'rejected') => {
+    try {
+      await courseService.updateStatus(id, status);
+      toast({ title: `Request ${status}` });
+      setRequests(prev => prev.filter(r => r.id !== id));
+    } catch (error) {
+      toast({ title: "Operation failed", variant: "destructive" });
+    }
+  };
+
+  if (activeTab === 'requests') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center space-x-2">
+              <Users className="h-6 w-6 text-primary" />
+              <span>Course Requests</span>
+            </h1>
+            <p className="text-muted-foreground">Manage incoming student enrollment applications</p>
+          </div>
+          <Button variant="outline" onClick={() => setActiveTab('overview')}>Back</Button>
+        </div>
+
+        <div className="grid gap-4">
+          {requests.map(req => (
+            <Card key={req.id}>
+              <CardContent className="flex items-center justify-between p-6">
+                <div>
+                  <h3 className="font-bold text-lg">{req.student?.name}</h3>
+                  <p className="text-muted-foreground">{req.course?.title}</p>
+                  {req.student?.bio && <p className="text-sm mt-1 italic">"{req.student.bio}"</p>}
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50" onClick={() => handleRequest(req.id, 'approved')}>
+                    <Check className="w-4 h-4 mr-1" /> Approve
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleRequest(req.id, 'rejected')}>
+                    <X className="w-4 h-4 mr-1" /> Reject
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {requests.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground card border-dashed">
+              No pending requests.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (activeTab === 'students') {
     return (
@@ -31,8 +107,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             </h1>
             <p className="text-muted-foreground">Manage your students and track their progress</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setActiveTab('overview')}
           >
             Back to Overview
@@ -60,8 +136,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             </h1>
             <p className="text-muted-foreground">Create and manage assessments for your students</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setActiveTab('overview')}
           >
             Back to Overview
@@ -83,8 +159,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             </h1>
             <p className="text-muted-foreground">Manage study materials and resources</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setActiveTab('overview')}
           >
             Back to Overview
@@ -106,8 +182,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             </h1>
             <p className="text-muted-foreground">Review and grade student submissions</p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setActiveTab('overview')}
           >
             Back to Overview
@@ -126,10 +202,19 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
           <div>
             <h1 className="text-2xl font-bold mb-2">Faculty Dashboard</h1>
             <p className="text-primary-foreground/80">{user.name} • {user.rank} • Level {user.level}</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="mt-4 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md"
+              onClick={() => setShowProfileDialog(true)}
+            >
+              Edit Profile
+            </Button>
           </div>
           {userId && <NotificationCenter userId={userId} />}
         </div>
       </div>
+      <ProfileEditDialog open={showProfileDialog} onOpenChange={setShowProfileDialog} />
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -178,11 +263,18 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <CardDescription>View and manage your students</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
-              className="w-full bg-gradient-primary border-0 hover:shadow-glow"
+            <Button
+              className="w-full bg-gradient-primary border-0 hover:shadow-glow mb-2"
               onClick={() => setActiveTab('students')}
             >
               Manage Students
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setActiveTab('requests')}
+            >
+              Review Applications
             </Button>
           </CardContent>
         </Card>
@@ -196,7 +288,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <CardDescription>Create and manage assessments</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
+            <Button
               className="w-full bg-gradient-primary border-0 hover:shadow-glow"
               onClick={() => setActiveTab('assessments')}
             >
@@ -214,7 +306,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <CardDescription>Upload and organize materials</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
+            <Button
               className="w-full bg-gradient-primary border-0 hover:shadow-glow"
               onClick={() => setActiveTab('materials')}
             >
@@ -232,7 +324,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             <CardDescription>Review and grade submissions</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
+            <Button
               className="w-full bg-gradient-secondary text-secondary-foreground border-0 hover:shadow-academic"
               onClick={() => setActiveTab('grading')}
             >
