@@ -36,6 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { StudentCourses } from "@/components/StudentCourses";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import { moduleService, Enrollment } from "@/lib/modules";
 import {
   ResponsiveContainer,
   RadialBarChart,
@@ -87,7 +88,17 @@ const progressGoalData = [
   { name: 'Progress', value: 68, fill: '#3b82f6' },
 ];
 
-const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color }: any) => (
+interface MetricCardProps {
+  title: string;
+  value: string | number;
+  label: string;
+  trend?: 'up' | 'down' | null;
+  trendValue?: string;
+  icon: any; // Lucide icon type is complex, leaving any for now or using LucideIcon
+  color: string;
+}
+
+const MetricCard = ({ title, value, label, trend, trendValue, icon: Icon, color }: MetricCardProps) => (
   <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 bg-white relative overflow-hidden group rounded-2xl">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-semibold text-slate-500">{title}</CardTitle>
@@ -115,6 +126,27 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements'>('overview');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEnrollments();
+  }, []);
+
+  const fetchEnrollments = async () => {
+    try {
+      setIsLoading(true);
+      const data = await moduleService.listRequests(); // This returns current user's enrollments if student
+      setEnrollments(data);
+    } catch (error) {
+      console.error('Failed to fetch enrollments:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const activeEnrollments = enrollments.filter(e => e.status === 'approved');
+  const pendingEnrollments = enrollments.filter(e => e.status === 'pending');
 
   const handleLogout = async () => {
     try {
@@ -182,10 +214,81 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricCard title="Active Courses" value="3" label="Courses in progress" trend="up" trendValue="+1" icon={BookOpen} color="blue-600" />
+                <MetricCard title="Active Modules" value={activeEnrollments.length} label="Modules in progress" trend={activeEnrollments.length > 0 ? "up" : null} trendValue="+1" icon={BookOpen} color="blue-600" />
                 <MetricCard title="Community Points" value="1,250" label="Top 10% performance" trend="up" trendValue="15%" icon={Star} color="purple-600" />
-                <MetricCard title="Assignments" value="12" label="2 pending review" icon={Target} color="orange-600" />
+                <MetricCard title="Enrollment" value={pendingEnrollments.length} label="Pending approval" icon={Target} color="orange-600" />
                 <MetricCard title="Time Spent" value="24h" label="Learning this week" trend="up" trendValue="12.5%" icon={Clock} color="green-600" />
+              </div>
+            </section>
+
+            <section>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <Card className="lg:col-span-12 border-0 shadow-sm bg-white overflow-hidden rounded-[2rem]">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-xl font-bold text-slate-800">My Academic Path</CardTitle>
+                        <CardDescription>Progress through your enrolled programs</CardDescription>
+                      </div>
+                      <Badge variant="outline" className="border-blue-100 text-blue-600 bg-blue-50 px-3">
+                        {activeEnrollments.length} Active {activeEnrollments.length === 1 ? 'Program' : 'Programs'}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {activeEnrollments.length > 0 ? (
+                      <div className="space-y-8">
+                        {activeEnrollments.map((enrollment) => (
+                          <div key={enrollment.id} className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex items-center gap-4">
+                                <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200">
+                                  <GraduationCap className="h-6 w-6" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-slate-800 text-lg">{enrollment.cohort?.module?.curriculum?.title}</h4>
+                                  <p className="text-sm text-slate-500">Currently in: <span className="text-blue-600 font-semibold">{enrollment.cohort?.module?.title}</span></p>
+                                </div>
+                              </div>
+                              <Button variant="outline" size="sm" className="rounded-xl border-slate-200 text-xs hover:bg-white" onClick={() => { setActiveTab('courses') }}>
+                                View Details
+                              </Button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 relative">
+                              {/* Connector line for large screens */}
+                              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 hidden lg:block z-0" />
+
+                              {/* We'd ideally fetch all modules of this curriculum here, but for now we'll show current state */}
+                              <div className="p-4 rounded-2xl bg-white border border-blue-200 shadow-sm relative z-10">
+                                <Badge className="mb-2 bg-blue-500">ACTIVE</Badge>
+                                <p className="font-bold text-slate-800 text-sm line-clamp-1">{enrollment.cohort?.module?.title}</p>
+                                <p className="text-[10px] text-slate-400 font-medium uppercase mt-1">Module {enrollment.cohort?.module?.order_index}</p>
+                              </div>
+
+                              <div className="p-4 rounded-2xl bg-slate-100/50 border border-slate-200 border-dashed flex flex-col items-center justify-center text-center relative z-10">
+                                <Zap className="h-4 w-4 text-slate-300 mb-2" />
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Next Up</p>
+                                <p className="text-[10px] text-slate-300 mt-1 italic">Advance to unlock</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-12 text-center">
+                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <BookOpen className="h-8 w-8 text-slate-300" />
+                        </div>
+                        <h4 className="font-bold text-slate-800">No active programs</h4>
+                        <p className="text-slate-500 text-sm mb-6">Choose a curriculum to start your learning journey.</p>
+                        <Button className="bg-gradient-primary border-0 rounded-xl px-8" onClick={() => setActiveTab('courses')}>
+                          Explore Programs
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </section>
 
@@ -306,12 +409,12 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
                   { label: 'Course Catalog', icon: BookOpen, tab: 'courses', color: 'blue-600' },
                   { label: 'Find Classmates', icon: GraduationCap, tab: 'classmates', color: 'purple-600' },
                   { label: 'View Events', icon: Calendar, tab: 'events', color: 'orange-600' },
-                  { label: 'Platform Stats', icon: Zap, color: 'green-600' },
+                  { label: 'Platform Stats', icon: Zap, tab: 'overview', color: 'green-600' },
                 ].map((item) => (
                   <Button
                     key={item.label}
                     variant="outline"
-                    onClick={() => setActiveTab(item.tab as any)}
+                    onClick={() => setActiveTab(item.tab as 'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements')}
                     className="h-28 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-md transition-all flex flex-col gap-3 group"
                   >
                     <div className={`p-3 rounded-2xl bg-${item.color}/10 text-${item.color} group-hover:scale-110 transition-transform`}>
@@ -338,7 +441,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
             {sidebarItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
+                onClick={() => setActiveTab(item.id as 'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements')}
                 className={`flex items-center gap-2 py-2 transition-all duration-300 whitespace-nowrap group relative ${activeTab === item.id ? 'text-blue-600' : 'text-slate-500 hover:text-blue-600'}`}
               >
                 <item.icon className={`h-4.5 w-4.5 shrink-0 ${activeTab === item.id ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-600'}`} />

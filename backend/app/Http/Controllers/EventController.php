@@ -8,8 +8,22 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+
+        if ($user && $user->role === 'faculty') {
+            return Event::with('teacher')->latest()->get();
+        }
+
+        if ($user && $user->role === 'student') {
+            $approvedCohortIds = $user->enrollments()->where('status', 'approved')->pluck('cohort_id');
+            return Event::whereIn('cohort_id', $approvedCohortIds)
+                ->with('teacher')
+                ->latest()
+                ->get();
+        }
+
         return Event::with('teacher')->latest()->get();
     }
 
@@ -25,7 +39,8 @@ class EventController extends Controller
             'details' => 'nullable|string',
             'agenda' => 'nullable|string',
             'learning_outcomes' => 'nullable|string',
-            'itinerary' => 'nullable|string'
+            'itinerary' => 'nullable|string',
+            'cohort_id' => 'required|exists:cohorts,id'
         ]);
 
         $event = $request->user()->hostedEvents()->create($validated);

@@ -23,7 +23,8 @@ export const EventsManager = ({ teacherId, cohortId }: { teacherId: string, coho
         details: "",
         agenda: "", // New field
         learning_outcomes: "", // New field
-        itinerary: "" // New field (for long events)
+        itinerary: "", // New field (for long events)
+        cohort_id: cohortId
     });
 
     const loadEvents = async () => {
@@ -58,7 +59,8 @@ export const EventsManager = ({ teacherId, cohortId }: { teacherId: string, coho
                 details: "",
                 agenda: "",
                 learning_outcomes: "",
-                itinerary: ""
+                itinerary: "",
+                cohort_id: cohortId
             });
             loadEvents();
         } catch (error) {

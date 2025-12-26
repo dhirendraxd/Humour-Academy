@@ -1,48 +1,49 @@
-import { moduleService, Module, Cohort } from "@/lib/modules";
+import { moduleService, Module, Cohort, Curriculum } from "@/lib/modules";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, User as UserIcon } from "lucide-react";
+import { BookOpen, Calendar, User as UserIcon, GraduationCap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
-    const [modules, setModules] = useState<Module[]>([]);
+    const [curriculums, setCurriculums] = useState<Curriculum[]>([]);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
     useEffect(() => {
-        loadModules();
+        loadCurriculums();
     }, []);
 
-    const loadModules = async () => {
+    const loadCurriculums = async () => {
         try {
-            const data = await moduleService.listModules();
-            // Fetch cohorts for each module to show availability
-            const modulesWithCohorts = await Promise.all(data.map(async (m) => {
-                const cohorts = await moduleService.listCohorts(m.id);
-                return { ...m, cohorts };
+            const data = await moduleService.listCurriculums();
+            // Fetch modules for each curriculum
+            const curriculumsWithModules = await Promise.all(data.map(async (c) => {
+                const modules = await moduleService.listModules(c.id);
+                return { ...c, modules };
             }));
-            setModules(modulesWithCohorts);
+            setCurriculums(curriculumsWithModules);
         } catch (error) {
-            console.error('Failed to load modules', error);
+            console.error('Failed to load curriculums', error);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleApply = async (cohortId: number) => {
+    const handleEnroll = async (curriculumId: number) => {
         try {
-            await moduleService.apply(cohortId);
+            await moduleService.applyToCurriculum(curriculumId);
             toast({
-                title: "Application Sent",
-                description: "Your request has been sent to the teacher.",
+                title: "Enrollment Requested",
+                description: "Your application for the program has been sent. The Module 1 teacher will review it shortly.",
             });
-        } catch (error: any) {
+        } catch (error) {
+            const err = error as Error;
             toast({
-                title: "Application Failed",
-                description: error.message || "Could not apply for cohort.",
+                title: "Enrollment Failed",
+                description: err.message || "Could not enroll in program.",
                 variant: "destructive"
             });
         }
@@ -55,72 +56,102 @@ export const StudentCourses = ({ onBack }: { onBack: () => void }) => {
                     <div>
                         <h1 className="text-3xl font-bold flex items-center space-x-3 tracking-tight">
                             <div className="p-2 bg-primary/10 rounded-lg">
-                                <BookOpen className="h-8 w-8 text-primary" />
+                                <GraduationCap className="h-8 w-8 text-primary" />
                             </div>
-                            <span>Curriculum Modules</span>
+                            <span>Academic Programs</span>
                         </h1>
-                        <p className="text-muted-foreground mt-2 text-lg">Browse modules and apply for open cohorts</p>
+                        <p className="text-muted-foreground mt-2 text-lg">Select a curriculum to begin your journey into humor mastery</p>
                     </div>
                     <Button variant="outline" onClick={onBack}>Back to Dashboard</Button>
                 </div>
 
-                <div className="grid gap-8">
-                    {modules.map(module => (
-                        <Card key={module.id} className="overflow-hidden border-slate-200 shadow-academic">
-                            <div className="md:flex">
-                                <div className="md:w-1/3 bg-slate-50 p-6 border-r border-slate-100">
-                                    <Badge variant="outline" className="mb-3">Module {module.order_index}</Badge>
-                                    <h2 className="text-xl font-bold mb-2">{module.title}</h2>
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-                                        <UserIcon className="h-4 w-4" />
-                                        <span>{module.teacher?.name}</span>
+                <div className="grid gap-8 lg:grid-cols-2">
+                    {curriculums.map(curriculum => (
+                        <Card key={curriculum.id} className="overflow-hidden border-slate-200 shadow-academic hover:shadow-glow transition-all">
+                            <CardHeader className="bg-slate-50/50 pb-4">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle className="text-2xl font-bold">{curriculum.title}</CardTitle>
+                                        <CardDescription className="mt-2 text-md leading-relaxed">
+                                            {curriculum.description}
+                                        </CardDescription>
                                     </div>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">
-                                        {module.description}
+                                    <Badge className="bg-primary/10 text-primary border-primary/20">
+                                        {curriculum.modules?.length || 0} Modules
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <div className="space-y-6">
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                        <BookOpen className="h-4 w-4" />
+                                        Learning Path
+                                    </h3>
+
+                                    <div className="space-y-4 relative">
+                                        {/* Vertical Path Line */}
+                                        <div className="absolute left-4 top-4 bottom-4 w-0.5 bg-slate-100 hidden sm:block"></div>
+
+                                        {curriculum.modules?.map((module, mIdx) => {
+                                            const upcomingCohort = module.cohorts?.find(c => new Date(c.application_deadline) >= new Date());
+                                            return (
+                                                <div key={module.id} className="flex gap-4 relative">
+                                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400 z-10 hidden sm:flex">
+                                                        {mIdx + 1}
+                                                    </div>
+                                                    <div className="flex-1 p-3 rounded-lg border border-slate-50 bg-slate-50/50">
+                                                        <div className="flex justify-between items-start">
+                                                            <div>
+                                                                <p className="font-semibold text-slate-800">{module.title}</p>
+                                                                <p className="description-text text-xs text-slate-500 mt-1 line-clamp-1">
+                                                                    {module.description}
+                                                                </p>
+                                                                {upcomingCohort && (
+                                                                    <p className="text-[10px] text-blue-600 font-bold mt-2 flex items-center gap-1">
+                                                                        <Calendar className="h-3 w-3" />
+                                                                        Registration Closes: {new Date(upcomingCohort.application_deadline).toLocaleDateString()}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex flex-col items-end gap-1">
+                                                                <span className="text-[10px] font-medium text-slate-400 italic">
+                                                                    {module.duration_months} Months
+                                                                </span>
+                                                                {upcomingCohort ? (
+                                                                    <Badge variant="outline" className="text-[9px] bg-green-50 text-green-700 border-green-100">
+                                                                        Enrolling Now
+                                                                    </Badge>
+                                                                ) : (
+                                                                    <Badge variant="outline" className="text-[9px] bg-slate-100 text-slate-500 border-slate-200">
+                                                                        Fully Booked
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <Button
+                                        className="w-full h-12 text-lg font-bold bg-gradient-primary hover:shadow-glow border-0"
+                                        onClick={() => handleEnroll(curriculum.id)}
+                                    >
+                                        Enroll in Program
+                                    </Button>
+                                    <p className="text-center text-[10px] text-slate-400 italic">
+                                        * Enrollment is subject to approval by the Module 1 Faculty Head.
                                     </p>
                                 </div>
-                                <div className="md:w-2/3 p-6 bg-white">
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                                        <Calendar className="h-4 w-4" />
-                                        Available Cohorts (Batches)
-                                    </h3>
-                                    <div className="grid gap-4 sm:grid-cols-2">
-                                        {module.cohorts?.filter(c => c.status !== 'completed').map(cohort => (
-                                            <div key={cohort.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 transition-colors">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <span className="font-semibold text-slate-700">{cohort.title}</span>
-                                                    <Badge variant={cohort.status === 'active' ? 'default' : 'secondary'} className="text-[10px] uppercase">
-                                                        {cohort.status}
-                                                    </Badge>
-                                                </div>
-                                                <p className="text-xs text-slate-500 mb-4">
-                                                    {cohort.start_date ? new Date(cohort.start_date).toLocaleDateString() : 'TBA'} -
-                                                    {cohort.end_date ? new Date(cohort.end_date).toLocaleDateString() : 'TBA'}
-                                                </p>
-                                                <Button
-                                                    size="sm"
-                                                    className="w-full bg-blue-600 hover:bg-blue-700"
-                                                    onClick={() => handleApply(cohort.id)}
-                                                >
-                                                    Apply to Join
-                                                </Button>
-                                            </div>
-                                        ))}
-                                        {(!module.cohorts || module.cohorts.length === 0) && (
-                                            <div className="col-span-full py-8 text-center text-slate-400 text-sm italic">
-                                                No upcoming cohorts for this module.
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                            </CardContent>
                         </Card>
                     ))}
-                    {modules.length === 0 && !loading && (
-                        <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                    {curriculums.length === 0 && !loading && (
+                        <div className="col-span-full text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
                             <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-slate-600">No modules available</h3>
-                            <p className="text-slate-400">The curriculum is currently being prepared.</p>
+                            <h3 className="text-lg font-semibold text-slate-600">No programs available</h3>
+                            <p className="text-slate-400">Our humor architects are currently drafting new curriculums.</p>
                         </div>
                     )}
                 </div>

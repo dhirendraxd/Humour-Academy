@@ -8,7 +8,7 @@ use App\Models\Enrollment;
 
 class Cohort extends Model
 {
-    protected $fillable = ['module_id', 'title', 'start_date', 'end_date', 'status'];
+    protected $fillable = ['module_id', 'title', 'start_date', 'application_deadline', 'end_date', 'status'];
 
     public function module()
     {

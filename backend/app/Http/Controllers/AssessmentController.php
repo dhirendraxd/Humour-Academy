@@ -9,7 +9,19 @@ class AssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()->assessments()->with('questions')->latest()->get();
+        $user = $request->user();
+
+        if ($user->role === 'faculty') {
+            return $user->assessments()->with('questions')->latest()->get();
+        }
+
+        // Student access: Approved cohorts only
+        $approvedCohortIds = $user->enrollments()->where('status', 'approved')->pluck('cohort_id');
+
+        return Assessment::whereIn('cohort_id', $approvedCohortIds)
+            ->with('questions')
+            ->latest()
+            ->get();
     }
 
     public function store(Request $request)
@@ -20,6 +32,7 @@ class AssessmentController extends Controller
             'type' => 'required|string',
             'total_marks' => 'required|integer',
             'due_date' => 'nullable|date',
+            'cohort_id' => 'required|exists:cohorts,id',
             'questions' => 'required|array|min:1',
             'questions.*.type' => 'required|string',
             'questions.*.question' => 'required|string',
@@ -37,6 +50,7 @@ class AssessmentController extends Controller
             'type' => $validated['type'],
             'total_marks' => $validated['total_marks'],
             'due_date' => $validated['due_date'],
+            'cohort_id' => $validated['cohort_id'],
         ]);
 
         foreach ($validated['questions'] as $qData) {

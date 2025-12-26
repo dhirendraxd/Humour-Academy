@@ -27,6 +27,7 @@ import { AssessmentCreation } from "@/components/AssessmentCreation";
 import { MaterialsManager } from "@/components/MaterialsManager";
 import { GradingInterface } from "@/components/GradingInterface";
 import { EventsManager } from "@/components/EventsManager";
+import { CohortManager } from "@/components/CohortManager";
 import { useState, useEffect } from "react";
 import { moduleService, Module, Cohort, Enrollment } from "@/lib/modules";
 import { useToast } from "@/hooks/use-toast";
@@ -110,7 +111,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'assessments' | 'materials' | 'grading' | 'requests' | 'events'>('overview');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [studentViewTab, setStudentViewTab] = useState<'directory' | 'applications'>('directory');
+  const [studentViewTab, setStudentViewTab] = useState<'directory' | 'applications' | 'batches'>('directory');
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
 
@@ -208,11 +209,18 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 )}
                 {studentViewTab === 'applications' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
               </button>
+              <button
+                onClick={() => setStudentViewTab('batches')}
+                className={`pb-3 px-1 text-sm font-bold transition-all relative ${studentViewTab === 'batches' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                Manage Batches
+                {studentViewTab === 'batches' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+              </button>
             </div>
 
             {studentViewTab === 'directory' ? (
               <UserManagement currentUserRole="faculty" allowedRoles={['student']} title="Student Directory" description="Manage and track learner progress" canEdit={true} />
-            ) : (
+            ) : studentViewTab === 'applications' ? (
               <div className="space-y-6">
                 <div className="grid gap-4">
                   {requests.map(req => (
@@ -246,6 +254,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                   )}
                 </div>
               </div>
+            ) : (
+              <CohortManager moduleId={selectedModule?.id || 0} />
             )}
           </div>
         );

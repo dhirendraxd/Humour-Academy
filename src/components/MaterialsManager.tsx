@@ -65,6 +65,7 @@ export const MaterialsManager = ({ facultyId, cohortId }: MaterialsManagerProps)
         title,
         description,
         file_url: fileUrl,
+        cohort_id: cohortId,
         learning_objectives: learningObjectives.split(',').map(s => s.trim()).filter(Boolean),
         prerequisites,
         estimated_study_time: estimatedStudyTime,

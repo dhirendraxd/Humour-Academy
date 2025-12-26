@@ -9,7 +9,18 @@ class MaterialController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()->materials()->latest()->get();
+        $user = $request->user();
+
+        if ($user->role === 'faculty') {
+            return $user->materials()->latest()->get();
+        }
+
+        // For student, only materials from cohorts they are approved for
+        $approvedCohortIds = $user->enrollments()->where('status', 'approved')->pluck('cohort_id');
+
+        return Material::whereIn('cohort_id', $approvedCohortIds)
+            ->latest()
+            ->get();
     }
 
     public function store(Request $request)
@@ -23,6 +34,7 @@ class MaterialController extends Controller
             'estimated_study_time' => 'nullable|string',
             'resource_type' => 'nullable|string',
             'module_breakdown' => 'nullable|string',
+            'cohort_id' => 'required|exists:cohorts,id',
         ]);
 
         $material = $request->user()->materials()->create($validated);

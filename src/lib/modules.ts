@@ -34,6 +34,7 @@ export interface Cohort {
     module_id: number;
     title: string;
     start_date: string;
+    application_deadline: string;
     end_date: string;
     status: 'planned' | 'active' | 'completed';
     enrollments_count?: number;
@@ -76,17 +77,21 @@ export const moduleService = {
         return api.get<Cohort[]>(`/cohorts?module_id=${moduleId}`);
     },
 
-    createCohort: async (data: any): Promise<Cohort> => {
+    createCohort: async (data: Partial<Cohort>): Promise<Cohort> => {
         return api.post<Cohort>('/cohorts', data);
     },
 
-    updateCohort: async (id: number, data: any): Promise<Cohort> => {
+    updateCohort: async (id: number, data: Partial<Cohort>): Promise<Cohort> => {
         return api.put<Cohort>(`/cohorts/${id}`, data);
     },
 
     // Enrollments
     apply: async (cohortId: number): Promise<Enrollment> => {
         return api.post<Enrollment>('/enrollments', { cohort_id: cohortId });
+    },
+
+    applyToCurriculum: async (curriculumId: number): Promise<Enrollment> => {
+        return api.post<Enrollment>('/enrollments', { curriculum_id: curriculumId });
     },
 
     listRequests: async (): Promise<Enrollment[]> => {

@@ -14,10 +14,11 @@ import { assessmentService, Assessment, Question } from "@/lib/assessments";
 
 interface AssessmentCreationProps {
   facultyId: string;
+  cohortId?: string;
   onAssessmentCreated?: () => void;
 }
 
-export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: AssessmentCreationProps) => {
+export const AssessmentCreation = ({ facultyId, cohortId, onAssessmentCreated }: AssessmentCreationProps) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -88,6 +89,7 @@ export const AssessmentCreation = ({ facultyId, onAssessmentCreated }: Assessmen
         type: formData.type,
         total_marks: formData.totalMarks,
         due_date: formData.dueDate || null,
+        cohort_id: cohortId,
         questions: questions.map(q => ({
           type: q.type,
           question: q.question,

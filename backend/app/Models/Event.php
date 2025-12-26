@@ -8,6 +8,7 @@ class Event extends Model
 {
     protected $fillable = [
         'teacher_id',
+        'cohort_id',
         'title',
         'description',
         'type',
@@ -23,5 +24,10 @@ class Event extends Model
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function cohort()
+    {
+        return $this->belongsTo(Cohort::class);
     }
 }

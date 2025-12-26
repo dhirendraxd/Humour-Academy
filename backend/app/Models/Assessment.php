@@ -8,6 +8,7 @@ class Assessment extends Model
 {
     protected $fillable = [
         'faculty_id',
+        'cohort_id',
         'title',
         'description',
         'type',
@@ -18,6 +19,11 @@ class Assessment extends Model
     public function faculty()
     {
         return $this->belongsTo(User::class, 'faculty_id');
+    }
+
+    public function cohort()
+    {
+        return $this->belongsTo(Cohort::class);
     }
 
     public function questions()
