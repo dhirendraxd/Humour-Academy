@@ -114,6 +114,7 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'classmates' | 'courses' | 'assignments' | 'events' | 'achievements'>('overview');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -332,29 +333,44 @@ export const StudentDashboard = ({ user }: StudentDashboardProps) => {
       <div className="flex-1 flex flex-col overflow-hidden px-10 py-8 bg-[#F8FAFC]">
         {/* Header */}
         <header className="flex items-center justify-between mb-10 shrink-0 gap-8">
-          {/* Dashboard Navigation Tabs (Horizontal) */}
-          <div className="flex items-center gap-1 bg-white/50 p-1.5 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto no-scrollbar">
+          {/* Dashboard Navigation Tabs (Simplified) */}
+          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1">
             {sidebarItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 whitespace-nowrap group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' : 'text-slate-500 hover:text-blue-600 hover:bg-white'}`}
+                className={`flex items-center gap-2 py-2 transition-all duration-300 whitespace-nowrap group relative ${activeTab === item.id ? 'text-blue-600' : 'text-slate-500 hover:text-blue-600'}`}
               >
-                <item.icon className={`h-4.5 w-4.5 shrink-0 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'}`} />
+                <item.icon className={`h-4.5 w-4.5 shrink-0 ${activeTab === item.id ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-600'}`} />
                 <span className="text-sm font-bold tracking-tight">
                   {item.label}
                 </span>
+                {activeTab === item.id && (
+                  <div
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
+                  />
+                )}
               </button>
             ))}
           </div>
 
-          <div className="flex items-center gap-4 flex-1">
-            {/* Restored Full Search Bar */}
-            <div className="relative w-full max-w-md group hidden lg:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-              <Input
-                placeholder="Search resources, courses, peers..."
-                className="pl-11 h-11 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-xs font-medium w-full"
+          <div className="flex items-center gap-4 ml-auto">
+            {/* Expandable Search */}
+            <div className={`flex items-center bg-white rounded-2xl transition-all duration-300 shadow-sm border border-slate-100 ${isSearchExpanded ? 'w-64 px-4' : 'w-11 px-0 justify-center'}`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`rounded-xl text-slate-400 hover:text-blue-600 hover:bg-slate-50 h-9 w-9 shrink-0 transition-colors ${isSearchExpanded ? 'mr-2' : ''}`}
+                onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                title="Search"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              <input
+                type="text"
+                placeholder="Search..."
+                className={`bg-transparent border-0 focus:ring-0 text-xs font-medium placeholder:text-slate-400 transition-all duration-300 outline-none ${isSearchExpanded ? 'w-full opacity-100' : 'w-0 opacity-0'}`}
+                autoFocus={isSearchExpanded}
               />
             </div>
 
