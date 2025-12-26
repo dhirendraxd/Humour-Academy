@@ -359,95 +359,39 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
 
   return (
     <div className="flex h-[calc(100vh-5.5rem)] bg-[#F8FAFC] overflow-hidden">
-      {/* Sidebar Overlay */}
-      <div
-        className={`bg-white border-r border-slate-50 flex flex-col items-center py-10 transition-all duration-500 ease-in-out relative group/sidebar ${isSidebarExpanded ? 'w-64 px-6 items-start' : 'w-20 px-0 items-center'}`}
-      >
-
-        <div
-          className={`p-3 bg-blue-600/5 rounded-2xl text-blue-600 mb-10 shrink-0 cursor-pointer hover:bg-blue-600 hover:text-white transition-all ${isSidebarExpanded ? 'ml-0' : ''}`}
-          onClick={() => navigate('/')}
-        >
-          <GraduationCap className="h-7 w-7" />
-        </div>
-
-        <div className="flex flex-col gap-4 w-full px-2">
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 w-full group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-slate-500 hover:text-blue-600 hover:bg-blue-600/5'}`}
-            >
-              <item.icon className="h-5 w-5 shrink-0" />
-              {isSidebarExpanded && (
-                <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
-                  {item.label}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-auto flex flex-col gap-4 w-full px-2">
-          <button
-            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-slate-500 hover:text-slate-800 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
-            onClick={() => setShowProfileDialog(true)}
-          >
-            <Settings className="h-5 w-5 shrink-0" />
-            {isSidebarExpanded && <span className="text-sm font-bold">Settings</span>}
-          </button>
-
-          <button
-            className={`flex items-center gap-4 p-3.5 rounded-[1.25rem] text-red-500 hover:text-red-700 hover:bg-red-50 transition-all ${isSidebarExpanded ? 'justify-start' : 'justify-center'}`}
-            onClick={handleLogout}
-          >
-            <LogOut className="h-5 w-5 shrink-0" />
-            {isSidebarExpanded && <span className="text-sm font-bold">Sign Out</span>}
-          </button>
-
-          <div className="h-[1px] bg-slate-100 my-2" />
-
-          <div className={`flex items-center gap-3 p-1.5 rounded-2xl bg-slate-50 border border-slate-100/50 ${isSidebarExpanded ? 'w-full pr-4' : 'w-fit mx-auto'}`}>
-            <Avatar className="h-10 w-10 border-2 border-white shadow-sm shrink-0">
-              <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            {isSidebarExpanded && (
-              <div className="flex flex-col min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
-                <span className="text-xs font-bold text-slate-800 truncate">{user.name}</span>
-                <span className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user.rank}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
       {/* Main Container */}
       <div className="flex-1 flex flex-col overflow-hidden px-10 py-8 bg-[#F8FAFC]">
         {/* Header */}
-        <header className="flex items-center justify-between mb-10 shrink-0">
-          <div className="flex items-center gap-6 flex-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-              className="rounded-2xl text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm h-12 w-12 shrink-0 transition-all"
-            >
-              {isSidebarExpanded ? <ChevronLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+        <header className="flex items-center justify-between mb-10 shrink-0 gap-8">
+          {/* Dashboard Navigation Tabs (Horizontal) */}
+          <div className="flex items-center gap-1 bg-white/50 p-1.5 rounded-2xl border border-slate-100 shadow-sm overflow-x-auto no-scrollbar">
+            {sidebarItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id as any)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 whitespace-nowrap group ${activeTab === item.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' : 'text-slate-500 hover:text-blue-600 hover:bg-white'}`}
+              >
+                <item.icon className={`h-4.5 w-4.5 shrink-0 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'}`} />
+                <span className="text-sm font-bold tracking-tight">
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
 
-            <div className="relative w-full max-w-lg group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
+          <div className="flex items-center gap-6">
+            {/* Relocated Search */}
+            <div className="relative w-64 group hidden lg:block">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
               <Input
-                placeholder="Search students, analytics, reports..."
-                className="pl-12 h-12 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-sm font-medium"
+                placeholder="Quick Search..."
+                className="pl-11 h-11 bg-white border-0 shadow-sm focus-visible:ring-1 focus-visible:ring-blue-600/10 rounded-2xl placeholder:text-slate-400 text-xs font-medium w-full"
               />
             </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex -space-x-3 overflow-hidden mr-2">
+
+            <div className="hidden sm:flex -space-x-3 overflow-hidden">
               {[1, 2, 3, 4].map(i => (
-                <Avatar key={i} className="inline-block h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100">
+                <Avatar key={i} className="inline-block h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100 cursor-pointer hover:scale-110 transition-transform">
                   <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=student${i}`} />
                 </Avatar>
               ))}
@@ -456,18 +400,47 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
               </button>
             </div>
 
-            <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+            <div className="h-8 w-[1px] bg-slate-200 hidden sm:block" />
 
-            <NotificationCenter userId={userId || ''} />
+            <div className="flex items-center gap-3">
+              <NotificationCenter userId={userId || ''} />
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-2xl text-slate-300 hover:text-slate-600 hover:bg-white hover:shadow-sm"
-              onClick={() => setShowProfileDialog(true)}
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-white hover:shadow-sm"
+                onClick={() => setShowProfileDialog(true)}
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+
+              <div className="h-8 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+
+              {/* User Profile Quick Access */}
+              <div
+                className="flex items-center gap-3 p-1 rounded-2xl hover:bg-white hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-100 group"
+                onClick={() => setShowProfileDialog(true)}
+              >
+                <Avatar className="h-9 w-9 border border-white shadow-sm">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col hidden sm:flex">
+                  <span className="text-[11px] font-bold text-slate-700 truncate max-w-[80px]">{user.name}</span>
+                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none">{user.rank}</span>
+                </div>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-2xl text-red-400 hover:text-red-600 hover:bg-red-50"
+                onClick={handleLogout}
+                title="Sign Out"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </header>
 
