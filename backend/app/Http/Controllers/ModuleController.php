@@ -20,15 +20,21 @@ class ModuleController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if ($user->role !== 'bod') {
+            return response()->json(['message' => 'Unauthorized. Only BOD can create modules.'], 403);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'curriculum_id' => 'required|exists:curriculums,id',
+            'teacher_id' => 'required|exists:users,id',
             'order_index' => 'nullable|integer',
             'duration_months' => 'nullable|integer',
         ]);
 
-        $module = $request->user()->modules()->create($request->all());
+        $module = Module::create($request->all());
 
         return response()->json($module, 201);
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FacultyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::put('/user/profile', [App\Http\Controllers\ProfileController::class, 'update']);
+    Route::get('/faculty', [FacultyController::class, 'index']);
 
     // Curriculum & Module routes
     Route::get('/curriculums', [CurriculumController::class, 'index']);

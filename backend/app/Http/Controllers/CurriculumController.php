@@ -14,10 +14,15 @@ class CurriculumController extends Controller
 
     public function store(Request $request)
     {
-        // Simple store for now
+        if ($request->user()->role !== 'bod') {
+            return response()->json(['message' => 'Unauthorized. Only BOD can create curriculums.'], 403);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'outcomes' => 'nullable|string',
+            'prerequisites' => 'nullable|string',
         ]);
 
         $curriculum = Curriculum::create($request->all());

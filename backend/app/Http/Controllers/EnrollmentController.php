@@ -99,7 +99,8 @@ class EnrollmentController extends Controller
         $enrollment = Enrollment::create([
             'student_id' => $student->id,
             'cohort_id' => $cohortId,
-            'status' => 'pending'
+            'status' => 'pending',
+            'application_details' => $request->application_details
         ]);
 
         // 3. Notify the Module Teacher

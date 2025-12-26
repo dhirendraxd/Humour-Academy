@@ -5,7 +5,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    role: 'student' | 'faculty';
+    role: 'student' | 'faculty' | 'bod';
     email_verified_at: string | null;
     bio?: string | null;
     city?: string | null;
@@ -30,7 +30,7 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
     name: string;
     email: string;
-    role?: 'student' | 'faculty';
+    role?: 'student' | 'faculty' | 'bod';
     password: string;
     password_confirmation: string;
     bio?: string;

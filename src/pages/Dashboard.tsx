@@ -51,6 +51,8 @@ const Dashboard = () => {
                 return <StudentDashboard user={userData} />;
             case 'faculty':
                 return <FacultyDashboard user={userData} userId={String(user.id)} />;
+            case 'bod':
+                return <BODDashboard user={userData} />;
             default:
                 return <StudentDashboard user={userData} />;
         }

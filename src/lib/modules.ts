@@ -49,7 +49,12 @@ export interface Enrollment {
     id: number;
     student_id: number;
     cohort_id: number;
-    status: 'pending' | 'approved' | 'rejected';
+    status: 'pending' | 'approved' | 'rejected' | 'completed';
+    application_details?: {
+        interests: string;
+        experience: string;
+        motivation: string;
+    };
     student?: {
         id: number;
         name: string;
@@ -61,6 +66,7 @@ export interface Enrollment {
 }
 
 export const moduleService = {
+    // ... items ...
     // Curriculums
     listCurriculums: async (): Promise<Curriculum[]> => {
         return api.get<Curriculum[]>('/curriculums');
@@ -89,19 +95,19 @@ export const moduleService = {
     },
 
     // Enrollments
-    apply: async (cohortId: number): Promise<Enrollment> => {
-        return api.post<Enrollment>('/enrollments', { cohort_id: cohortId });
+    apply: async (cohortId: number, application_details?: any): Promise<Enrollment> => {
+        return api.post<Enrollment>('/enrollments', { cohort_id: cohortId, application_details });
     },
 
-    applyToCurriculum: async (curriculumId: number): Promise<Enrollment> => {
-        return api.post<Enrollment>('/enrollments', { curriculum_id: curriculumId });
+    applyToCurriculum: async (curriculumId: number, application_details?: any): Promise<Enrollment> => {
+        return api.post<Enrollment>('/enrollments', { curriculum_id: curriculumId, application_details });
     },
 
     listRequests: async (): Promise<Enrollment[]> => {
         return api.get<Enrollment[]>('/enrollments');
     },
 
-    updateStatus: async (enrollmentId: number, status: 'approved' | 'rejected'): Promise<Enrollment> => {
+    updateStatus: async (enrollmentId: number, status: 'approved' | 'rejected' | 'completed'): Promise<Enrollment> => {
         return api.put<Enrollment>(`/enrollments/${enrollmentId}`, { status });
     }
 };
