@@ -1,119 +1,232 @@
-# Welcome to your Lovable project
+# Ramay Humour Academy
 
-## Project info
+A comprehensive platform for comedy and soft skills education, featuring curriculum management, faculty coordination, and student enrollment systems.
 
-**URL**: https://lovable.dev/projects/6e435454-3717-41a2-a2d6-76dd6d5493bd
+## About the Project
 
-## How can I edit this code?
+**Ramay Humour Academy** is an educational platform designed to teach comedic principles as trainable mechanics. The platform transforms intangible qualities like charisma, wit, and presence into structured, teachable skills through:
 
-There are several ways of editing your application.
+- **4 Core Programs**: Emotional Intelligence & Wit, Public Speaking & Presence, Adaptive Leadership, Advanced Satire & Strategy
+- **Module-Based Learning**: Each program consists of multiple phases taught by certified faculty
+- **Cohort Management**: Flexible scheduling with capacity management and enrollment tracking
+- **Role-Based Access**: Board of Directors (BOD), Faculty/Architects, and Students with distinct dashboards
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/6e435454-3717-41a2-a2d6-76dd6d5493bd) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-**Frontend:**
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-**Backend:**
-- Laravel 12
-- PHP 8.3
-- MySQL 8.0
-- Laravel Sanctum (API Authentication)
-
-## Backend Setup
-
-The project includes a Laravel backend for authentication and API services.
+## Getting Started
 
 ### Prerequisites
+- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 - PHP 8.3+
 - Composer
 - MySQL 8.0+
 
-### Quick Start
+### Installation
 
-1. **Navigate to backend directory:**
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/dhirendraxd/Humour-Academy.git
+   cd Humour-Academy
+   ```
+
+2. **Install frontend dependencies:**
+   ```sh
+   npm install
+   ```
+
+3. **Set up the backend:**
    ```sh
    cd backend
+   composer install
+   cp .env.example .env
    ```
 
-2. **Configure database:**
-   - Create MySQL database: `ramay_humour_academy`
-   - Update `.env` file with your database credentials
+4. **Configure database credentials in `.env`:**
+   ```
+   DB_DATABASE=ramay_humour_academy
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
+   ```
 
-3. **Run migrations:**
+5. **Run migrations and seed data:**
    ```sh
    php artisan migrate
+   php artisan db:seed
    ```
 
-4. **Start Laravel server:**
+6. **Start both servers:**
    ```sh
-   php artisan serve
-   ```
-
-5. **In a new terminal, start the frontend:**
-   ```sh
+   # Terminal 1 - Backend (from project root)
+   cd backend && php artisan serve
+   
+   # Terminal 2 - Frontend (from project root)
    npm run dev
    ```
 
-For detailed setup instructions, see [backend/SETUP_GUIDE.md](./backend/SETUP_GUIDE.md)
+The application will be available at `http://localhost:5173` (frontend) and `http://localhost:8000` (backend API).
 
-For API documentation, see [backend/API_DOCUMENTATION.md](./backend/API_DOCUMENTATION.md)
+## Architecture & Key Features
 
-## How can I deploy this project?
+### Frontend Architecture
+- **Vite** - Fast build tool and dev server
+- **React + TypeScript** - Component-based UI with type safety
+- **shadcn-ui** - High-quality component library
+- **Tailwind CSS** - Utility-first styling
+- **Recharts** - Data visualization for dashboards
 
-Simply open [Lovable](https://lovable.dev/projects/6e435454-3717-41a2-a2d6-76dd6d5493bd) and click on Share -> Publish.
+### Backend Architecture
+- **Laravel 12** - Modern PHP framework
+- **Laravel Sanctum** - API token authentication
+- **MySQL 8.0** - Relational database
+- **RESTful API** - Clean endpoint architecture
 
-## Can I connect a custom domain to my Lovable project?
+### Core Features
 
-Yes, you can!
+#### BOD (Board of Directors) Dashboard
+- Program (curriculum) creation and management
+- Faculty recruitment and approval workflow
+- Global cohort oversight
+- Academy-wide analytics and metrics
+- System-level controls
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+#### Faculty/Architect Dashboard
+- Module assignment and scheduling
+- Student enrollment management
+- Assessment and grading interface
+- Event hosting capabilities
+- Material distribution
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+#### Student Dashboard
+- Course browsing and enrollment
+- Progress tracking
+- Material access
+- Assessment submission
+
+## Project Structure
+
+```
+ramay-humour-academy/
+├── src/                          # Frontend React application
+│   ├── components/               # Reusable UI components
+│   │   ├── BODDashboard.tsx      # Board administration
+│   │   ├── FacultyDashboard.tsx  # Faculty management
+│   │   ├── StudentDashboard.tsx  # Student interface
+│   │   └── ...other components
+│   ├── pages/                    # Page components
+│   ├── lib/                      # Utilities and API services
+│   ├── hooks/                    # Custom React hooks
+│   └── data/                     # Mock data for development
+├── backend/                      # Laravel application
+│   ├── app/
+│   │   ├── Http/Controllers/     # API endpoints
+│   │   │   ├── CohortController.php
+│   │   │   ├── CurriculumController.php
+│   │   │   ├── ModuleController.php
+│   │   │   ├── RecruitmentController.php
+│   │   │   ├── AnalyticsController.php
+│   │   │   └── ...other controllers
+│   │   └── Models/               # Database models
+│   ├── database/
+│   │   ├── migrations/           # Schema migrations
+│   │   └── seeders/              # Database seeding
+│   ├── routes/
+│   │   └── api.php               # API routes
+│   └── SETUP_GUIDE.md            # Backend setup instructions
+└── README.md                     # This file
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login user
+- `POST /auth/logout` - Logout user (protected)
+
+### Curriculum Management
+- `GET /curriculums` - List all programs
+- `POST /curriculums` - Create program (BOD only)
+- `PUT /curriculums/{id}` - Update program (BOD only)
+- `DELETE /curriculums/{id}` - Delete program (BOD only)
+
+### Module Management
+- `GET /modules` - List modules
+- `GET /modules/{id}` - Get module details
+- `POST /modules` - Create module (BOD only)
+- `PUT /modules/{id}` - Update module (BOD only)
+
+### Cohort Management
+- `GET /cohorts` - List cohorts
+- `POST /cohorts` - Create cohort
+- `PUT /cohorts/{id}` - Update cohort
+
+### Faculty & Recruitment
+- `GET /faculty` - List faculty and profiles
+- `POST /recruitment/apply` - Submit faculty application
+- `GET /recruitment/applications` - View applications (BOD only)
+- `PUT /recruitment/applications/{id}` - Approve/reject applications (BOD only)
+
+### Analytics
+- `GET /analytics/dashboard` - Board metrics
+- `GET /analytics/enrollment-trends` - Enrollment data
+- `GET /analytics/program-distribution` - Program distribution stats
+
+For full API documentation, see [backend/API_DOCUMENTATION.md](./backend/API_DOCUMENTATION.md)
+
+## Development
+
+### Frontend Development
+```sh
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run lint         # Run linter
+```
+
+### Backend Development
+```sh
+cd backend
+php artisan serve              # Start server
+php artisan tinker             # Interactive shell
+php artisan migrate            # Run migrations
+php artisan db:seed            # Seed database
+php artisan make:controller    # Generate controller
+```
+
+## Database Schema
+
+Key models and their relationships:
+- **User** - Stores users (students, faculty, BOD)
+- **Curriculum** - Educational programs
+- **Module** - Individual program phases
+- **Cohort** - Class batches for modules
+- **Enrollment** - Student registrations
+- **TeacherApplication** - Faculty recruitment
+- **Assessment** - Graded tasks
+- **Material** - Course content
+
+## Default Credentials (Development)
+
+After running migrations and seeding:
+
+| Role | Email | Password |
+|------|-------|----------|
+| BOD | bod@academy.com | password123 |
+| Faculty 1 | sarah@academy.com | password123 |
+| Faculty 2 | james@academy.com | password123 |
+| Student 1 | alex@student.com | password123 |
+| Student 2 | emma@student.com | password123 |
+| Student 3 | marcus@student.com | password123 |
+
+**Note**: Change these credentials in production.
+
+## Contributing
+
+1. Create a feature branch: `git checkout -b feature/your-feature`
+2. Make your changes and commit: `git commit -am 'Add feature'`
+3. Push to the branch: `git push origin feature/your-feature`
+4. Submit a pull request
+
+## License
+
+This project is proprietary and confidential.
+
+## Support
+
+For issues, questions, or feature requests, please refer to the project documentation or contact the development team.
