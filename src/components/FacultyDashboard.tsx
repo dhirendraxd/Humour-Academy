@@ -114,6 +114,36 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
   const [studentViewTab, setStudentViewTab] = useState<'directory' | 'applications' | 'batches'>('directory');
   const [requests, setRequests] = useState<Enrollment[]>([]);
   const { toast } = useToast();
+  const [assignedModules, setAssignedModules] = useState<Module[]>([]);
+
+  useEffect(() => {
+    // Determine the effective user ID (passed prop or authenticated user)
+    const effectiveUserId = userId;
+
+    if (effectiveUserId) {
+      // Fetch all modules first (since we don't have a specific endpoint for user-assigned modules yet, filtering client-side for now or assuming the API could be updated later)
+      // Optimization: In a real app, we'd use /users/{id}/modules or similar.
+      // For now, let's fetch all modules and filter by teacher_id
+      const fetchModules = async () => {
+        // We can iterate over curriculums to find modules, or just use the module index if it supported filtering by teacher_id (which we didn't explicitly check but can add support or do client side)
+        // Wait, ModuleController index supports 'curriculum_id' filter.
+        // Let's rely on basic fetching logic for now. 
+        // Ideally we'd add `Route::get('/users/{id}/modules', ...)` but for simplicity let's assume we can fetch all curriculums -> modules.
+        try {
+          const currics = await moduleService.listCurriculums();
+          let allModules: Module[] = [];
+          for (const c of currics) {
+            const mods = await moduleService.listModules(c.id);
+            allModules = [...allModules, ...mods];
+          }
+          setAssignedModules(allModules.filter(m => String(m.teacher_id) === String(effectiveUserId)));
+        } catch (e) {
+          console.error("Failed to load modules");
+        }
+      };
+      fetchModules();
+    }
+  }, [userId]);
 
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
@@ -221,7 +251,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 Manage Batches
                 {studentViewTab === 'batches' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
               </button>
-            </div>
+            </div >
 
             {studentViewTab === 'directory' ? (
               <UserManagement currentUserRole="faculty" allowedRoles={['student']} title="Student Directory" description="Manage and track learner progress" canEdit={true} />
@@ -281,7 +311,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
             ) : (
               <CohortManager moduleId={selectedModule?.id || 0} />
             )}
-          </div>
+          </div >
         );
       case 'assessments':
         return <AssessmentCreation facultyId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
@@ -291,22 +321,20 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
         return <GradingInterface facultyId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
       case 'events':
         return <EventsManager teacherId={userId || ''} cohortId={selectedCohort?.id?.toString()} />;
+      case 'overview':
       default:
         return (
-          <div className="space-y-8 animate-in fade-in duration-700">
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Quick Actions */}
             <section>
-              <h3 className="text-lg font-bold mb-4 text-slate-800">Quick Actions</h3>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <h2 className="text-xl font-bold tracking-tight text-slate-800 mb-6">Command Center</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { label: 'Host Event', icon: CalendarIcon, tab: 'events', color: 'blue-600' },
                   {
-                    label: 'Review Requests',
+                    label: 'Review Applications',
                     icon: Users,
-                    onClick: () => {
-                      setActiveTab('students');
-                      setStudentViewTab('applications');
-                    },
-                    color: 'purple-600'
+                    onClick: () => { setActiveTab('students'); setStudentViewTab('applications'); },
+                    color: 'blue-600'
                   },
                   { label: 'Grade Tasks', icon: ClipboardCheck, tab: 'grading', color: 'orange-600' },
                   { label: 'New Syllabus', icon: Plus, tab: 'materials', color: 'green-600' },
@@ -323,8 +351,8 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                     <span className="text-xs font-bold text-slate-600">{action.label}</span>
                   </Button>
                 ))}
-              </div>
-            </section>
+              </div >
+            </section >
 
             <section>
               <div className="flex items-center justify-between mb-6">
@@ -454,7 +482,7 @@ export const FacultyDashboard = ({ user, userId }: FacultyDashboardProps) => {
                 </CardContent>
               </Card>
             </div>
-          </div>
+          </div >
         );
     }
   };

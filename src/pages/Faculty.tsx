@@ -4,14 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Users, GraduationCap, Trophy, Star } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, GraduationCap, Trophy, Star, Calendar, Search } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
-import { MOCK_PROFILES, Profile } from "@/data/mockData";
+import { Profile } from "@/data/mockData";
 import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
+import { api } from "@/lib/api";
+import { Teacher } from "@/lib/modules";
 
 export default function Faculty() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -27,13 +31,30 @@ export default function Faculty() {
 
   const fetchProfiles = async () => {
     try {
-      // Mock API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setProfiles(MOCK_PROFILES);
+      setLoading(true);
+      // Fetch data from unified public endpoint
+      const allUsers = await api.get<any[]>('/faculty');
+
+      // Convert API users to Profile format
+      const profilesData: Profile[] = allUsers.map((u: any) => ({
+        id: String(u.id),
+        user_id: String(u.id),
+        full_name: u.name,
+        email: u.email || '',
+        role: u.role || 'student',
+        level: u.level || 1,
+        rank: u.rank || 'Member',
+        bio: u.bio || '',
+        city: u.city || '',
+        phone: u.phone || '',
+        interests: typeof u.interests === 'string' ? JSON.parse(u.interests) : (u.interests || [])
+      }));
+
+      setProfiles(profilesData);
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to load faculty data",
+        description: "Failed to load academy roster",
         variant: "destructive"
       });
     } finally {
@@ -245,6 +266,102 @@ export default function Faculty() {
           )}
         </div>
       </FadeIn>
+
+      {/* Recruitment Section */}
+      <section className="bg-slate-900 py-32 mt-20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.1),transparent)]" />
+        <FadeIn>
+          <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight">
+              Shape the Future of <span className="text-blue-500">Comedy</span>
+            </h2>
+            <p className="text-xl text-slate-400 mb-12 leading-relaxed">
+              We are always looking for exceptional humorists, satirists, and storytellers to join our faculty.
+              Help us architect the next generation of charisma.
+            </p>
+            <RecruitmentForm />
+          </div>
+        </FadeIn>
+      </section>
     </PageLayout>
+  );
+}
+
+function RecruitmentForm() {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const { profile } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!profile) {
+      toast({ title: "Authentication required", description: "Please login to apply.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      await api.post('/recruitment/apply', {
+        specialization: formData.get('specialization'),
+        experience_summary: formData.get('experience'),
+        resume_link: formData.get('resume')
+      });
+      toast({ title: "Application Submitted", description: "The Board of Directors will review your credentials." });
+      setOpen(false);
+    } catch (err) {
+      toast({ title: "Submission failed", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button
+        size="lg"
+        onClick={() => setOpen(true)}
+        className="rounded-full px-12 h-14 text-base font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-900/20 transition-all hover:-translate-y-1"
+      >
+        Apply for Faculty Position
+      </Button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <FadeIn direction="up" className="w-full max-w-xl">
+            <Card className="border-0 shadow-2xl rounded-[2.5rem] bg-white text-left overflow-hidden">
+              <CardHeader className="p-8 border-b border-slate-50">
+                <CardTitle className="text-2xl font-black text-slate-900">Faculty Candidacy</CardTitle>
+                <CardDescription>Present your credentials for review by the High Command.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary Specialization</label>
+                    <Input name="specialization" required placeholder="e.g., Political Satire, Physical Comedy, Rhetoric" className="rounded-xl h-12 border-slate-100 bg-slate-50/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Experience Summary</label>
+                    <Textarea name="experience" required placeholder="Briefly detail your journey in humor..." className="rounded-xl min-h-[120px] border-slate-100 bg-slate-50/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Portfolio / Resume Link (Optional)</label>
+                    <Input name="resume" placeholder="https://..." className="rounded-xl h-12 border-slate-100 bg-slate-50/50" />
+                  </div>
+                  <div className="flex gap-4 pt-4">
+                    <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1 h-12 rounded-xl border-slate-100 font-bold">
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={loading} className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all">
+                      {loading ? 'Transmitting...' : 'Submit Application'}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </FadeIn>
+        </div>
+      )}
+    </>
   );
 }

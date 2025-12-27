@@ -11,12 +11,18 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\RecruitmentController;
+use App\Http\Controllers\AnalyticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Public authentication routes
+// Public routes
 Route::post('/auth/register', [RegisterController::class, 'register']);
 Route::post('/auth/login', [LoginController::class, 'login']);
+Route::get('/faculty', [FacultyController::class, 'index']);
+Route::get('/curriculums', [CurriculumController::class, 'index']);
+Route::get('/modules', [ModuleController::class, 'index']);
+Route::get('/modules/{id}', [ModuleController::class, 'show']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
@@ -25,14 +31,17 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::put('/user/profile', [App\Http\Controllers\ProfileController::class, 'update']);
-    Route::get('/faculty', [FacultyController::class, 'index']);
+    Route::post('/faculty', [FacultyController::class, 'store']);
 
-    // Curriculum & Module routes
-    Route::get('/curriculums', [CurriculumController::class, 'index']);
+    // Curriculum Management
     Route::post('/curriculums', [CurriculumController::class, 'store']);
-    Route::get('/modules', [ModuleController::class, 'index']);
+    Route::put('/curriculums/{id}', [CurriculumController::class, 'update']);
+    Route::delete('/curriculums/{id}', [CurriculumController::class, 'destroy']);
+
+    // Module Management
     Route::post('/modules', [ModuleController::class, 'store']);
-    Route::get('/modules/{id}', [ModuleController::class, 'show']);
+    Route::put('/modules/{id}', [ModuleController::class, 'update']);
+    Route::delete('/modules/{id}', [ModuleController::class, 'destroy']);
 
     // Cohort routes
     Route::get('/cohorts', [CohortController::class, 'index']);
@@ -72,4 +81,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Grading
     Route::get('/grading/submissions', [App\Http\Controllers\GradingController::class, 'index']);
     Route::put('/grading/submissions/{id}', [App\Http\Controllers\GradingController::class, 'update']);
+
+    // Recruitment
+    Route::get('/recruitment/applications', [RecruitmentController::class, 'index']);
+    Route::post('/recruitment/apply', [RecruitmentController::class, 'store']);
+    Route::put('/recruitment/applications/{id}', [RecruitmentController::class, 'update']);
+
+    // Analytics
+    Route::get('/analytics/dashboard', [AnalyticsController::class, 'dashboard']);
+    Route::get('/analytics/enrollment-trends', [AnalyticsController::class, 'enrollmentTrends']);
+    Route::get('/analytics/program-distribution', [AnalyticsController::class, 'programDistribution']);
 });
