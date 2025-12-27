@@ -1,5 +1,7 @@
 // API client for Laravel backend
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+console.log('API Base URL:', API_BASE_URL);
 
 // Get authentication token from localStorage
 const getToken = (): string | null => {
@@ -34,20 +36,36 @@ async function apiRequest<T>(
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
-        credentials: 'include', // Important for Sanctum
-    });
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`[API] ${options.method || 'GET'} ${url}`);
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({
-            message: 'An error occurred',
-        }));
-        throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    try {
+        const response = await fetch(url, {
+            ...options,
+            headers,
+            credentials: 'include', // Important for Sanctum
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let error = { message: 'An error occurred' };
+            
+            if (contentType?.includes('application/json')) {
+                error = await response.json().catch(() => ({ message: 'An error occurred' }));
+            }
+            
+            console.error(`[API Error] ${response.status}: ${error.message}`);
+            throw new Error(error.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(`[API] Response:`, data);
+        return data;
+    } catch (error) {
+        console.error('[API] Request failed:', error);
+        throw error;
     }
-
-    return response.json();
+}
 }
 
 // API methods
