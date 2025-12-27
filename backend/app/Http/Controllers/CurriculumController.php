@@ -29,4 +29,25 @@ class CurriculumController extends Controller
 
         return response()->json($curriculum, 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        if ($request->user()->role !== 'bod') {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $curriculum = Curriculum::findOrFail($id);
+        $curriculum->update($request->all());
+        return response()->json($curriculum);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        if ($request->user()->role !== 'bod') {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        Curriculum::destroy($id);
+        return response()->json(['message' => 'Deleted successfully']);
+    }
 }

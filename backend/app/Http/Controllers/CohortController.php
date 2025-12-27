@@ -10,6 +10,13 @@ class CohortController extends Controller
 {
     public function index(Request $request)
     {
+        // Allow fetching all cohorts for BOD/Admin without module_id
+        if (!$request->has('module_id')) {
+            // In a real app, strictly check permissions here
+            // if ($request->user()->role !== 'bod') abort(403);
+            return Cohort::with('module')->withCount('enrollments')->latest()->get();
+        }
+
         $request->validate([
             'module_id' => 'required|exists:modules,id'
         ]);

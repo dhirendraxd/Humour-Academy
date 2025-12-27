@@ -43,4 +43,37 @@ class ModuleController extends Controller
     {
         return Module::with(['teacher', 'curriculum', 'cohorts'])->findOrFail($id);
     }
+
+    public function update(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user->role !== 'bod') {
+            return response()->json(['message' => 'Unauthorized. Only BOD can update modules.'], 403);
+        }
+
+        $module = Module::findOrFail($id);
+        $oldTeacherId = $module->teacher_id;
+
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'teacher_id' => 'sometimes|required|exists:users,id',
+            'duration_months' => 'nullable|integer',
+        ]);
+
+        $module->update($request->all());
+
+        // Notify new teacher if changed
+        if ($request->has('teacher_id') && $module->teacher_id != $oldTeacherId) {
+            \App\Models\Notification::create([
+                'user_id' => $module->teacher_id,
+                'title' => 'New Module Assignment',
+                'message' => "You have been assigned as the architect for module: {$module->title}",
+                'type' => 'info',
+                'is_read' => false
+            ]);
+        }
+
+        return response()->json($module);
+    }
 }
