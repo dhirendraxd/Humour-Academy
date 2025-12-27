@@ -2,6 +2,18 @@
 
 A comprehensive platform for comedy and soft skills education, featuring curriculum management, faculty coordination, and student enrollment systems.
 
+## 🚀 Quick Start
+
+Get up and running in 5 minutes! See [QUICKSTART.md](./QUICKSTART.md) for step-by-step instructions.
+
+```bash
+# Automated setup (recommended)
+bash setup.sh
+bash start.sh
+
+# Visit http://localhost:5173
+```
+
 ## About the Project
 
 **Ramay Humour Academy** is an educational platform designed to teach comedic principles as trainable mechanics. The platform transforms intangible qualities like charisma, wit, and presence into structured, teachable skills through:
@@ -169,6 +181,29 @@ ramay-humour-academy/
 - `GET /analytics/program-distribution` - Program distribution stats
 
 For full API documentation, see [backend/API_DOCUMENTATION.md](./backend/API_DOCUMENTATION.md)
+
+## 📋 Documentation
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Get started in 5 minutes
+- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Fix common issues
+- **[backend/SETUP_GUIDE.md](./backend/SETUP_GUIDE.md)** - Detailed backend setup
+- **[backend/API_DOCUMENTATION.md](./backend/API_DOCUMENTATION.md)** - Complete API reference
+
+## 🔧 Helper Scripts
+
+### `setup.sh` - Automated Setup
+Handles everything: frontend deps, backend deps, database setup, migrations, seeding.
+
+```bash
+bash setup.sh
+```
+
+### `start.sh` - Start Both Servers
+Launches frontend (port 5173) and backend (port 8000) simultaneously.
+
+```bash
+bash start.sh
+```
 
 ## Development
 
