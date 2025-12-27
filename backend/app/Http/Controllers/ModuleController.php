@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Module;
+use App\Models\Notification;
+use App\Traits\ApiResponse;
+use App\Traits\SanitizesInput;
 use Illuminate\Http\Request;
 
 class ModuleController extends Controller
 {
+    use ApiResponse, SanitizesInput;
+
     public function index(Request $request)
     {
         $query = Module::with(['teacher:id,name,rank,bio', 'curriculum']);
@@ -15,15 +20,17 @@ class ModuleController extends Controller
             $query->where('curriculum_id', $request->curriculum_id);
         }
 
-        return response()->json($query->orderBy('order_index')->get());
+        if ($request->search) {
+            $query->where('title', 'like', "%{$request->search}%");
+        }
+
+        $modules = $query->orderBy('order_index')->paginate(15);
+        return $this->successWithPagination($modules, 'Modules retrieved successfully');
     }
 
     public function store(Request $request)
     {
-        $user = $request->user();
-        if ($user->role !== 'bod') {
-            return response()->json(['message' => 'Unauthorized. Only BOD can create modules.'], 403);
-        }
+        $this->authorize('create', Module::class);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -33,25 +40,24 @@ class ModuleController extends Controller
             'order_index' => 'nullable|integer',
             'duration_months' => 'nullable|integer',
         ]);
+    
+    $data = $this->sanitizeArray($request->all(), ['title', 'description']);
+    $module = Module::create($data);
 
-        $module = Module::create($request->all());
-
-        return response()->json($module, 201);
+        return $this->success($module, 'Module created successfully', 201);
     }
 
     public function show($id)
     {
-        return Module::with(['teacher', 'curriculum', 'cohorts'])->findOrFail($id);
+        $module = Module::with(['teacher', 'curriculum', 'cohorts'])->findOrFail($id);
+        return $this->success($module, 'Module retrieved successfully');
     }
 
     public function update(Request $request, $id)
     {
-        $user = $request->user();
-        if ($user->role !== 'bod') {
-            return response()->json(['message' => 'Unauthorized. Only BOD can update modules.'], 403);
-        }
-
         $module = Module::findOrFail($id);
+        $this->authorize('update', $module);
+
         $oldTeacherId = $module->teacher_id;
 
         $request->validate([
@@ -65,7 +71,7 @@ class ModuleController extends Controller
 
         // Notify new teacher if changed
         if ($request->has('teacher_id') && $module->teacher_id != $oldTeacherId) {
-            \App\Models\Notification::create([
+            Notification::create([
                 'user_id' => $module->teacher_id,
                 'title' => 'New Module Assignment',
                 'message' => "You have been assigned as the architect for module: {$module->title}",
@@ -74,6 +80,15 @@ class ModuleController extends Controller
             ]);
         }
 
-        return response()->json($module);
+        return $this->success($module, 'Module updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        $module = Module::findOrFail($id);
+        $this->authorize('delete', $module);
+
+        $module->delete();
+        return $this->success(null, 'Module deleted successfully');
     }
 }

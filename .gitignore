@@ -59,3 +59,8 @@ bun.lockb
 yarn.lock
 .pnp
 .pnp.js
+# Generated documentation (keep only README.md)
+CODE_SCAN_REPORT.md
+IMPLEMENTATION_SUMMARY.md
+VERIFICATION_REPORT.md
+DEVELOPER_GUIDE.md

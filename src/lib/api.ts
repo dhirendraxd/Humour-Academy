@@ -66,7 +66,6 @@ async function apiRequest<T>(
         throw error;
     }
 }
-}
 
 // API methods
 export const api = {

@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\LogsActivity;
 
 class Assessment extends Model
 {
+    use SoftDeletes, LogsActivity;
+
     protected $fillable = [
         'faculty_id',
         'cohort_id',
@@ -15,6 +19,8 @@ class Assessment extends Model
         'total_marks',
         'due_date',
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function faculty()
     {

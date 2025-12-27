@@ -16,11 +16,15 @@ use App\Http\Controllers\AnalyticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
-Route::post('/auth/register', [RegisterController::class, 'register']);
-Route::post('/auth/login', [LoginController::class, 'login']);
+// Public routes with rate limiting
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/auth/register', [RegisterController::class, 'register']);
+    Route::post('/auth/login', [LoginController::class, 'login']);
+});
+
 Route::get('/faculty', [FacultyController::class, 'index']);
 Route::get('/curriculums', [CurriculumController::class, 'index']);
+Route::get('/curriculums/{id}', [CurriculumController::class, 'show']);
 Route::get('/modules', [ModuleController::class, 'index']);
 Route::get('/modules/{id}', [ModuleController::class, 'show']);
 
@@ -82,9 +86,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/grading/submissions', [App\Http\Controllers\GradingController::class, 'index']);
     Route::put('/grading/submissions/{id}', [App\Http\Controllers\GradingController::class, 'update']);
 
-    // Recruitment
+    // Recruitment with rate limiting
     Route::get('/recruitment/applications', [RecruitmentController::class, 'index']);
-    Route::post('/recruitment/apply', [RecruitmentController::class, 'store']);
+    Route::post('/recruitment/apply', [RecruitmentController::class, 'store'])->middleware('throttle:3,60');
     Route::put('/recruitment/applications/{id}', [RecruitmentController::class, 'update']);
 
     // Analytics
