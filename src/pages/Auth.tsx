@@ -36,11 +36,24 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { signIn, signUp, user } = useAuth(); // Destructure methods from context instead of using supabase directly
+  const { signIn, signUp, user } = useAuth();
+
+  const getRoleHome = (role?: string) => {
+    switch (role) {
+      case 'faculty':
+        return '/faculty';
+      case 'bod':
+        return '/dashboard';
+      case 'student':
+      default:
+        return '/dashboard';
+    }
+  };
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      const target = getRoleHome((user as any)?.role);
+      navigate(target, { replace: true });
     }
   }, [user, navigate]);
 
@@ -57,7 +70,8 @@ export default function Auth() {
         title: "Welcome back!",
         description: "Successfully logged in",
       });
-      navigate('/dashboard', { replace: true });
+      const target = getRoleHome((user as any)?.role);
+      navigate(target, { replace: true });
 
     } catch (error: any) {
       toast({
@@ -97,7 +111,8 @@ export default function Auth() {
         description: "Account created successfully. Logging you in...",
       });
 
-      navigate('/dashboard', { replace: true });
+      const target = getRoleHome((user as any)?.role);
+      navigate(target, { replace: true });
 
       // Reset form (though we navigate away)
       setSignupData({
