@@ -63,14 +63,13 @@ export default function Auth() {
 
     try {
 
-      // Use real signIn
-      await signIn(loginData.email, loginData.password);
+      const signedInUser = await signIn(loginData.email, loginData.password);
 
       toast({
         title: "Welcome back!",
         description: "Successfully logged in",
       });
-      const target = getRoleHome((user as any)?.role);
+      const target = getRoleHome((signedInUser as any)?.role);
       navigate(target, { replace: true });
 
     } catch (error: any) {
@@ -100,7 +99,7 @@ export default function Auth() {
       // For now, I will modify AuthProvider.tsx signature in next step. 
       // I'll skip this edit for now and do AuthProvider first? No, I'm already in Auth.tsx
       // I'll update it to call a new signature I WILL create.
-      await signUp(signupData.email, signupData.fullName, signupData.password, signupData.role, {
+      const registeredUser = await signUp(signupData.email, signupData.fullName, signupData.password, signupData.role, {
         bio: signupData.bio,
         city: signupData.city,
         phone: signupData.phone
@@ -111,7 +110,7 @@ export default function Auth() {
         description: "Account created successfully. Logging you in...",
       });
 
-      const target = getRoleHome((user as any)?.role);
+      const target = getRoleHome((registeredUser as any)?.role);
       navigate(target, { replace: true });
 
       // Reset form (though we navigate away)

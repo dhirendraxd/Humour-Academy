@@ -8,8 +8,8 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, fullName: string, password: string, role: string, additionalData?: any) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<User>;
+  signUp: (email: string, fullName: string, password: string, role: string, additionalData?: any) => Promise<User>;
   isAuthenticated: boolean;
 }
 
@@ -19,8 +19,8 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signOut: async () => { },
-  signIn: async () => { },
-  signUp: async () => { },
+  signIn: async () => { return Promise.resolve(null as any) },
+  signUp: async () => { return Promise.resolve(null as any) },
   isAuthenticated: false,
 });
 
@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const response = await auth.login({ email, password });
       setUser(response.user);
+      return response.user;
     } finally {
       setLoading(false);
     }
@@ -80,11 +81,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         name: fullName,
         email,
         password,
-        password_confirmation: password, // Assuming password confirmation matches for now
+        password_confirmation: password,
         role,
         ...additionalData
       });
       setUser(response.user);
+      return response.user;
     } finally {
       setLoading(false);
     }

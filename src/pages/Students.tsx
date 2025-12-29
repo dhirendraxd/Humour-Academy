@@ -9,7 +9,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { FadeIn } from "@/components/FadeIn";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
-import { MOCK_PROFILES, Profile } from "@/data/mockData";
+import { Profile } from "@/data/mockData";
 
 export default function Students() {
   const [students, setStudents] = useState<Profile[]>([]);
@@ -33,9 +33,9 @@ export default function Students() {
 
   const fetchStudents = async () => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const studentProfiles = MOCK_PROFILES.filter(p => p.role === 'student')
-        .sort((a, b) => b.level - a.level);
+      // TODO: Replace with real API call to backend when available
+      // Example: const res = await fetch('/api/students'); const data = await res.json();
+      const studentProfiles: Profile[] = [];
       setStudents(studentProfiles);
       setFilteredStudents(studentProfiles);
     } catch (error: any) {

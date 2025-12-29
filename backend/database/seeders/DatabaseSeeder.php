@@ -21,70 +21,43 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create BOD user
-        $bod = User::create([
-            'name' => 'Board Administrator',
-            'email' => 'bod@academy.com',
-            'password' => Hash::make('password123'),
-            'role' => 'bod',
-            'rank' => 'Board Director',
-            'level' => 10,
-            'bio' => 'Academy oversight and strategic planning.',
-        ]);
+        // Create fresh minimal users: one per role
+        $bod = User::updateOrCreate(
+            ['email' => 'bod@academy.com'],
+            [
+                'name' => 'Board Admin',
+                'password' => Hash::make('password123'),
+                'role' => 'bod',
+                'rank' => 'Board Director',
+                'level' => 10,
+                'bio' => 'Academy oversight and strategic planning.',
+            ]
+        );
 
-        // Create Faculty/Teachers
-        $teacher1 = User::create([
-            'name' => 'Dr. Sarah Mitchell',
-            'email' => 'sarah@academy.com',
-            'password' => Hash::make('password123'),
-            'role' => 'faculty',
-            'rank' => 'Senior Architect',
-            'level' => 8,
-            'bio' => 'Expert in satire and comedic timing with 15 years of experience.',
-            'interests' => json_encode(['Satire', 'Writing', 'Stand-up']),
-        ]);
+        $faculty = User::updateOrCreate(
+            ['email' => 'faculty@academy.com'],
+            [
+                'name' => 'Faculty Member',
+                'password' => Hash::make('password123'),
+                'role' => 'faculty',
+                'rank' => 'Architect',
+                'level' => 5,
+                'bio' => 'Faculty for core modules.',
+                'interests' => json_encode(['Teaching'])
+            ]
+        );
 
-        $teacher2 = User::create([
-            'name' => 'Prof. James Chen',
-            'email' => 'james@academy.com',
-            'password' => Hash::make('password123'),
-            'role' => 'faculty',
-            'rank' => 'Master Architect',
-            'level' => 9,
-            'bio' => 'Specializes in public speaking and improvisational comedy.',
-            'interests' => json_encode(['Improv', 'Public Speaking', 'Leadership']),
-        ]);
-
-        // Create Students
-        $student1 = User::create([
-            'name' => 'Alex Johnson',
-            'email' => 'alex@student.com',
-            'password' => Hash::make('password123'),
-            'role' => 'student',
-            'level' => 3,
-            'bio' => 'Aspiring comedian learning the craft.',
-            'interests' => json_encode(['Comedy', 'Writing']),
-        ]);
-
-        $student2 = User::create([
-            'name' => 'Emma Rodriguez',
-            'email' => 'emma@student.com',
-            'password' => Hash::make('password123'),
-            'role' => 'student',
-            'level' => 2,
-            'bio' => 'Marketing professional looking to improve presentation skills.',
-            'interests' => json_encode(['Public Speaking', 'Leadership']),
-        ]);
-
-        $student3 = User::create([
-            'name' => 'Marcus Williams',
-            'email' => 'marcus@student.com',
-            'password' => Hash::make('password123'),
-            'role' => 'student',
-            'level' => 4,
-            'bio' => 'Stand-up comedian refining my technique.',
-            'interests' => json_encode(['Stand-up', 'Storytelling']),
-        ]);
+        $student = User::updateOrCreate(
+            ['email' => 'student@academy.com'],
+            [
+                'name' => 'Student User',
+                'password' => Hash::make('password123'),
+                'role' => 'student',
+                'level' => 1,
+                'bio' => 'New student.',
+                'interests' => json_encode(['Learning'])
+            ]
+        );
 
         // Create Curriculums (Courses)
         $curriculum1 = Curriculum::create([
@@ -113,7 +86,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Foundations of Emotional Reading',
             'description' => 'Learn to read micro-expressions and social cues to understand your audience.',
             'duration_months' => 2,
-            'teacher_id' => $teacher1->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module1_2 = Module::create([
@@ -121,7 +94,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Timing & Delivery Mechanics',
             'description' => 'The science behind comedic timing and effective delivery.',
             'duration_months' => 2,
-            'teacher_id' => $teacher1->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module1_3 = Module::create([
@@ -129,7 +102,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Advanced Wit Application',
             'description' => 'Apply wit in real-world scenarios with confidence.',
             'duration_months' => 3,
-            'teacher_id' => $teacher1->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         // Create Modules for Curriculum 2
@@ -138,7 +111,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Voice & Vocal Power',
             'description' => 'Develop your vocal instrument for maximum impact.',
             'duration_months' => 2,
-            'teacher_id' => $teacher2->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module2_2 = Module::create([
@@ -146,7 +119,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Stage Presence & Body Language',
             'description' => 'Command attention through physical presence.',
             'duration_months' => 2,
-            'teacher_id' => $teacher2->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module2_3 = Module::create([
@@ -154,7 +127,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Audience Engagement Tactics',
             'description' => 'Interactive techniques to keep your audience captivated.',
             'duration_months' => 2,
-            'teacher_id' => $teacher2->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         // Create Modules for Curriculum 3
@@ -163,7 +136,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Leadership Through Humor',
             'description' => 'Use humor as a leadership tool to build trust and rapport.',
             'duration_months' => 3,
-            'teacher_id' => $teacher2->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module3_2 = Module::create([
@@ -171,7 +144,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Difficult Conversations',
             'description' => 'Navigate challenging discussions with grace and wit.',
             'duration_months' => 2,
-            'teacher_id' => $teacher2->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         // Create Modules for Curriculum 4
@@ -180,7 +153,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Satirical Writing Fundamentals',
             'description' => 'Craft intelligent satire that entertains and enlightens.',
             'duration_months' => 3,
-            'teacher_id' => $teacher1->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         $module4_2 = Module::create([
@@ -188,7 +161,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Social Commentary Techniques',
             'description' => 'Master the art of meaningful social commentary through humor.',
             'duration_months' => 3,
-            'teacher_id' => $teacher1->id,
+            'teacher_id' => $faculty->id,
         ]);
 
         // Create Cohorts
@@ -222,43 +195,21 @@ class DatabaseSeeder extends Seeder
         // Enroll students in cohorts
         Enrollment::create([
             'cohort_id' => $cohort1->id,
-            'student_id' => $student1->id,
-            'status' => 'approved',
-        ]);
-
-        Enrollment::create([
-            'cohort_id' => $cohort2->id,
-            'student_id' => $student2->id,
-            'status' => 'approved',
-        ]);
-
-        Enrollment::create([
-            'cohort_id' => $cohort1->id,
-            'student_id' => $student3->id,
+            'student_id' => $student->id,
             'status' => 'approved',
         ]);
 
         // Create notifications for teachers about their assigned modules
         Notification::create([
-            'user_id' => $teacher1->id,
+            'user_id' => $faculty->id,
             'type' => 'module_assigned',
             'title' => 'New Module Assignment',
             'message' => 'You have been assigned to teach: Foundations of Emotional Reading',
         ]);
 
-        Notification::create([
-            'user_id' => $teacher2->id,
-            'type' => 'module_assigned',
-            'title' => 'New Module Assignment',
-            'message' => 'You have been assigned to teach: Voice & Vocal Power',
-        ]);
-
         $this->command->info('Database seeded successfully!');
         $this->command->info('BOD: bod@academy.com / password123');
-        $this->command->info('Teacher 1: sarah@academy.com / password123');
-        $this->command->info('Teacher 2: james@academy.com / password123');
-        $this->command->info('Student 1: alex@student.com / password123');
-        $this->command->info('Student 2: emma@student.com / password123');
-        $this->command->info('Student 3: marcus@student.com / password123');
+        $this->command->info('Faculty: faculty@academy.com / password123');
+        $this->command->info('Student: student@academy.com / password123');
     }
 }

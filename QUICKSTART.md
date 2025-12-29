@@ -72,11 +72,8 @@ Use any of these accounts to test different features:
 | Role | Email | Password |
 |------|-------|----------|
 | 👨‍💼 Board Member | bod@academy.com | password123 |
-| 👨‍🏫 Faculty 1 | sarah@academy.com | password123 |
-| 👨‍🏫 Faculty 2 | james@academy.com | password123 |
-| 👨‍🎓 Student 1 | alex@student.com | password123 |
-| 👨‍🎓 Student 2 | emma@student.com | password123 |
-| 👨‍🎓 Student 3 | marcus@student.com | password123 |
+| 👨‍🏫 Faculty | faculty@academy.com | password123 |
+| 👨‍🎓 Student | student@academy.com | password123 |
 
 ## What to Try
 
