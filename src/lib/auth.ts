@@ -22,23 +22,6 @@ export interface AuthResponse {
     token: string;
 }
 
-export interface LoginCredentials {
-    email: string;
-    password: string;
-}
-
-export interface RegisterCredentials {
-    name: string;
-    email: string;
-    role?: 'student' | 'faculty' | 'bod';
-    password: string;
-    password_confirmation: string;
-    bio?: string;
-    city?: string;
-    phone?: string;
-    interests?: string[];
-}
-
 export interface UpdateProfileData {
     name?: string;
     email?: string;
@@ -46,39 +29,11 @@ export interface UpdateProfileData {
     city?: string;
     phone?: string;
     interests?: string[];
-    rank?: string; // Optional for now as it might be read-only in backend
+    rank?: string;
 }
 
-export interface RequestCodeResponse { message: string; dev_code?: number }
-
-// Authentication functions
+// Authentication functions (Google OAuth only)
 export const auth = {
-    // Register a new user (legacy; not used for passwordless)
-    register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/auth/register', credentials);
-        tokenManager.setToken(response.token);
-        return response;
-    },
-
-    // Legacy password login (still available)
-    login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/auth/login', credentials);
-        tokenManager.setToken(response.token);
-        return response;
-    },
-
-    // Passwordless: request email code
-    requestLoginCode: async (email: string): Promise<RequestCodeResponse> => {
-        return api.post<RequestCodeResponse>('/auth/request-code', { email });
-    },
-
-    // Passwordless: verify email code
-    verifyLoginCode: async (email: string, code: string): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/auth/verify-code', { email, code });
-        tokenManager.setToken(response.token);
-        return response;
-    },
-
     // Logout user
     logout: async (): Promise<void> => {
         try {
@@ -103,3 +58,4 @@ export const auth = {
         return tokenManager.getToken() !== null;
     },
 };
+

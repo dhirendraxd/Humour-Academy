@@ -8,10 +8,6 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
-  signIn: (email: string, password: string) => Promise<User>;
-  signUp: (email: string, fullName: string, password: string, role: string, additionalData?: any) => Promise<User>;
-  requestCode: (email: string) => Promise<{ message: string; dev_code?: number }>;
-  verifyCode: (email: string, code: string) => Promise<User>;
   isAuthenticated: boolean;
 }
 
@@ -21,10 +17,6 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signOut: async () => { },
-  signIn: async () => { return Promise.resolve(null as any) },
-  signUp: async () => { return Promise.resolve(null as any) },
-  requestCode: async () => ({ message: 'noop' }),
-  verifyCode: async () => { return Promise.resolve(null as any) },
   isAuthenticated: false,
 });
 
@@ -74,58 +66,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     initAuth();
   }, []);
 
-  // Sign in function
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const response = await auth.login({ email, password });
-      setUser(response.user);
-      return response.user;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Sign up function
-  const signUp = async (email: string, fullName: string, password: string, role: string, additionalData?: any) => {
-    setLoading(true);
-    try {
-      const response = await auth.register({
-        name: fullName,
-        email,
-        password,
-        password_confirmation: password,
-        role,
-        ...additionalData
-      });
-      setUser(response.user);
-      return response.user;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Sign out function
   const signOut = async () => {
     setLoading(true);
     try {
       await auth.logout();
       setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const requestCode = async (email: string) => {
-    return auth.requestLoginCode(email);
-  };
-
-  const verifyCode = async (email: string, code: string) => {
-    setLoading(true);
-    try {
-      const response = await auth.verifyLoginCode(email, code);
-      setUser(response.user);
-      return response.user;
     } finally {
       setLoading(false);
     }
@@ -153,10 +99,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         profile,
         loading,
         signOut,
-        signIn,
-        signUp,
-        requestCode,
-        verifyCode,
         isAuthenticated: !!user,
       }}
     >
