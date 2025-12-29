@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,8 @@ export default function Auth() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loginData, setLoginData] = useState({ email: "", code: "" });
+  const [codeSent, setCodeSent] = useState(false);
   const [signupData, setSignupData] = useState({
     email: "",
     password: "",
@@ -36,7 +37,7 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, requestCode, verifyCode, user } = useAuth();
 
   const getRoleHome = (role?: string) => {
     switch (role) {
@@ -57,21 +58,32 @@ export default function Auth() {
     }
   }, [user, navigate]);
 
+  if (user) {
+    const target = getRoleHome((user as any)?.role);
+    return <Navigate to={target} replace />;
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-
-      const signedInUser = await signIn(loginData.email, loginData.password);
-
-      toast({
-        title: "Welcome back!",
-        description: "Successfully logged in",
-      });
-      const target = getRoleHome((signedInUser as any)?.role);
-      navigate(target, { replace: true });
-
+      if (!codeSent) {
+        const res = await requestCode(loginData.email);
+        setCodeSent(true);
+        toast({
+          title: "Code sent",
+          description: res.dev_code ? `Dev code: ${res.dev_code}` : "Check your inbox for the 6-digit code",
+        });
+      } else {
+        const signedInUser = await verifyCode(loginData.email, loginData.code);
+        toast({
+          title: "Welcome back!",
+          description: "Successfully logged in",
+        });
+        const target = getRoleHome((signedInUser as any)?.role);
+        navigate(target, { replace: true });
+      }
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -206,27 +218,25 @@ export default function Auth() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                        <div className="relative">
-                          <Input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            value={loginData.password}
-                            onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                            placeholder="Enter your password"
-                            className="h-12 pr-12 bg-background/50"
-                            required
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-12 w-12 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                          </Button>
-                        </div>
+                        <Label htmlFor="code" className="text-sm font-medium">{codeSent ? 'Enter 6-digit Code' : 'Email Login'}</Label>
+                        {!codeSent ? (
+                          <div className="relative">
+                            <p className="text-xs text-muted-foreground mb-2">We’ll send a one-time code to your email</p>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <Input
+                              id="code"
+                              inputMode="numeric"
+                              pattern="\\d{6}"
+                              value={loginData.code}
+                              onChange={(e) => setLoginData({ ...loginData, code: e.target.value })}
+                              placeholder="123456"
+                              className="h-12 bg-background/50"
+                              required
+                            />
+                          </div>
+                        )
                       </div>
 
                       <Button
@@ -234,8 +244,14 @@ export default function Auth() {
                         className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 font-medium rounded-lg"
                         disabled={isLoading}
                       >
-                        {isLoading ? "Signing In..." : "Sign In"}
+                        {isLoading ? (codeSent ? 'Verifying...' : 'Sending...') : (codeSent ? 'Verify & Sign In' : 'Send Code')}
                       </Button>
+
+                      <div className="mt-4 flex items-center justify-center">
+                        <Button type="button" variant="outline" className="w-full h-12" onClick={() => { window.location.href = '/api/auth/google/redirect'; }}>
+                          <span className="mr-2">🔗</span> Continue with Google
+                        </Button>
+                      </div>
                     </form>
                   </TabsContent>
 

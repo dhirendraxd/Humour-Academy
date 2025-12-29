@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\PasswordlessController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\CohortController;
@@ -20,6 +22,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('throttle:10,1')->group(function () {
     Route::post('/auth/register', [RegisterController::class, 'register']);
     Route::post('/auth/login', [LoginController::class, 'login']);
+
+    // Passwordless email code
+    Route::post('/auth/request-code', [PasswordlessController::class, 'requestCode']);
+    Route::post('/auth/verify-code', [PasswordlessController::class, 'verifyCode']);
+
+    // Google OAuth
+    Route::get('/auth/google/redirect', [GoogleController::class, 'redirect']);
+    Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 });
 
 Route::get('/faculty', [FacultyController::class, 'index']);

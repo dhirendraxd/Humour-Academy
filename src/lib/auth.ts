@@ -49,18 +49,32 @@ export interface UpdateProfileData {
     rank?: string; // Optional for now as it might be read-only in backend
 }
 
+export interface RequestCodeResponse { message: string; dev_code?: number }
+
 // Authentication functions
 export const auth = {
-    // Register a new user
+    // Register a new user (legacy; not used for passwordless)
     register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>('/auth/register', credentials);
         tokenManager.setToken(response.token);
         return response;
     },
 
-    // Login user
+    // Legacy password login (still available)
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>('/auth/login', credentials);
+        tokenManager.setToken(response.token);
+        return response;
+    },
+
+    // Passwordless: request email code
+    requestLoginCode: async (email: string): Promise<RequestCodeResponse> => {
+        return api.post<RequestCodeResponse>('/auth/request-code', { email });
+    },
+
+    // Passwordless: verify email code
+    verifyLoginCode: async (email: string, code: string): Promise<AuthResponse> => {
+        const response = await api.post<AuthResponse>('/auth/verify-code', { email, code });
         tokenManager.setToken(response.token);
         return response;
     },

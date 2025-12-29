@@ -10,6 +10,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<User>;
   signUp: (email: string, fullName: string, password: string, role: string, additionalData?: any) => Promise<User>;
+  requestCode: (email: string) => Promise<{ message: string; dev_code?: number }>;
+  verifyCode: (email: string, code: string) => Promise<User>;
   isAuthenticated: boolean;
 }
 
@@ -21,6 +23,8 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => { },
   signIn: async () => { return Promise.resolve(null as any) },
   signUp: async () => { return Promise.resolve(null as any) },
+  requestCode: async () => ({ message: 'noop' }),
+  verifyCode: async () => { return Promise.resolve(null as any) },
   isAuthenticated: false,
 });
 
@@ -45,6 +49,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
+      // Capture token from URL (Google OAuth callback), then clean URL
+      const url = new URL(window.location.href);
+      const tokenParam = url.searchParams.get('token');
+      if (tokenParam) {
+        tokenManager.setToken(tokenParam);
+        url.searchParams.delete('token');
+        window.history.replaceState({}, document.title, url.toString());
+      }
+
       if (auth.isAuthenticated()) {
         try {
           const currentUser = await auth.getUser();
@@ -103,6 +116,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const requestCode = async (email: string) => {
+    return auth.requestLoginCode(email);
+  };
+
+  const verifyCode = async (email: string, code: string) => {
+    setLoading(true);
+    try {
+      const response = await auth.verifyLoginCode(email, code);
+      setUser(response.user);
+      return response.user;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Derive profile from user
   const profile: Profile | null = user ? {
     id: user.id.toString(),
@@ -127,6 +155,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signOut,
         signIn,
         signUp,
+        requestCode,
+        verifyCode,
         isAuthenticated: !!user,
       }}
     >
