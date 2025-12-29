@@ -205,6 +205,17 @@ Launches frontend (port 5173) and backend (port 8000) simultaneously.
 bash start.sh
 ```
 
+## Security & Sanitization
+
+- Backend input is sanitized via global middleware to trim, remove control characters, and strip HTML from most fields. A safe subset of tags is allowed for common rich-text fields (e.g., `content`, `description`, `body`).
+- Strict security headers (CSP, frame-ancestors, MIME sniffing protections, referrer policy) are applied globally. CSP is relaxed in local development for the Vite dev server.
+- Frontend provides a `sanitizeHTML()` helper in [src/lib/sanitize.ts](src/lib/sanitize.ts) for any user-provided HTML. Always sanitize before using `dangerouslySetInnerHTML`.
+
+Recommended:
+- Validate inputs in controllers/request objects and avoid raw SQL; prefer Eloquent/Query Builder.
+- Do not render unsanitized user HTML. Use `sanitizeHTML()` if needed.
+- Keep dependencies updated and run `npm audit fix`/`composer update` periodically.
+
 ## Development
 
 ### Frontend Development
