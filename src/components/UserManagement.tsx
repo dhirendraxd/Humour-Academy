@@ -148,10 +148,18 @@ export const UserManagement = ({
     if (!editingUser) return;
     setIsUpdating(true);
     try {
-      console.log("Saving performance plan mock", {
-        userId: editingUser.id,
+      // Save performance plan to backend
+      await api.put(`/users/${editingUser.id}/performance-plan`, {
         plan: performancePlan,
+        goals: planGoals,
+        mentor: planMentor,
       });
+      
+      toast({
+        title: "Success",
+        description: "Performance plan saved successfully.",
+      });
+      
       setIsPlanDialogOpen(false);
       setPerformancePlan("");
       setPlanGoals("");
