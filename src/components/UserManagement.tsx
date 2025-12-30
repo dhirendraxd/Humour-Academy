@@ -32,7 +32,6 @@ import {
   TrendingUp
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-// import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface Profile {
@@ -77,8 +76,6 @@ export const UserManagement = ({
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // Mock fetching users
-      console.log("Fetching users mock");
       setUsers([]);
 
     } catch (error) {
@@ -127,9 +124,6 @@ export const UserManagement = ({
 
     setIsUpdating(true);
     try {
-      // Mock update user
-      console.log("Updating user mock", editingUser);
-
       toast({
         title: "User Updated",
         description: "User information has been successfully updated.",
@@ -157,12 +151,6 @@ export const UserManagement = ({
       console.log("Saving performance plan mock", {
         userId: editingUser.id,
         plan: performancePlan,
-        goals: planGoals,
-        mentor: planMentor
-      });
-      toast({
-        title: "Plan Saved",
-        description: `Development plan for ${editingUser.full_name} has been updated.`,
       });
       setIsPlanDialogOpen(false);
       setPerformancePlan("");

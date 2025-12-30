@@ -33,8 +33,6 @@ export default function Students() {
 
   const fetchStudents = async () => {
     try {
-      // TODO: Replace with real API call to backend when available
-      // Example: const res = await fetch('/api/students'); const data = await res.json();
       const studentProfiles: Profile[] = [];
       setStudents(studentProfiles);
       setFilteredStudents(studentProfiles);

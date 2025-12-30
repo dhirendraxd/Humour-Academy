@@ -1,8 +1,6 @@
 // API client for Laravel backend
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-console.log('API Base URL:', API_BASE_URL);
-
 // Get authentication token from localStorage
 const getToken = (): string | null => {
     return localStorage.getItem('auth_token');
@@ -37,7 +35,6 @@ async function apiRequest<T>(
     }
 
     const url = `${API_BASE_URL}${endpoint}`;
-    console.log(`[API] ${options.method || 'GET'} ${url}`);
 
     try {
         const response = await fetch(url, {
@@ -54,17 +51,14 @@ async function apiRequest<T>(
                 error = await response.json().catch(() => ({ message: 'An error occurred' }));
             }
             
-            console.error(`[API Error] ${response.status}: ${error.message}`);
             throw new Error(error.message || `HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
         console.log(`[API] Response:`, data);
-        return data;
-    } catch (error) {
+        tch (error) {
         console.error('[API] Request failed:', error);
-        throw error;
-    }
+        
 }
 
 // API methods
