@@ -54,6 +54,12 @@ temp/
 *.backup
 *.bak
 
+# Local backend folder (NOT pushed to GitHub)
+academy backend/
+academy_backend/
+academy-backend/
+
+
 # Package manager files
 bun.lockb
 yarn.lock
