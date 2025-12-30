@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, auth } from '@/lib/auth';
+import { tokenManager } from '@/lib/api';
 import { Profile } from '@/data/mockData';
 
 // Define context type

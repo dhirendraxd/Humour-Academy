@@ -55,10 +55,10 @@ async function apiRequest<T>(
         }
 
         const data = await response.json();
-        console.log(`[API] Response:`, data);
-        tch (error) {
-        console.error('[API] Request failed:', error);
-        
+        return data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 // API methods
